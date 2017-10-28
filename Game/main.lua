@@ -36,12 +36,13 @@ function love.load()
 end
 
 function love.draw()
-    -- This stack push begins the code that makes our camera follow our player. Everything that needs to stay in place should be here
 
+    -- These values are used to move the camera, and also to get the absolute mouse position relative to the map --
     local x_translate_val = (windowWidth / 2) - player.x
     local y_translate_val = (windowHeight / 2) - player.y
 
-    love.graphics.push()
+    
+    -- This stack push begins the code that makes our camera follow our player. Everything that needs to stay in place should be herelove.graphics.push()
     love.graphics.translate(x_translate_val, y_translate_val)
 
     draw_tiles() -- from tiling.lua
