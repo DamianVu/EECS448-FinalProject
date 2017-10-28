@@ -1,5 +1,6 @@
 -- Current functionality is just movement and mouse cursor until we get maps and tiling implemented
 
+local CH = require "collisionhandler"
 require "tiling"
 
 mouse = {}
@@ -18,6 +19,8 @@ function love.load()
     -- Make mouse invisible so we can use a custom cursor --
     love.mouse.setVisible(false)
 
+
+    -- Global Game variables
     base_speed = 250
 
 
