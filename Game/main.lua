@@ -5,6 +5,9 @@ player = {}
 
 function love.load()
 
+    love.window.setMode(1600, 900, {resizable=true, vsync=false, minwidth=800, minheight=600})
+    --love.window.setFullscreen(true, "desktop")
+
     -- Make mouse invisible so we can use a custom cursor --
     love.mouse.setVisible(false)
 
@@ -12,8 +15,8 @@ function love.load()
 
 
     -- Player initialization
-    player.x = 400
-    player.y = 300
+    player.x = 0
+    player.y = 32
     player.speed = 1 -- (We can scale this number later to have speed modifiers)
     player.img = love.graphics.newImage('player.png')
     -- End Player initialization
