@@ -42,7 +42,8 @@ function love.draw()
     local y_translate_val = (windowHeight / 2) - player.y
 
     
-    -- This stack push begins the code that makes our camera follow our player. Everything that needs to stay in place should be herelove.graphics.push()
+    -- This stack push begins the code that makes our camera follow our player. Everything that needs to stay in place should be here
+    love.graphics.push()
     love.graphics.translate(x_translate_val, y_translate_val)
 
     draw_tiles() -- from tiling.lua
