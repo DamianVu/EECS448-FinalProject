@@ -22,8 +22,8 @@ function love.load()
 
 
     -- Player initialization - With a 64x64px sprite, this will place it in the center.
-    player.x = 702
-    player.y = 450
+    player.x = 0
+    player.y = 0
     player.speed = 1 -- (We can scale this number later to have speed modifiers)
     player.img = love.graphics.newImage('images/sprites/player.png')
     -- End Player initialization
@@ -36,15 +36,21 @@ function love.load()
 end
 
 function love.draw()
+    -- This stack push begins the code that makes our camera follow our player. Everything that needs to stay in place should be here
+
+    local x_translate_val = (windowWidth / 2) - player.x
+    local y_translate_val = (windowHeight / 2) - player.y
+
     love.graphics.push()
-    love.graphics.translate((windowWidth / 2) - (player.x + 32), -player.y + (windowHeight / 2))
+    love.graphics.translate(x_translate_val, y_translate_val)
 
-    draw_tiles()
+    draw_tiles() -- from tiling.lua
 
-    -- Draw player
-    love.graphics.draw(player.img, player.x, player.y, 0, 1, 1, 0, 32)
+    -- Draw player --
+    love.graphics.draw(player.img, player.x - 32, player.y, 0, 1, 1, 0, 32)
 
     love.graphics.pop()
+    -- This stack pop ends the code for the camera following. Anything that should stay in place on screen should follow this
 
     -- Draw circle where mouse is --
     love.graphics.setColor(255, 255, 255)
@@ -55,8 +61,11 @@ function love.draw()
     love.graphics.setColor(0, 203, 255)
     love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 10)
     love.graphics.print("Wubba lubba dub dub!", 10, 30)
+    love.graphics.print("Player Location: " .. tostring(math.floor(player.x)) .. "," .. tostring(math.floor(player.y)), 10, 50)
+    love.graphics.print("Mouse Screen Location: " .. tostring(math.floor(mouse.x)) .. "," .. tostring(math.floor(mouse.y)), 10, 70)
+    love.graphics.print("Mouse Abs Location: " .. tostring(math.floor(mouse.x - x_translate_val)) .. "," .. tostring(math.floor(mouse.y - y_translate_val)), 10, 90)
     -- End Text in the top left
-    love.graphics.circle("fill", 800, 450, 2)
+    --love.graphics.circle("fill", windowWidth/2, windowHeight/2, 2)            This code draws a dot in the center of the screen
     -- Code that will cap FPS at 144 --
     local cur_time = love.timer.getTime()
     if next_time <= cur_time then
@@ -89,6 +98,13 @@ function love.update(dt)
     end
 
 
+end
+
+function love.keypressed(key)
+    if key == 'r' then -- reset position
+        player.x = 0
+        player.y = 0
+    end
 end
 
 function love.quit()
