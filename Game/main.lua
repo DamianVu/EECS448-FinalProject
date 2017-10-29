@@ -2,6 +2,7 @@
 
 local CH = require "collisionhandler"
 require "tiling"
+require "cObject"
 
 mouse = {}
 player = {}
@@ -31,6 +32,9 @@ function love.load()
     player.img = love.graphics.newImage('images/sprites/player.png')
     -- End Player initialization
 
+    -- Hitbox initialization
+    player.hb = cObject:new(0, 0, 64, 64, -32, -32)
+
 
     -- Code that will cap FPS at 144
     min_dt = 1/144
@@ -44,6 +48,8 @@ function love.draw()
     local x_translate_val = (windowWidth / 2) - player.x
     local y_translate_val = (windowHeight / 2) - player.y
 
+
+
     
     -- This stack push begins the code that makes our camera follow our player. Everything that needs to stay in place should be here
     love.graphics.push()
@@ -52,7 +58,10 @@ function love.draw()
     draw_tiles() -- from tiling.lua
 
     -- Draw player --
-    love.graphics.draw(player.img, player.x - 32, player.y, 0, 1, 1, 0, 32)
+    love.graphics.draw(player.img, player.x, player.y, 0, 1, 1, 32, 32)
+
+    player.hb:setLocation(player.x, player.y)
+    player.hb:drawHitbox()
 
     love.graphics.pop()
     -- This stack pop ends the code for the camera following. Anything that should stay in place on screen should follow this

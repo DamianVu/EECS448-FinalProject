@@ -2,7 +2,7 @@
 Map = {
 	{1,1,1,1,1,1},
 	{1,2,2,2,2,1},
-	{1,2,2,2,2,1},
+	{1,2,3,3,2,1},
 	{1,2,2,2,2,1},
 	{1,1,1,2,2,1}
 }
@@ -45,6 +45,8 @@ function draw_tiles()
 	local start_y = -(64 * y_count / 2)
 	-- End of centering map on screen
 
+
+	-- Draws map on screen --
 	for rowIndex = 1, #Map do
 		local row = Map[rowIndex]
 		for columnIndex = 1, #row do
