@@ -31,19 +31,19 @@ end
 -- -- End --
 
 --Map-- Class definition and constructor, new_map
-Map = class {grid, id_dict}
+Map = class {tiles, id_dict}
 function new_map(grid, id_dict)
 	local map = Map()
-	map.grid = {}
+	map.tiles = {}
 	map.id_dict = id_dict
 
-	for rowIndex = 1, #grid do --Fill grid with tiles
+	for rowIndex = 1, #grid do --Fill map with tiles, where id is the number in the grid
 		local row = grid[rowIndex]
+		map.tiles[rowIndex] = {}
 		for columnIndex = 1, #row do
-			local nthTile = Tile()
-			nthTile.id = row[columnIndex]													--|id example: 1 = terrain, 2 = path
-			-- nthTile.collision = map.id_dict[nthTile.id].collision	--|collision: true or false
-			map.grid[rowIndex][columnIndex] = nthTile
+			local id = row[columnIndex]
+			local nthTile = new_tile(id, x, y, width, height, map.id_dict[id].collision)
+			map.tiles[rowIndex][columnIndex] = nthTile
 		end
 	end
 	return map
@@ -55,21 +55,21 @@ Tileset = class {map = {}, img, width, height, tileWidth, tileHeight}
 function new_tileset(map, img, width, height, tileWidth, tileHeight)
 	local ts = Tileset()
 	ts.map = map                        -- map - 2d array of Tile objects
-	ts.img = img
-	ts.width = width
-	ts.height = height
-	ts.tileWidth = tileWidth
-	ts.tileHeight = tileHeight
+	ts.img = img												-- img - love.graphics.newImage('image/path.png')
+	ts.width = width										-- width - width of tileset = img.getWidth()
+	ts.height = height									-- height - height of tileset = img.getHeight()
+	ts.tileWidth = tileWidth						-- tileWidth - Width of tile in set
+	ts.tileHeight = tileHeight					-- tileHeight - Height of tile in set
 	return ts
 end
 -- End --
 
 
 
--- Load the tileset to be worked on for our game. TODO implement csv file
+-- Load the tileset to be worked on for our game. TODO works with csv format if we added a loadmapfile(file), for example
 function load_tileset()
 
-	-- Here is what we need to create a test map for the time being
+	--Test Map data-- Here is what we need to create a test map for the time being
 	test_grid = {
 		{1,1,1,1,1,1},
 		{1,2,2,2,2,1},
@@ -77,15 +77,22 @@ function load_tileset()
 		{1,2,2,2,2,1},
 		{1,1,1,2,2,1}
 	}
-	test_map = test_grid
+	test_id_dict = {1,2}								--Tile IDs in the map
+	test_id_dict[1] = {"collision"}		--Properties of each Tile ID. Only have collision for now
+	test_id_dict[2] = {"collision"}
+	test_id_dict[1].collision = true
+	test_id_dict[2].collision = false
+	test_map = new_map(test_grid, test_id_dict)
 	test_set = love.graphics.newImage('images/tilesets/testset.png')
+	--END--
 
-	-- Create the object for the tileset to be worked with
+
+	-- Create the object for the tileset to be worked with in the rendering stage
 	ts = new_tileset(test_map, test_set, test_set:getWidth(), test_set:getHeight(), 64, 64)
 
-
-
-	-- Specify tiles of tileset TODO maybe do this in an indefinite loop? To allow for unspecified tileset dimensions?
+	-- Specify tiles of tileset
+	-- TODO do this in an indefinite loop? To allow for unspecified tileset dimensions?
+	-- TODO Integrate Quads as a property of the tileset
 	Quads = {
 		love.graphics.newQuad(0, 0, ts.tileWidth, ts.tileHeight, ts.width, ts.height),
 		love.graphics.newQuad(64, 0, ts.tileWidth, ts.tileHeight, ts.width, ts.height),
@@ -103,9 +110,9 @@ function draw_tiles()
 	local y_count = 0
 	local finalx = 0
 
-	for ff = 1, #ts.map do
+	for ff = 1, #ts.map.tiles do
 		y_count = y_count + 1
-		local row = ts.map[ff]
+		local row = ts.map.tiles[ff]
 		local x_count = 0
 		for ffa = 1, #row do
 			x_count = x_count + 1
@@ -120,11 +127,11 @@ function draw_tiles()
 	-- End of centering map on screen
 
 
-	-- Render ts.map from tileset onscreen
-	for rowIndex = 1, #ts.map do
-		local row = ts.map[rowIndex]
+	-- MAP RENDER FUNCTION: Render ts.map.tiles from tileset onscreen
+	for rowIndex = 1, #ts.map.tiles do
+		local row = ts.map.tiles[rowIndex]
 		for columnIndex = 1, #row do
-			local number = row[columnIndex]
+			local number = row[columnIndex].id
 			local x, y = start_x + ((columnIndex - 1) * ts.tileWidth), start_y + ((rowIndex - 1) * ts.tileHeight)
 			HC.rectangle(x, y, ts.tileWidth, ts.tileHeight)
 			love.graphics.draw(ts.img, Quads[number], x, y) -- Draw Tile
