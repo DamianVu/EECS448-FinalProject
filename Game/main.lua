@@ -1,6 +1,8 @@
 -- Current functionality is just movement and mouse cursor until we get maps and tiling implemented
 
+local CH = require "collisionhandler"
 require "tiling"
+require "cObject"
 
 mouse = {}
 player = {}
@@ -9,7 +11,7 @@ function love.load()
     windowWidth = 1600
     windowHeight = 900
 
-    love.window.setMode(windowWidth, windowHeight, {resizable=false, vsync=false, minwidth=800, minheight=600, borderless=true})
+    love.window.setMode(windowWidth, windowHeight, {resizable=false, vsync=false, minwidth=800, minheight=600, borderless=true, msaa=2})
     --love.window.setFullscreen(true, "desktop")
 
     -- Load tilesets
@@ -18,7 +20,10 @@ function love.load()
     -- Make mouse invisible so we can use a custom cursor --
     love.mouse.setVisible(false)
 
+
+    -- Global Game variables
     base_speed = 250
+    debugMode = false
 
 
     -- Player initialization - With a 64x64px sprite, this will place it in the center.
@@ -27,6 +32,9 @@ function love.load()
     player.speed = 1 -- (We can scale this number later to have speed modifiers)
     player.img = love.graphics.newImage('images/sprites/player.png')
     -- End Player initialization
+
+    -- Hitbox initialization
+    player.hb = cObject:new(0, 0, 32, 32, -16, -16)
 
 
     -- Code that will cap FPS at 144
@@ -41,6 +49,8 @@ function love.draw()
     local x_translate_val = (windowWidth / 2) - player.x
     local y_translate_val = (windowHeight / 2) - player.y
 
+
+
     
     -- This stack push begins the code that makes our camera follow our player. Everything that needs to stay in place should be here
     love.graphics.push()
@@ -49,7 +59,14 @@ function love.draw()
     draw_tiles() -- from tiling.lua
 
     -- Draw player --
-    love.graphics.draw(player.img, player.x - 32, player.y, 0, 1, 1, 0, 32)
+    love.graphics.draw(player.img, player.x, player.y, 0, .5, .5, 32, 32)
+
+    if debugMode then
+        highlightTiles(player.x, player.y, 32, 32)
+    end
+
+    player.hb:setLocation(player.x, player.y)
+    player.hb:drawHitbox()
 
     love.graphics.pop()
     -- This stack pop ends the code for the camera following. Anything that should stay in place on screen should follow this
@@ -63,9 +80,12 @@ function love.draw()
     love.graphics.setColor(0, 203, 255)
     love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 10)
     love.graphics.print("Wubba lubba dub dub!", 10, 30)
-    love.graphics.print("Player Location: " .. tostring(math.floor(player.x)) .. "," .. tostring(math.floor(player.y)), 10, 50)
-    love.graphics.print("Mouse Screen Location: " .. tostring(math.floor(mouse.x)) .. "," .. tostring(math.floor(mouse.y)), 10, 70)
-    love.graphics.print("Mouse Abs Location: " .. tostring(math.floor(mouse.x - x_translate_val)) .. "," .. tostring(math.floor(mouse.y - y_translate_val)), 10, 90)
+    love.graphics.print("Debug Mode(tab): " .. tostring(debugMode), 10, 50)
+    if debugMode then
+        love.graphics.print("Player Location: " .. tostring(math.floor(player.x)) .. "," .. tostring(math.floor(player.y)), 10, 70)
+        love.graphics.print("Mouse Screen Location: " .. tostring(math.floor(mouse.x)) .. "," .. tostring(math.floor(mouse.y)), 10, 90)
+        love.graphics.print("Mouse Abs Location: " .. tostring(math.floor(mouse.x - x_translate_val)) .. "," .. tostring(math.floor(mouse.y - y_translate_val)), 10, 110)
+    end
     -- End Text in the top left
     --love.graphics.circle("fill", windowWidth/2, windowHeight/2, 2)            This code draws a dot in the center of the screen
     -- Code that will cap FPS at 144 --
@@ -106,6 +126,9 @@ function love.keypressed(key)
     if key == 'r' then -- reset position
         player.x = 0
         player.y = 0
+    end
+    if key == 'tab' then
+        debugMode = not debugMode
     end
 end
 
