@@ -14,8 +14,8 @@ function love.load()
     love.window.setMode(windowWidth, windowHeight, {resizable=false, vsync=false, minwidth=800, minheight=600, borderless=true, msaa=2})
     --love.window.setFullscreen(true, "desktop")
 
-    -- Load tilesets
-    load_tilesets()
+    -- Load tileset
+    load_tileset()
 
     -- Make mouse invisible so we can use a custom cursor --
     love.mouse.setVisible(false)
@@ -50,8 +50,6 @@ function love.draw()
     local y_translate_val = (windowHeight / 2) - player.y
 
 
-
-    
     -- This stack push begins the code that makes our camera follow our player. Everything that needs to stay in place should be here
     love.graphics.push()
     love.graphics.translate(x_translate_val, y_translate_val)
