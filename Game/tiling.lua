@@ -3,16 +3,58 @@
 class = require '30log'					--| Object orientation framework
 HC = require './HC'   					--| Collision Detection
 
--- TODO
--- Make a Tile class for Tile objects
---     -- Tile Objects will have all information for a given tile that needs to be realized. Render position, size, collision enable, etc.
 
--- Begin -- Tileset Class Definition and constructor, new_tileset
+-- TODO Tile Objects will have all information for a given tile that needs to be realized. Render position, size, collision enable, etc.
+--Tile-- Class definition and constructor, new_tile
+Tile = class {id, x, y, width, height, collision} -- Will likely need to add parameters
+function new_tile(id, x, y, width, height, collision)
+	local tile = Tile()
+	tile.id = id							 --|int - integer representation of Tile
+	tile.x = x								 --|int - x coordinate of upper-left corner
+	tile.y = y								 --|int - y coordinate of upper-left corner
+	tile.width = width				 --|int - Tile width
+	tile.height = height			 --|int - Tile height
+	tile.collision = collision --|bool - collision enabled
+	return tile
+end
+-- End --
+
+
+--
+-- --TileDictionary-- Class definition and constructor, new_TileDictionary
+-- -- Specifies the properties of a Tile ID (e.g. disable collision for 2)
+-- TileDictionary = class {dict}
+-- function new_TileDictionary(dict)
+-- 	local td = TileDictionary()
+-- 	td.dict = dict
+-- end
+-- -- End --
+
+--Map-- Class definition and constructor, new_map
+Map = class {grid, id_dict}
+function new_map(grid, id_dict)
+	local map = Map()
+	map.grid = {}
+	map.id_dict = id_dict
+
+	for rowIndex = 1, #grid do --Fill grid with tiles
+		local row = grid[rowIndex]
+		for columnIndex = 1, #row do
+			local nthTile = Tile()
+			nthTile.id = row[columnIndex]													--|id example: 1 = terrain, 2 = path
+			-- nthTile.collision = map.id_dict[nthTile.id].collision	--|collision: true or false
+			map.grid[rowIndex][columnIndex] = nthTile
+		end
+	end
+	return map
+end
+-- End --
+
+--Tileset-- Class definition and constructor, new_tileset
 Tileset = class {map = {}, img, width, height, tileWidth, tileHeight}
-
 function new_tileset(map, img, width, height, tileWidth, tileHeight)
 	local ts = Tileset()
-	ts.map = map
+	ts.map = map                        -- map - 2d array of Tile objects
 	ts.img = img
 	ts.width = width
 	ts.height = height
@@ -20,23 +62,27 @@ function new_tileset(map, img, width, height, tileWidth, tileHeight)
 	ts.tileHeight = tileHeight
 	return ts
 end
--- End -- Tileset Class Definition and constructor
+-- End --
 
 
--- Load a tileset called ts, and
+
+-- Load the tileset to be worked on for our game. TODO implement csv file
 function load_tileset()
 
-	-- The test map for our tileset. will be importable from csv file eventually
-	Map = {
+	-- Here is what we need to create a test map for the time being
+	test_grid = {
 		{1,1,1,1,1,1},
 		{1,2,2,2,2,1},
 		{1,2,2,2,2,1},
 		{1,2,2,2,2,1},
 		{1,1,1,2,2,1}
 	}
+	test_map = test_grid
 	test_set = love.graphics.newImage('images/tilesets/testset.png')
 
-	ts = new_tileset(Map, test_set, test_set:getWidth(), test_set:getHeight(), 64, 64) -- Here we create a tileset object as an example.
+	-- Create the object for the tileset to be worked with
+	ts = new_tileset(test_map, test_set, test_set:getWidth(), test_set:getHeight(), 64, 64)
+
 
 
 	-- Specify tiles of tileset TODO maybe do this in an indefinite loop? To allow for unspecified tileset dimensions?
@@ -48,6 +94,8 @@ function load_tileset()
 	}
 
 end
+
+
 
 function draw_tiles()
 
