@@ -16,6 +16,7 @@ function love.load()
 
     -- Load tileset
     load_tileset()
+    load_tilesets()
 
     -- Make mouse invisible so we can use a custom cursor --
     love.mouse.setVisible(false)

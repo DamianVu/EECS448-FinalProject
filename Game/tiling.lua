@@ -70,29 +70,21 @@ function load_tileset()
 
 	--Test Map data-- Here is what we need to create a test map for the time being
 	test_grid = {
-		{1,1,1,1,1,1},
-		{1,2,2,2,2,1},
-		{1,2,2,2,2,1},
-		{1,2,2,2,2,1},
-		{1,1,1,2,2,1}
+		{1,1,1,1,1,1,1,1},
+		{1,2,2,2,2,2,2,1},
+		{1,2,3,3,2,2,2,1},
+		{1,2,2,2,2,2,2,1},
+		{1,1,1,2,2,2,2,1},
+		{1,2,2,2,2,1,1,1},
+		{1,2,2,2,2,2,2,1},
+		{1,1,1,1,1,1,1,1}
 	}
-	test_id_dict = {1,2}								--Tile IDs in the map
-	test_id_dict[1] = {"collision"}		--Properties of each Tile ID. Only have collision for now
-	test_id_dict[2] = {"collision"}
-	test_id_dict[1].collision = true
-	test_id_dict[2].collision = false
+	test_id_dict = {1,2,3}								--Tile IDs in the map
+	test_id_dict[1] = {collision = true}		--Properties of each Tile ID. Only have collision for now
+	test_id_dict[2] = {collision = false}
+	test_id_dict[3] = {collision = true}
 	test_map = new_map(test_grid, test_id_dict)
-
-Map = {
-	{1,1,1,1,1,1,1,1},
-	{1,2,2,2,2,2,2,1},
-	{1,2,3,3,2,2,2,1},
-	{1,2,2,2,2,2,2,1},
-	{1,1,1,2,2,2,2,1},
-	{1,2,2,2,2,1,1,1},
-	{1,2,2,2,2,2,2,1},
-	{1,1,1,1,1,1,1,1}
-}
+end
 
 function load_tilesets()
 	test_set = love.graphics.newImage('images/tilesets/testset.png')
@@ -112,20 +104,9 @@ function load_tilesets()
 		love.graphics.newQuad(64, 64, ts.tileWidth, ts.tileHeight, ts.width, ts.height)
 	}
 
-	--getTileCount()
 
 end
 
---[=====[
-function getTileCount()
-	rowCount = 0
-	colCount = 0
-	for rowInd = 1, #Map do
-		local row = Map[rowInd]
-		for colInd = 1, #row do
-
-end
-]=====]--
 
 
 
@@ -214,10 +195,6 @@ function draw_tiles()
 	-- MAP RENDER FUNCTION: Render ts.map.tiles from tileset onscreen
 	for rowIndex = 1, #ts.map.tiles do
 		local row = ts.map.tiles[rowIndex]
-          
-	-- Draws map on screen --
-	for rowIndex = 1, #Map do
-		local row = Map[rowIndex]
 		for columnIndex = 1, #row do
 			local number = row[columnIndex].id
 			local x, y = start_x + ((columnIndex - 1) * ts.tileWidth), start_y + ((rowIndex - 1) * ts.tileHeight)
