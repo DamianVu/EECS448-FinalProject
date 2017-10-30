@@ -11,7 +11,7 @@ function love.load()
     windowWidth = 1600
     windowHeight = 900
 
-    love.window.setMode(windowWidth, windowHeight, {resizable=false, vsync=false, minwidth=800, minheight=600, borderless=true})
+    love.window.setMode(windowWidth, windowHeight, {resizable=false, vsync=false, minwidth=800, minheight=600, borderless=true, msaa=2})
     --love.window.setFullscreen(true, "desktop")
 
     -- Load tilesets
@@ -23,6 +23,7 @@ function love.load()
 
     -- Global Game variables
     base_speed = 250
+    debugMode = false
 
 
     -- Player initialization - With a 64x64px sprite, this will place it in the center.
@@ -33,7 +34,7 @@ function love.load()
     -- End Player initialization
 
     -- Hitbox initialization
-    player.hb = cObject:new(0, 0, 64, 64, -32, -32)
+    player.hb = cObject:new(0, 0, 32, 32, -16, -16)
 
 
     -- Code that will cap FPS at 144
@@ -58,7 +59,11 @@ function love.draw()
     draw_tiles() -- from tiling.lua
 
     -- Draw player --
-    love.graphics.draw(player.img, player.x, player.y, 0, 1, 1, 32, 32)
+    love.graphics.draw(player.img, player.x, player.y, 0, .5, .5, 32, 32)
+
+    if debugMode then
+        highlightTiles(player.x, player.y, 32, 32)
+    end
 
     player.hb:setLocation(player.x, player.y)
     player.hb:drawHitbox()
@@ -75,9 +80,12 @@ function love.draw()
     love.graphics.setColor(0, 203, 255)
     love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 10)
     love.graphics.print("Wubba lubba dub dub!", 10, 30)
-    love.graphics.print("Player Location: " .. tostring(math.floor(player.x)) .. "," .. tostring(math.floor(player.y)), 10, 50)
-    love.graphics.print("Mouse Screen Location: " .. tostring(math.floor(mouse.x)) .. "," .. tostring(math.floor(mouse.y)), 10, 70)
-    love.graphics.print("Mouse Abs Location: " .. tostring(math.floor(mouse.x - x_translate_val)) .. "," .. tostring(math.floor(mouse.y - y_translate_val)), 10, 90)
+    love.graphics.print("Debug Mode(tab): " .. tostring(debugMode), 10, 50)
+    if debugMode then
+        love.graphics.print("Player Location: " .. tostring(math.floor(player.x)) .. "," .. tostring(math.floor(player.y)), 10, 70)
+        love.graphics.print("Mouse Screen Location: " .. tostring(math.floor(mouse.x)) .. "," .. tostring(math.floor(mouse.y)), 10, 90)
+        love.graphics.print("Mouse Abs Location: " .. tostring(math.floor(mouse.x - x_translate_val)) .. "," .. tostring(math.floor(mouse.y - y_translate_val)), 10, 110)
+    end
     -- End Text in the top left
     --love.graphics.circle("fill", windowWidth/2, windowHeight/2, 2)            This code draws a dot in the center of the screen
     -- Code that will cap FPS at 144 --
@@ -118,6 +126,9 @@ function love.keypressed(key)
     if key == 'r' then -- reset position
         player.x = 0
         player.y = 0
+    end
+    if key == 'tab' then
+        debugMode = not debugMode
     end
 end
 
