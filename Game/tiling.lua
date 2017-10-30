@@ -1,45 +1,53 @@
 
 
-class = 	require '30log'				--| Object orientation framework
-HC = require './HC'   --| Collision Detection
+class = require '30log'					--| Object orientation framework
+HC = require './HC'   					--| Collision Detection
 
--- Map for testing - Map files will look like this
-Map = {
-	{1,1,1,1,1,1},
-	{1,2,2,2,2,1},
-	{1,2,2,2,2,1},
-	{1,2,2,2,2,1},
-	{1,1,1,2,2,1}
-}
-
---Tileset Class
-Tileset = class {map = {}, img, width, height, tileWidth = 64, tileHeight = 64}
 -- TODO
--- load_tileset will create a tileset from a file that is passed
--- draw_tiles will be passed a tileset and will draw it
 -- Make a Tile class for Tile objects
 --     -- Tile Objects will have all information for a given tile that needs to be realized. Render position, size, collision enable, etc.
 
-function load_tileset()
-	test_set = love.graphics.newImage('images/tilesets/testset.png')
-	local tilesetW, tilesetH = test_set:getWidth(), test_set:getHeight()
-	TileW, TileH = 64, 64
+-- Begin -- Tileset Class Definition and constructor, new_tileset
+Tileset = class {map = {}, img, width, height, tileWidth, tileHeight}
 
-	--Here we create a tileset object
-	test_tileset = Tileset(Map, test_set, tilesetW, tilesetH, TileW, TileH)
+function new_tileset(map, img, width, height, tileWidth, tileHeight)
+	local ts = Tileset()
+	ts.map = map
+	ts.img = img
+	ts.width = width
+	ts.height = height
+	ts.tileWidth = tileWidth
+	ts.tileHeight = tileHeight
+	return ts
+end
+-- End -- Tileset Class Definition and constructor
+
+
+-- Load a tileset called ts, and
+function load_tileset()
+
+	-- The test map for our tileset. will be importable from csv file eventually
+	Map = {
+		{1,1,1,1,1,1},
+		{1,2,2,2,2,1},
+		{1,2,2,2,2,1},
+		{1,2,2,2,2,1},
+		{1,1,1,2,2,1}
+	}
+	test_set = love.graphics.newImage('images/tilesets/testset.png')
+
+	ts = new_tileset(Map, test_set, test_set:getWidth(), test_set:getHeight(), 64, 64) -- Here we create a tileset object as an example.
 
 
 	-- Specify tiles of tileset TODO maybe do this in an indefinite loop? To allow for unspecified tileset dimensions?
 	Quads = {
-		love.graphics.newQuad(0, 0, TileW, TileH, tilesetW, tilesetH),
-		love.graphics.newQuad(64, 0, TileW, TileH, tilesetW, tilesetH),
-		love.graphics.newQuad(0, 64, TileW, TileH, tilesetW, tilesetH),
-		love.graphics.newQuad(64, 64, TileW, TileH, tilesetW, tilesetH)
+		love.graphics.newQuad(0, 0, ts.tileWidth, ts.tileHeight, ts.width, ts.height),
+		love.graphics.newQuad(64, 0, ts.tileWidth, ts.tileHeight, ts.width, ts.height),
+		love.graphics.newQuad(0, 64, ts.tileWidth, ts.tileHeight, ts.width, ts.height),
+		love.graphics.newQuad(64, 64, ts.tileWidth, ts.tileHeight, ts.width, ts.height)
 	}
 
 end
-
-
 
 function draw_tiles()
 
@@ -47,9 +55,9 @@ function draw_tiles()
 	local y_count = 0
 	local finalx = 0
 
-	for ff = 1, #Map do
+	for ff = 1, #ts.map do
 		y_count = y_count + 1
-		local row = Map[ff]
+		local row = ts.map[ff]
 		local x_count = 0
 		for ffa = 1, #row do
 			x_count = x_count + 1
@@ -64,14 +72,14 @@ function draw_tiles()
 	-- End of centering map on screen
 
 
-	-- Render Map from tileset onscreen
-	for rowIndex = 1, #Map do
-		local row = Map[rowIndex]
+	-- Render ts.map from tileset onscreen
+	for rowIndex = 1, #ts.map do
+		local row = ts.map[rowIndex]
 		for columnIndex = 1, #row do
 			local number = row[columnIndex]
-			local x, y = start_x + ((columnIndex - 1) * TileW), start_y + ((rowIndex - 1) * TileH)
-			HC.rectangle(x, y, TileW, TileH)
-			love.graphics.draw(test_set, Quads[number], x, y) -- Draw Tile
+			local x, y = start_x + ((columnIndex - 1) * ts.tileWidth), start_y + ((rowIndex - 1) * ts.tileHeight)
+			HC.rectangle(x, y, ts.tileWidth, ts.tileHeight)
+			love.graphics.draw(ts.img, Quads[number], x, y) -- Draw Tile
 		end
 	end
 
