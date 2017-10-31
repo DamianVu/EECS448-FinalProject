@@ -28,8 +28,8 @@ function love.load()
 
 
     -- Player initialization - With a 64x64px sprite, this will place it in the center.
-    player.x = 0
-    player.y = 0
+    player.x = 96
+    player.y = 96
     player.speed = 1 -- (We can scale this number later to have speed modifiers)
     player.img = love.graphics.newImage('images/sprites/player.png')
     -- End Player initialization
@@ -50,19 +50,24 @@ function love.draw()
     local x_translate_val = (windowWidth / 2) - player.x
     local y_translate_val = (windowHeight / 2) - player.y
 
-
     -- This stack push begins the code that makes our camera follow our player. Everything that needs to stay in place should be here
     love.graphics.push()
     love.graphics.translate(x_translate_val, y_translate_val)
 
     draw_tiles() -- from tiling.lua
+    local r,g,b,a = love.graphics.getColor() -- Get old color
+    if debugMode then
+        highlightTiles(player.x, player.y, 32, 32)
+    end
+    love.graphics.setColor(r,g,b,a) -- Reset to old color
 
     -- Draw player --
     love.graphics.draw(player.img, player.x, player.y, 0, .5, .5, 32, 32)
 
-    if debugMode then
-        highlightTiles(player.x, player.y, 32, 32)
-    end
+    
+
+
+    
 
     player.hb:setLocation(player.x, player.y)
     player.hb:drawHitbox()
