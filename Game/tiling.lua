@@ -1,6 +1,5 @@
 
 class = require '30log'					--| Object orientation framework
-HC = require './HC'   					--| Collision Detection
 
 
 -- TODO Tile Objects will have all information for a given tile that needs to be realized. Render position, size, collision enable, etc.
@@ -50,20 +49,20 @@ end
 -- End --
 
 --Tileset-- Class definition and constructor, new_tileset
-Tileset = class {map = {}, img, width, height, tileWidth, tileHeight}
-function new_tileset(map, img, width, height, tileWidth, tileHeight)
+Tileset = class {map = {}, img, width, height, tileWidth, tileHeight, startx, starty}
+function new_tileset(map, img, width, height, tileWidth, tileHeight, startx, starty)
 	local ts = Tileset()
 	ts.map = map                        -- map - 2d array of Tile objects
 	ts.img = img												-- img - love.graphics.newImage('image/path.png')
 	ts.width = width										-- width - width of tileset = img.getWidth()
 	ts.height = height									-- height - height of tileset = img.getHeight()
-	ts.tileWidth = tileWidth						-- tileWidth - Width of tile in set
-	ts.tileHeight = tileHeight					-- tileHeight - Height of tile in set
+	ts.tileWidth = tileWidth or 64					-- tileWidth - Width of tile in set
+	ts.tileHeight = tileHeight or 64				-- tileHeight - Height of tile in set
+	ts.startx = startx or 0
+	ts.starty = starty or 0
 	return ts
 end
 -- End --
-
-
 
 -- Load the tileset to be worked on for our game. TODO works with csv format if we added a loadmapfile(file), for example
 function load_tileset()
@@ -73,13 +72,13 @@ function load_tileset()
 		{1,1,1,1,1,1,1,1},
 		{1,2,2,2,2,2,2,1},
 		{1,2,3,3,2,2,2,1},
-		{1,2,2,2,2,2,2,1},
+		{1,2,2,2,2,2,2,1,1,1,1},
 		{1,1,1,2,2,2,2,1},
 		{1,2,2,2,2,1,1,1},
 		{1,2,2,2,2,2,2,1},
 		{1,1,1,1,1,1,1,1}
 	}
-	test_id_dict = {1,2,3}								--Tile IDs in the map
+	test_id_dict = {}								--Tile IDs in the map
 	test_id_dict[1] = {collision = true}		--Properties of each Tile ID. Only have collision for now
 	test_id_dict[2] = {collision = false}
 	test_id_dict[3] = {collision = true}
@@ -107,11 +106,25 @@ function load_tilesets()
 
 end
 
+color_dict = {}
+color_dict[1] = {255, 0, 0}
+color_dict[2] = {0, 255, 0}
+color_dict[3] = {255, 255, 0}
 
 
+-- This tilex and tiley corresponds to the location in ts.map.tiles
+function highlight(tilex, tiley)
+	if (tilex < 1 or tiley < 1 or tiley > #ts.map.tiles or tilex > #ts.map.tiles[tiley]) then 
+		return
+	end
+	-- Good to go. Let's highlight it based on tile id
+	-- Find coordinate
+	local width = ts.tileWidth
+	local height = ts.tileHeight
 
-
-
+	love.graphics.setColor(color_dict[ts.map.tiles[tiley][tilex].id])
+	love.graphics.rectangle("line", (ts.startx + ((tilex - 1) * width)) + (tilex ~= 1 and 0 or 1), (ts.starty + ((tiley - 1) * height)) + (tiley ~= 1 and 0 or 1), width - 1, height - 1)
+end
 
 -- EVERYTHING IS WORST CASE SCENARIO ON PURPOSE
 
@@ -123,72 +136,42 @@ function highlightTiles(x, y, width, height) -- Assumption: x, y is in the cente
 
 	-- Get the tile that our x,y is currently in. We don't even technically need a tilecount for this, we know that the map starts at 0,0
 
-	temp = {}
-	intermediate = {}
+	local ptiles = {}
 
-	table.insert(temp, {math.floor((x - (width/2)) / 64), math.floor((y - (height/2)) / 64)})
-	table.insert(temp, {math.floor((x + (width/2)) / 64), math.floor((y - (height/2)) / 64)})
-	table.insert(temp, {math.floor((x - (width/2)) / 64), math.floor((y + (height/2)) / 64)})
-	table.insert(temp, {math.floor((x + (width/2)) / 64), math.floor((y + (height/2)) / 64)})
+	ptiles[1] = {math.floor((x - (width/2) + ts.startx) / ts.tileWidth) + 1, math.floor((y - (height/2) + ts.starty) / ts.tileHeight) + 1}
+	ptiles[2] = {math.floor((x + (width/2) + ts.startx) / ts.tileWidth) + 1, math.floor((y - (height/2) + ts.starty) / ts.tileHeight) + 1}
+	ptiles[3] = {math.floor((x - (width/2) + ts.startx) / ts.tileWidth) + 1, math.floor((y + (height/2) + ts.starty) / ts.tileHeight) + 1}
+	--ptiles[4] = {math.floor((x + (width/2) + ts.startx) / ts.tileWidth) + 1, math.floor((y + (height/2) + ts.starty) / ts.tileHeight) + 1}
+	-- Don't need the bottom right vertex of the character
 
-	-- Worst case scenario is all 16 of these inserts
+	local targetTiles = {}
 
-	table.insert(intermediate, {temp[1][1] - 1, temp[1][2] - 1})
-	table.insert(intermediate, {temp[1][1] - 1, temp[1][2]})
-	table.insert(intermediate, {temp[1][1], temp[1][2] - 1})
+	local offsetx = 0
+	local offsety = 0
+	local currentx = ptiles[1][1]
+	local currenty = ptiles[1][2]
 
-	table.insert(intermediate, {temp[2][1] + 1, temp[2][2] - 1})
-	table.insert(intermediate, {temp[2][1] + 1, temp[2][2]})
-	table.insert(intermediate, {temp[2][1], temp[2][2] - 1})
 
-	table.insert(intermediate, {temp[3][1] - 1, temp[3][2] + 1})
-	table.insert(intermediate, {temp[3][1] - 1, temp[3][2]})
-	table.insert(intermediate, {temp[3][1], temp[3][2] + 1})
-
-	table.insert(intermediate, {temp[4][1] + 1, temp[4][2] + 1})
-	table.insert(intermediate, {temp[4][1] + 1, temp[4][2]})
-	table.insert(intermediate, {temp[4][1], temp[4][2] + 1})
-
-	-- Yellow for intermediate tiles, Orange for intermediate collisions
-	for i = 1, #intermediate do
-		love.graphics.setColor(255, 255, 0)
-		love.graphics.rectangle("line", intermediate[i][1] * 64, intermediate[i][2] * 64, 64, 64)
+	if (currentx ~= ptiles[2][1] or currenty ~= ptiles[2][2]) then
+		offsetx = 1
+	end
+	if (currentx ~= ptiles[3][1] or currenty ~= ptiles[3][2]) then
+		offsety = 1
 	end
 
-	-- Red for the tile we are currently in
-	love.graphics.setColor(255, 0, 0)
-	for ind = 1, #temp do
-		love.graphics.rectangle("line", temp[ind][1] * 64, temp[ind][2] * 64, 64, 64)
+	for i = currentx - 1, (currentx + offsetx + 1) do
+		for j = currenty - 1, (currenty + offsety + 1) do
+			highlight(i,j)
+		end
 	end
-
-
 
 end
 
 
 function draw_tiles()
 
-	--[=====[
-        
-	-- This code will center the map on screen
-	local y_count = 0
-	local finalx = 0
-
-	for ff = 1, #ts.map.tiles do
-		y_count = y_count + 1
-		local row = ts.map.tiles[ff]
-		local x_count = 0
-		for ffa = 1, #row do
-			x_count = x_count + 1
-			if x_count > finalx then
-				finalx = x_count
-			end
-		end
-	end
-	]=====]--
-
-	local start_x = -(64 * (finalx or 0) / 2)
-	local start_y = -(64 * (y_count or 0) / 2)
+	local start_x = ts.startx
+	local start_y = ts.starty
 	-- End of centering map on screen
 
 
@@ -198,7 +181,7 @@ function draw_tiles()
 		for columnIndex = 1, #row do
 			local number = row[columnIndex].id
 			local x, y = start_x + ((columnIndex - 1) * ts.tileWidth), start_y + ((rowIndex - 1) * ts.tileHeight)
-			HC.rectangle(x, y, ts.tileWidth, ts.tileHeight)
+			--HC.rectangle(x, y, ts.tileWidth, ts.tileHeight)
 			love.graphics.draw(ts.img, Quads[number], x, y) -- Draw Tile
 		end
 	end
