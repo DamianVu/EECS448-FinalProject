@@ -150,8 +150,7 @@ function love.update(dt)
 
 
 
-    -- This should only update once every dt anyways...
-    --player:move()
+    CH:checkCollisions() -- This will handle and resolve collisions right before movement.
 
     for i = 1, #movingObjects do
         movingObjects[i]:move()

@@ -106,8 +106,9 @@ function load_tilesets()
 
 end
 
-function getTileAnchorPoint()
+function getTileAnchorPoint(tilex, tiley)
 	-- Return the pixel location in the center of the tile.
+	return ((tilex - 1) * ts.tileWidth) + ts.tileWidth/2, ((tiley - 1) * ts.tileHeight) + ts.tileHeight / 2
 end
 
 function validTile(tilex, tiley)
