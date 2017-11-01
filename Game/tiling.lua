@@ -1,5 +1,5 @@
 
-class = require '30log'					--| Object orientation framework
+class = require 'libraries.ext.30log'					--| Object orientation framework
 
 
 -- TODO Tile Objects will have all information for a given tile that needs to be realized. Render position, size, collision enable, etc.
@@ -65,6 +65,7 @@ function new_tileset(map, img, width, height, tileWidth, tileHeight, startx, sta
 end
 -- End --
 
+
 -- Load the tileset to be worked on for our game. TODO works with csv format if we added a loadmapfile(file), for example
 function load_tileset()
 
@@ -85,6 +86,8 @@ function load_tileset()
 	test_id_dict[3] = {collision = true}
 	test_id_dict[4] = {collision = false, bumpFactor = 3} 
 	test_map = new_map(test_grid, test_id_dict)
+
+	load_tilesets()
 end
 
 function load_tilesets()

@@ -1,8 +1,9 @@
 -- Current functionality is just movement and mouse cursor until we get maps and tiling implemented
 
 require "tiling"
-require "collisionhandler"
-require "cObject"
+require "libraries.collisionhandler"
+require "libraries.cObject"
+require "debugging"
 
 mouse = {}
 player = {}
@@ -18,14 +19,9 @@ function love.load()
 
     -- Load tileset
     load_tileset()
-    load_tilesets()
 
     -- Make mouse invisible so we can use a custom cursor --
     love.mouse.setVisible(false)
-
-
-    -- Collision Handler initialization --
-    CH = CollisionHandler()
 
 
     -- Global Game variables
@@ -38,6 +34,8 @@ function love.load()
 
     movingObjects[#movingObjects + 1] = player
 
+    -- Collision Handler initialization --
+    CH = CollisionHandler()
     CH:addObj(player)
 
     -- Code that will cap FPS at 144
@@ -104,21 +102,6 @@ function love.update(dt)
     -- Get current mouse position and store in object mouse
     mouse.x, mouse.y = love.mouse.getPosition()
 
-    --[=====[
-    -- Listen for keypresses to move player (if a player holds 'w' and 's', they will be stationary. Same with 'a' and 'd')
-    if love.keyboard.isDown('d') then
-        player.x = player.x + (player.speed * base_speed * dt)
-    end
-    if love.keyboard.isDown('a') then
-        player.x = player.x - (player.speed * base_speed * dt)
-    end
-    if love.keyboard.isDown('w') then
-        player.y = player.y - (player.speed * base_speed * dt)
-    end
-    if love.keyboard.isDown('s') then
-        player.y = player.y + (player.speed * base_speed * dt)
-    end
-    ]=====]--
     if CH.playerMovement then
 
         if love.keyboard.isDown('d') then
@@ -184,37 +167,7 @@ function love.keypressed(key)
     end
 end
 
-function drawMonitors()
-    love.graphics.setColor(0, 203, 255)
-    love.graphics.print("Wubba lubba dub dub!", 10, 10)
-    love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 30)
-    love.graphics.print("Debug Mode(tab): " .. tostring(debugMode), 10, 50)
-end
 
-function drawDebug()
-    love.graphics.setColor(0, 203, 255)
-    love.graphics.print("Player Location: " .. tostring(math.floor(player.x)) .. "," .. tostring(math.floor(player.y)), 10, 70)
-    love.graphics.print("Mouse Screen Location: " .. tostring(math.floor(mouse.x)) .. "," .. tostring(math.floor(mouse.y)), 10, 90)
-    love.graphics.print("Mouse Abs Location: " .. tostring(math.floor(mouse.x - x_translate_val)) .. "," .. tostring(math.floor(mouse.y - y_translate_val)), 10, 110)
-    local cl, al = get_cObjectPositionInfo(player)
-    love.graphics.print("Player is positioned in " .. cl:size() .. " tile(s)", 10 , 130)
-    love.graphics.print("Player has " .. al:size() .. " adjacent tile(s)", 10, 150)
-    local coll, track = CH:getNumberOfPossibleCollisions(1)
-    love.graphics.print("Current # of collisions: " .. coll, 10, 170)
-    love.graphics.print("We should be tracking " .. track .. " possible collisions", 10, 190)
-    --love.graphics.print("Current: " .. coordListString(cl.list), 10, 190)
-    --love.graphics.print("Adj: " .. coordListString(al.list), 10, 210)
-end
-
-function coordListString(list)
-    local tempString = ""
-
-    for i=1, #list do
-        local x,y = unpack(list[i])
-        tempString = tempString .. "(" .. x .. "," .. y .. ")"
-    end
-    return tempString
-end
 
 function love.quit()
   print("Game instance has been closed")

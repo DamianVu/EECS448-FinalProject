@@ -1,5 +1,5 @@
 -- Named: cObject for collisionObject
-class = require '30log'
+class = require 'libraries.ext.30log'
 
 cObject = class("cObject", {})
 
