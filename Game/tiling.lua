@@ -5,7 +5,7 @@ class = require '30log'					--| Object orientation framework
 -- TODO Tile Objects will have all information for a given tile that needs to be realized. Render position, size, collision enable, etc.
 --Tile-- Class definition and constructor, new_tile
 Tile = class {id, x, y, width, height, collision} -- Will likely need to add parameters
-function new_tile(id, x, y, width, height, collision)
+function new_tile(id, x, y, width, height, collision, bumpFactor)
 	local tile = Tile()
 	tile.id = id							 --|int - integer representation of Tile
 	tile.x = x								 --|int - x coordinate of upper-left corner
@@ -13,6 +13,7 @@ function new_tile(id, x, y, width, height, collision)
 	tile.width = width				 --|int - Tile width
 	tile.height = height			 --|int - Tile height
 	tile.collision = collision --|bool - collision enabled
+	tile.bumpFactor = bumpFactor or 1
 	return tile
 end
 -- End --
@@ -40,7 +41,7 @@ function new_map(grid, id_dict)
 		map.tiles[rowIndex] = {}
 		for columnIndex = 1, #row do
 			local id = row[columnIndex]
-			local nthTile = new_tile(id, x, y, width, height, map.id_dict[id].collision)
+			local nthTile = new_tile(id, x, y, width, height, map.id_dict[id].collision, map.id_dict[id].bumpFactor)
 			map.tiles[rowIndex][columnIndex] = nthTile
 		end
 	end
@@ -73,15 +74,16 @@ function load_tileset()
 		{1,2,2,2,2,2,2,1},
 		{1,2,3,3,2,2,2,1},
 		{1,2,2,2,2,2,2,1,1,1,1},
-		{1,1,1,2,2,2,2,1},
-		{1,2,2,2,2,1,1,1},
-		{1,2,2,2,2,2,2,1},
-		{1,1,1,1,1,1,1,1}
+		{1,1,1,2,2,2,2,2,2,2,1},
+		{1,2,2,2,2,1,1,1,1,2,1},
+		{1,2,2,2,2,2,2,2,2,2,1},
+		{1,1,1,1,1,1,1,1,1,1,1}
 	}
 	test_id_dict = {}								--Tile IDs in the map
-	test_id_dict[1] = {collision = true}		--Properties of each Tile ID. Only have collision for now
+	test_id_dict[1] = {collision = true, bumpFactor = 1}		--Properties of each Tile ID. Only have collision for now
 	test_id_dict[2] = {collision = false}
 	test_id_dict[3] = {collision = true}
+	test_id_dict[4] = {collision = false, bumpFactor = 3} 
 	test_map = new_map(test_grid, test_id_dict)
 end
 

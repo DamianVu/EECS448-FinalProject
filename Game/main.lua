@@ -51,6 +51,11 @@ function love.draw()
     -- These values are used to move the camera, and also to get the absolute mouse position relative to the map --
     x_translate_val = (windowWidth / 2) - player.x
     y_translate_val = (windowHeight / 2) - player.y
+
+    if not CH.playerMovement then
+        x_translate_val = 0
+        y_translate_val = 0
+    end
     -- This stack push begins the code that makes our camera follow our player. Everything that needs to stay in place should be here
     love.graphics.push()
     love.graphics.translate(x_translate_val, y_translate_val)
@@ -114,44 +119,52 @@ function love.update(dt)
         player.y = player.y + (player.speed * base_speed * dt)
     end
     ]=====]--
+    if CH.playerMovement then
 
-    if love.keyboard.isDown('d') then
-        player.x_vel = player.speed * base_speed * dt
-    end
-    if love.keyboard.isDown('a') then
-        player.x_vel = -player.speed * base_speed * dt
-    end
-    if love.keyboard.isDown('w') then
-        player.y_vel = -player.speed * base_speed * dt
-    end
-    if love.keyboard.isDown('s') then
-        player.y_vel = player.speed * base_speed * dt
-    end
-
-    if not (love.keyboard.isDown('d') or love.keyboard.isDown('a')) then
-        if (player.x_vel_counter < 1) then
-            player.x_vel = 0
-        else
-            player.x_vel_counter = player.x_vel_counter - 1
+        if love.keyboard.isDown('d') then
+            player.x_vel = player.speed * base_speed * dt
         end
-    else
-        player.x_vel_counter = base_slowdown_counter
-    end
-
-    if not (love.keyboard.isDown('w') or love.keyboard.isDown('s')) then
-        if (player.y_vel_counter < 1) then
-            player.y_vel = 0
-        else
-            player.y_vel_counter = player.y_vel_counter - 1
+        if love.keyboard.isDown('a') then
+            player.x_vel = -player.speed * base_speed * dt
         end
+        if love.keyboard.isDown('w') then
+            player.y_vel = -player.speed * base_speed * dt
+        end
+        if love.keyboard.isDown('s') then
+            player.y_vel = player.speed * base_speed * dt
+        end
+
+        if not (love.keyboard.isDown('d') or love.keyboard.isDown('a')) then
+            if (player.x_vel_counter < 1) then
+                player.x_vel = 0
+            else
+                player.x_vel_counter = player.x_vel_counter - 1
+            end
+        else
+            player.x_vel_counter = base_slowdown_counter
+        end
+
+        if not (love.keyboard.isDown('w') or love.keyboard.isDown('s')) then
+            if (player.y_vel_counter < 1) then
+                player.y_vel = 0
+            else
+                player.y_vel_counter = player.y_vel_counter - 1
+            end
+        else
+            player.y_vel_counter = base_slowdown_counter
+        end
+
     else
-        player.y_vel_counter = base_slowdown_counter
+        if CH.playerMovementDisableCount < 1 then
+            CH.playerMovementDisableCount = 10
+            CH.playerMovement = true
+        else
+            CH.playerMovementDisableCount = CH.playerMovementDisableCount - 1
+        end
     end
-
-
-
-    CH:checkCollisions() -- This will handle and resolve collisions right before movement.
-
+    if debugMode then
+        CH:checkCollisions() -- This will handle and resolve collisions right before movement.
+    end
     for i = 1, #movingObjects do
         movingObjects[i]:move()
     end

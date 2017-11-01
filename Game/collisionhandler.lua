@@ -5,7 +5,8 @@ class = require '30log'
 CollisionHandler = class("CollisionHandler", {collisionEntities = {}})
 
 function CollisionHandler:init()
-
+	self.playerMovement = true
+	self.playerMovementDisableCount = 10
 end
 
 function CollisionHandler:addObj(cObj) 
@@ -68,12 +69,16 @@ end
 function CollisionHandler:handleTileCollision(mId, coord)
 	local px = self.collisionEntities[mId].x
 	local py = self.collisionEntities[mId].y
-	local x,y = getTileAnchorPoint(unpack(coord))
+	local cx,cy = unpack(coord)
+	local x,y = getTileAnchorPoint(cx,cy)
+	local bumpFactor = ts.map.tiles[cy][cx].bumpFactor
 
 	local diffx = px - x
 	local diffy = py - y
 
 	-- Let's find out if diffx or diffy dominates first
+
+	local direction = -1 -- 1=up, 2=right, 3=down, 4=left
 
 	local dx = -1
 	local dy = -1
@@ -90,11 +95,21 @@ function CollisionHandler:handleTileCollision(mId, coord)
 
 	if dx - dy > 0 then
 		-- X dominates y
-
+		if diffx < 0 then
+			direction = 2
+		else
+			direction = 4
+		end
 	else
 		-- Y dominates x
-
+		if diffy < 0 then
+			direction = 3
+		else
+			direction = 1
+		end
 	end
+
+	self:bump(mId, direction, bumpFactor, 1)
 
 	-- Up
 
@@ -105,7 +120,36 @@ end
 
 -- For walls, direction can only be one of 4 values, and collisionType = 1
 function CollisionHandler:bump(mId, direction, bumpFactor, collisionType) -- Direction should be ?radians? or ?degrees?
+	if self.playerMovement == true then
+		local bumpAmt = .25 * bumpFactor
 
+		if collisionType == 1 then
+			-- Wall bounce
+			if direction == 1 then
+				self.collisionEntities[mId].y_vel = bumpAmt
+				self.collisionEntities[mId].y = self.collisionEntities[mId].y + .1
+			elseif direction == 2 then
+				self.collisionEntities[mId].x_vel = -(bumpAmt)
+				self.collisionEntities[mId].x = self.collisionEntities[mId].x - .1
+			elseif direction == 3 then
+				self.collisionEntities[mId].y_vel = -(bumpAmt)
+				self.collisionEntities[mId].y = self.collisionEntities[mId].y - .1
+			else
+				self.collisionEntities[mId].x_vel = bumpAmt
+				self.collisionEntities[mId].x = self.collisionEntities[mId].x + .1
+			end
+		else
+
+		end
+
+		if bumpFactor > 1 then
+			-- Make it so the player can't move for a little bit
+			self.playerMovement = false
+		end
+	else
+		self.collisionEntities[mId].x_vel = 0
+		self.collisionEntities[mId].y_vel = 0
+	end
 end
 --[=====[]]
 -- IDEAS: I'm keeping this here so I can type random ideas as they come to me.
