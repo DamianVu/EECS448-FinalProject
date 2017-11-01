@@ -106,6 +106,14 @@ function load_tilesets()
 
 end
 
+function getTileAnchorPoint()
+	-- Return the pixel location in the center of the tile.
+end
+
+function validTile(tilex, tiley)
+	return not (tilex < 1 or tiley < 1 or tiley > #ts.map.tiles or tilex > #ts.map.tiles[tiley])
+end
+
 color_dict = {}
 color_dict[1] = {255, 0, 0}
 color_dict[2] = {0, 255, 0}
@@ -114,7 +122,7 @@ color_dict[3] = {255, 255, 0}
 
 -- This tilex and tiley corresponds to the location in ts.map.tiles
 function highlight(tilex, tiley)
-	if (tilex < 1 or tiley < 1 or tiley > #ts.map.tiles or tilex > #ts.map.tiles[tiley]) then 
+	if not validTile(tilex, tiley) then
 		return
 	end
 	-- Good to go. Let's highlight it based on tile id
@@ -127,7 +135,6 @@ function highlight(tilex, tiley)
 	love.graphics.rectangle("line", (ts.startx + ((tilex - 1) * width)) + (tilex ~= 1 and 0 or 1), (ts.starty + ((tiley - 1) * height)) + (tiley ~= 1 and 0 or 1), width - 1, height - 1)
 	love.graphics.setColor(r,g,b,a) -- Reset to old color
 end
-
 
 -- This function will take in an objects x, y coords and its width/height. This will allow us to highlight tiles around it.
 function highlightTiles(cObj) -- Assumption: x, y is in the center of the sprite
@@ -175,12 +182,17 @@ function CoordinateList:init(unique)
 end
 
 function CoordinateList:add(coord)
+	local x,y = unpack(coord)
 	if self.unique then
 		if not self:contains(coord) then
-			self.list[#self.list + 1] = coord
+			if validTile(x,y) then 
+				self.list[#self.list + 1] = coord
+			end
 		end
 	else
-		self.list[#self.list + 1] = coord
+		if validTile(x,y) then 
+			self.list[#self.list + 1] = coord
+		end
 	end
 end
 
@@ -189,7 +201,7 @@ function CoordinateList:contains(coord)
 	for i = 1, #self.list do
 		local cx, cy = unpack(self.list[i])
 		if cx == ix and cy == iy then
-			return true
+			return true, i
 		end
 	end
 	return false
@@ -199,18 +211,31 @@ function CoordinateList:size()
 	return #self.list
 end
 
+function CoordinateList.subset(outerList, innerList)
+	local rList = CoordinateList(true)
+
+	for i = 1, #outerList.list do
+		local x,y = unpack(outerList.list[i])
+		if not innerList:contains({x,y}) then
+			rList:add({x,y})
+		end
+	end
+
+	return rList
+end
+
 function get_cObjectPositionInfo(cObj)
 	-- This should return current tiles and adjacent tiles
 	-- We know cObj has an x,y, width, height, and offset values
 
-	x1 = math.floor((cObj.x - (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1
-	y1 = math.floor((cObj.y - (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1
-	x2 = math.floor((cObj.x + (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1
-	y2 = math.floor((cObj.y - (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1
-	x3 = math.floor((cObj.x - (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1
-	y3 = math.floor((cObj.y + (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1
-	x4 = math.floor((cObj.x + (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1
-	y4 = math.floor((cObj.y + (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1
+	local x1 = math.floor((cObj.x - (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1
+	local y1 = math.floor((cObj.y - (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1
+	local x2 = math.floor((cObj.x + (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1
+	local y2 = math.floor((cObj.y - (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1
+	local x3 = math.floor((cObj.x - (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1
+	local y3 = math.floor((cObj.y + (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1
+	local x4 = math.floor((cObj.x + (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1
+	local y4 = math.floor((cObj.y + (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1
 
 	cList = CoordinateList(true)
 
@@ -219,13 +244,20 @@ function get_cObjectPositionInfo(cObj)
 	cList:add({x3, y3})
 	cList:add({x4, y4})
 
-	aList = CoordinateList(true)
+	tList = CoordinateList(true) -- temp list
 
 	for i = 1, #cList.list do
-		
+		local x,y = unpack(cList.list[i])
+		for j = x-1, x + 1 do
+			for k = y-1, y + 1 do
+				tList:add({j,k})
+			end 
+		end
 	end
 
-	return cList
+	aList = CoordinateList.subset(tList, cList)
+
+	return cList, aList
 end
 
 

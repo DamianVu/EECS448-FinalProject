@@ -184,8 +184,24 @@ function drawDebug()
     love.graphics.print("Player Location: " .. tostring(math.floor(player.x)) .. "," .. tostring(math.floor(player.y)), 10, 70)
     love.graphics.print("Mouse Screen Location: " .. tostring(math.floor(mouse.x)) .. "," .. tostring(math.floor(mouse.y)), 10, 90)
     love.graphics.print("Mouse Abs Location: " .. tostring(math.floor(mouse.x - x_translate_val)) .. "," .. tostring(math.floor(mouse.y - y_translate_val)), 10, 110)
-    cl = get_cObjectPositionInfo(player)
-    love.graphics.print("Player is standing in " .. cl:size() .. " tile(s)", 10 , 130)
+    local cl, al = get_cObjectPositionInfo(player)
+    love.graphics.print("Player is positioned in " .. cl:size() .. " tile(s)", 10 , 130)
+    love.graphics.print("Player has " .. al:size() .. " adjacent tile(s)", 10, 150)
+    local coll, track = CH:getNumberOfPossibleCollisions(1)
+    love.graphics.print("Current # of collisions: " .. coll, 10, 170)
+    love.graphics.print("We should be tracking " .. track .. " possible collisions", 10, 190)
+    --love.graphics.print("Current: " .. coordListString(cl.list), 10, 190)
+    --love.graphics.print("Adj: " .. coordListString(al.list), 10, 210)
+end
+
+function coordListString(list)
+    local tempString = ""
+
+    for i=1, #list do
+        local x,y = unpack(list[i])
+        tempString = tempString .. "(" .. x .. "," .. y .. ")"
+    end
+    return tempString
 end
 
 function love.quit()
