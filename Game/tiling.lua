@@ -6,10 +6,10 @@ class = require 'libraries.ext.30log'					--| Object orientation framework
 ---------------------------------------------------------
 
 test_id_dict = {}								
-test_id_dict[1] = {collision = true, bumpFactor = 1}		
+test_id_dict[1] = {collision = true, bumpFactor = 0}		
 test_id_dict[2] = {collision = false}
-test_id_dict[3] = {collision = true}
-test_id_dict[4] = {collision = true, bumpFactor = 3} 
+test_id_dict[3] = {collision = true, bumpFactor = 0}
+test_id_dict[4] = {collision = true, bumpFactor = 5} 
 
 color_dict = {}
 color_dict[1] = {255, 0, 0}
@@ -37,7 +37,7 @@ function Tile:init(id, x, y, width, height, collision, bumpFactor)
 	self.width = width				 			--|int - Tile width
 	self.height = height			 			--|int - Tile height
 	self.collision = collision 					--|bool - collision enabled
-	self.bumpFactor = bumpFactor or 1			--|num - bumping factor (not too functional yet)
+	self.bumpFactor = bumpFactor or 0			--|num - bumping factor (not too functional yet)
 end
 
 --Map-- Class definition and constructor, new_map

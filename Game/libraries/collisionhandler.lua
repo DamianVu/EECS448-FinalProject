@@ -92,6 +92,8 @@ function CollisionHandler:handleTileCollision(mId, coord)
 		dy = diffy
 	end
 
+	local change = -1
+
 	if dx - dy > 0 then
 		-- X dominates y
 		if diffx < 0 then
@@ -99,6 +101,7 @@ function CollisionHandler:handleTileCollision(mId, coord)
 		else
 			direction = 4
 		end
+		change = dx
 	else
 		-- Y dominates x
 		if diffy < 0 then
@@ -106,9 +109,12 @@ function CollisionHandler:handleTileCollision(mId, coord)
 		else
 			direction = 1
 		end
+		change = dy
 	end
 
-	self:bump(mId, direction, bumpFactor, 1)
+	change = change - math.floor(change) -- This will probably need to be revised...
+
+	self:bump(mId, direction, bumpFactor, 1, change)
 
 	-- Up
 
@@ -118,7 +124,8 @@ function CollisionHandler:handleTileCollision(mId, coord)
 end
 
 -- For walls, direction can only be one of 4 values, and collisionType = 1
-function CollisionHandler:bump(mId, direction, bumpFactor, collisionType) -- Direction should be ?radians? or ?degrees?
+-- Change is how far we should reset them
+function CollisionHandler:bump(mId, direction, bumpFactor, collisionType, change) -- Direction should be ?radians? or ?degrees?
 	if self.playerMovement == true then
 		local bumpAmt = .5 * bumpFactor
 
@@ -126,24 +133,24 @@ function CollisionHandler:bump(mId, direction, bumpFactor, collisionType) -- Dir
 			-- Wall bounce
 			if direction == 1 then
 				self.collisionEntities[mId].y_vel = bumpAmt
-				self.collisionEntities[mId].y = self.collisionEntities[mId].y + .1
+				self.collisionEntities[mId].y = self.collisionEntities[mId].y + change
 			elseif direction == 2 then
 				self.collisionEntities[mId].x_vel = -(bumpAmt)
-				self.collisionEntities[mId].x = self.collisionEntities[mId].x - .1
+				self.collisionEntities[mId].x = self.collisionEntities[mId].x - change
 			elseif direction == 3 then
 				self.collisionEntities[mId].y_vel = -(bumpAmt)
-				self.collisionEntities[mId].y = self.collisionEntities[mId].y - .1
+				self.collisionEntities[mId].y = self.collisionEntities[mId].y - change
 			else
 				self.collisionEntities[mId].x_vel = bumpAmt
-				self.collisionEntities[mId].x = self.collisionEntities[mId].x + .1
+				self.collisionEntities[mId].x = self.collisionEntities[mId].x + change
 			end
 		else
 
 		end
 
-		if bumpFactor > 1 then
-			-- Make it so the player can't move for a little bit
+		if bumpFactor > 0 then
 			self.playerMovement = false
+			self.playerMovementDisableCount = math.floor(bumpFactor * 2)
 		end
 	else
 		self.collisionEntities[mId].x_vel = 0
