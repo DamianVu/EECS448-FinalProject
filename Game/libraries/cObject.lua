@@ -26,12 +26,12 @@ end
 
 -- Will return 4 coordinates that the object currently spans. In top-left, top-right, bottom-left, bottom-right order
 function cObject:getSpan()
-	return 	{	
-		{(self.x + self.x_offset) - (self.length / 2), (self.y + self.y_offset) - (self.width / 2)},
-		{(self.x + self.x_offset) + (self.length / 2), (self.y + self.y_offset) - (self.width / 2)},
-		{(self.x + self.x_offset) - (self.length / 2), (self.y + self.y_offset) + (self.width / 2)},
-		{(self.x + self.x_offset) + (self.length / 2), (self.y + self.y_offset) + (self.width / 2)}
-	}
+	local spanList = CoordinateList()
+	spanList:add({math.floor((self.x - (self.x_offset * self.scaleX) + currentMap.startx) / currentMap.tileWidth) + 1, math.floor((self.y - (self.y_offset * self.scaleY) + currentMap.starty) / currentMap.tileHeight) + 1})
+	spanList:add({math.floor((self.x + (self.x_offset * self.scaleX) + currentMap.startx) / currentMap.tileWidth) + 1, math.floor((self.y - (self.y_offset * self.scaleY) + currentMap.starty) / currentMap.tileHeight) + 1})
+	spanList:add({math.floor((self.x - (self.x_offset * self.scaleX) + currentMap.startx) / currentMap.tileWidth) + 1, math.floor((self.y + (self.y_offset * self.scaleY) + currentMap.starty) / currentMap.tileHeight) + 1})
+	spanList:add({math.floor((self.x + (self.x_offset * self.scaleX) + currentMap.startx) / currentMap.tileWidth) + 1, math.floor((self.y + (self.y_offset * self.scaleY) + currentMap.starty) / currentMap.tileHeight) + 1})
+	return spanList
 end
 
 function cObject:drawHitbox()
@@ -42,6 +42,7 @@ function cObject:drawHitbox()
 end
 
 function cObject:draw()
+	love.graphics.setColor(255,255,255,255)
 	love.graphics.draw(self.sprite, self.x, self.y, self.rotation, self.scaleX, self.scaleY, self.x_offset, self.y_offset)
 end
 

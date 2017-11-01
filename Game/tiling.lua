@@ -104,8 +104,19 @@ function CoordinateList:contains(coord)
 	return false
 end
 
-function CoordinateList:size()
-	return #self.list
+-- This returns a new, larger CoordinateList containing every tile in the previous AND every adjacent tile attached
+-- I don't see why this function would ever be ran if self.unique = false, but we can cross that bridge when the time comes
+function CoordinateList:fullSpan()
+	local rList = CoordinateList()
+	for i = 1, #self.list do
+		local x,y = unpack(self.list[i])
+		for j = x-1, x+1 do
+			for k = y-1, y+1 do
+				rList:add({j,k})
+			end
+		end
+	end
+	return rList
 end
 
 function CoordinateList.subset(outerList, innerList)
@@ -147,132 +158,80 @@ function load_tileset()
 
 
 	-- Create the object for the tileset to be worked with in the rendering stage
-	ts = Tileset(test_map, test_set, test_set:getWidth(), test_set:getHeight(), 64, 64)
+	currentMap = Tileset(test_map, test_set, test_set:getWidth(), test_set:getHeight(), 64, 64)
 
 	-- Specify tiles of tileset
 	-- TODO do this in an indefinite loop? To allow for unspecified tileset dimensions?
 	-- TODO Integrate Quads as a property of the tileset
 	Quads = {
-		love.graphics.newQuad(0, 0, ts.tileWidth, ts.tileHeight, ts.width, ts.height),
-		love.graphics.newQuad(64, 0, ts.tileWidth, ts.tileHeight, ts.width, ts.height),
-		love.graphics.newQuad(0, 64, ts.tileWidth, ts.tileHeight, ts.width, ts.height),
-		love.graphics.newQuad(64, 64, ts.tileWidth, ts.tileHeight, ts.width, ts.height)
+		love.graphics.newQuad(0, 0, currentMap.tileWidth, currentMap.tileHeight, currentMap.img:getDimensions()),
+		love.graphics.newQuad(64, 0, currentMap.tileWidth, currentMap.tileHeight, currentMap.img:getDimensions()),
+		love.graphics.newQuad(0, 64, currentMap.tileWidth, currentMap.tileHeight, currentMap.img:getDimensions()),
+		love.graphics.newQuad(64, 64, currentMap.tileWidth, currentMap.tileHeight, currentMap.img:getDimensions())
 	}
 end
 
 function getTileAnchorPoint(tilex, tiley)
 	-- Return the pixel location in the center of the tile.
-	return ((tilex - 1) * ts.tileWidth) + ts.tileWidth/2, ((tiley - 1) * ts.tileHeight) + ts.tileHeight / 2
+	return ((tilex - 1) * currentMap.tileWidth) + currentMap.tileWidth/2, ((tiley - 1) * currentMap.tileHeight) + currentMap.tileHeight / 2
 end
 
 function validTile(tilex, tiley)
-	return not (tilex < 1 or tiley < 1 or tiley > #ts.map.tiles or tilex > #ts.map.tiles[tiley])
+	return not (tilex < 1 or tiley < 1 or tiley > #currentMap.map.tiles or tilex > #currentMap.map.tiles[tiley])
 end
 
--- This tilex and tiley corresponds to the location in ts.map.tiles
+-- This tilex and tiley corresponds to the location in currentMap.map.tiles
 function highlight(tilex, tiley)
 	if not validTile(tilex, tiley) then
 		return
 	end
 	-- Good to go. Let's highlight it based on tile id
 	-- Find coordinate
-	local width = ts.tileWidth
-	local height = ts.tileHeight
+	local width = currentMap.tileWidth
+	local height = currentMap.tileHeight
 
     local r,g,b,a = love.graphics.getColor() -- Get old color
-	love.graphics.setColor(unpack(color_dict[ts.map.tiles[tiley][tilex].id]))
-	love.graphics.rectangle("line", (ts.startx + ((tilex - 1) * width)) + (tilex ~= 1 and 0 or 1), (ts.starty + ((tiley - 1) * height)) + (tiley ~= 1 and 0 or 1), width - 1, height - 1)
+	love.graphics.setColor(unpack(color_dict[currentMap.map.tiles[tiley][tilex].id]))
+	love.graphics.rectangle("line", (currentMap.startx + ((tilex - 1) * width)) + (tilex ~= 1 and 0 or 1), (currentMap.starty + ((tiley - 1) * height)) + (tiley ~= 1 and 0 or 1), width - 1, height - 1)
 	love.graphics.setColor(r,g,b,a) -- Reset to old color
 end
 
 -- This function will take in an objects x, y coords and its width/height. This will allow us to highlight tiles around it.
-function highlightTiles(cObj) -- Assumption: x, y is in the center of the sprite
-	-- We know we're in a tile if our width + x/2 or width - x/2 along with height + y/2 and height -y/2 overlaps with a tile.
+function highlightTiles(cObj)
+	local spanList = cObj:getSpan():fullSpan()
 
-	-- Initial testing. This will not utilize width/height yet.
-
-	-- Get the tile that our x,y is currently in. We don't even technically need a tilecount for this, we know that the map starts at 0,0
-
-	local ptiles = {}
-
-	ptiles[1] = {math.floor((cObj.x - (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1, math.floor((cObj.y - (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1}
-	ptiles[2] = {math.floor((cObj.x + (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1, math.floor((cObj.y - (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1}
-	ptiles[3] = {math.floor((cObj.x - (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1, math.floor((cObj.y + (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1}
-	--ptiles[4] = {math.floor((x + (width/2) + ts.startx) / ts.tileWidth) + 1, math.floor((y + (height/2) + ts.starty) / ts.tileHeight) + 1}
-	-- Don't need the bottom right vertex of the character
-
-	local targetTiles = {}
-
-	local offsetx = 0
-	local offsety = 0
-	local currentx, currenty = unpack(ptiles[1])
-
-
-	if (currentx ~= ptiles[2][1] or currenty ~= ptiles[2][2]) then
-		offsetx = 1
+	for i = 1, #spanList.list do
+		local x,y = unpack(spanList.list[i])
+		highlight(x,y)
 	end
-	if (currentx ~= ptiles[3][1] or currenty ~= ptiles[3][2]) then
-		offsety = 1
-	end
-
-	for i = currentx - 1, (currentx + offsetx + 1) do
-		for j = currenty - 1, (currenty + offsety + 1) do
-			highlight(i,j)
-		end
-	end
-
 end
 
 function get_cObjectPositionInfo(cObj)
 	-- This should return current tiles and adjacent tiles
 	-- We know cObj has an x,y, width, height, and offset values
 
-	local x1 = math.floor((cObj.x - (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1
-	local y1 = math.floor((cObj.y - (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1
-	local x2 = math.floor((cObj.x + (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1
-	local y2 = math.floor((cObj.y - (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1
-	local x3 = math.floor((cObj.x - (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1
-	local y3 = math.floor((cObj.y + (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1
-	local x4 = math.floor((cObj.x + (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1
-	local y4 = math.floor((cObj.y + (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1
+	cList = cObj:getSpan()
 
-	cList = CoordinateList(true)
-
-	cList:add({x1, y1})
-	cList:add({x2, y2})
-	cList:add({x3, y3})
-	cList:add({x4, y4})
-
-	tList = CoordinateList(true) -- temp list
-
-	for i = 1, #cList.list do
-		local x,y = unpack(cList.list[i])
-		for j = x-1, x + 1 do
-			for k = y-1, y + 1 do
-				tList:add({j,k})
-			end 
-		end
-	end
-
-	aList = CoordinateList.subset(tList, cList)
+	aList = CoordinateList.subset(cList:fullSpan(), cList)
 
 	return cList, aList
 end
 
 function draw_tiles()
-	local start_x = ts.startx
-	local start_y = ts.starty
+	local start_x = currentMap.startx
+	local start_y = currentMap.starty
 	-- End of centering map on screen
 
 
-	-- MAP RENDER FUNCTION: Render ts.map.tiles from tileset onscreen
-	for rowIndex = 1, #ts.map.tiles do
-		local row = ts.map.tiles[rowIndex]
+	-- MAP RENDER FUNCTION: Render currentMap.map.tiles from tileset onscreen
+	love.graphics.setColor(255,255,255,255)
+	for rowIndex = 1, #currentMap.map.tiles do
+		local row = currentMap.map.tiles[rowIndex]
 		for columnIndex = 1, #row do
 			local number = row[columnIndex].id
-			local x, y = start_x + ((columnIndex - 1) * ts.tileWidth), start_y + ((rowIndex - 1) * ts.tileHeight)
-			--HC.rectangle(x, y, ts.tileWidth, ts.tileHeight)
-			love.graphics.draw(ts.img, Quads[number], x, y) -- Draw Tile
+			local x, y = start_x + ((columnIndex - 1) * currentMap.tileWidth), start_y + ((rowIndex - 1) * currentMap.tileHeight)
+			--HC.rectangle(x, y, currentMap.tileWidth, currentMap.tileHeight)
+			love.graphics.draw(currentMap.img, Quads[number], x, y) -- Draw Tile
 		end
 	end
 end

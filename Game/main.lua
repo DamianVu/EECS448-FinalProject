@@ -91,6 +91,7 @@ function love.draw()
         next_time = cur_time
         return
     end
+
     love.timer.sleep(next_time - cur_time)
     -- End Code that will cap FPS at 144 --
 end
