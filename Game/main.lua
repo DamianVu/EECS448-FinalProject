@@ -9,11 +9,16 @@ require "cObject"
 mouse = {}
 player = {}
 
+-- Server connection information
 SERVER_ADDRESS, SERVER_PORT = "localhost", 25560
+
+USERNAME = "user"
 
 function love.load()
 
-    connectToServer()
+    -- Networking
+    -- setClientUser(USERNAME)
+    connectToServer(SERVER_ADDRESS, SERVER_PORT)
 
 
     windowWidth = 1600
@@ -112,6 +117,7 @@ end
 
 function love.update(dt)
 
+    --Network debugging
 
     -- Code that will cap FPS at 144
     next_time = next_time + min_dt
@@ -122,15 +128,19 @@ function love.update(dt)
     -- Listen for keypresses to move player (if a player holds 'w' and 's', they will be stationary. Same with 'a' and 'd')
     if love.keyboard.isDown('d') then
         player.x = player.x + (player.speed * base_speed * dt)
+        sendToServer(USERNAME.. " moveto " .. player.x .. " " .. player.y)
     end
     if love.keyboard.isDown('a') then
         player.x = player.x - (player.speed * base_speed * dt)
+        sendToServer(USERNAME.. " moveto " .. player.x .. " " .. player.y)
     end
     if love.keyboard.isDown('w') then
         player.y = player.y - (player.speed * base_speed * dt)
+        sendToServer(USERNAME.. " moveto " .. player.x .. " " .. player.y)
     end
     if love.keyboard.isDown('s') then
         player.y = player.y + (player.speed * base_speed * dt)
+        sendToServer(USERNAME.. " moveto " .. player.x .. " " .. player.y)
     end
 
 
