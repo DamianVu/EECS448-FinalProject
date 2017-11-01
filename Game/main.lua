@@ -112,10 +112,6 @@ end
 
 function love.update(dt)
 
-    --Network
-    bufferPull()
-
-
 
     -- Code that will cap FPS at 144
     next_time = next_time + min_dt

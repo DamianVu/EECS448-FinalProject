@@ -18,17 +18,16 @@ function disconnectFromServer()
 end
 
 
+-- General method for sending data to server.
+function sendToServer(data) -- data should be in the form of a string
 
-function sendToServer(data)
-  print "Sending to server..."
-  repeat
 
     -- TODO Determine protocol for messages, and general server connection management. join(), leave(), etc.
 
 
-    udp:send("Hello server")
+    -- TODO Here, use regexes to route the data to the proper handler. I propose we use something like "<entity> <cmd> <params>" for message formatting
+    udp:send(data)
 
 
-    socket.sleep(0.01)
-  until false
+    -- socket.sleep(0.01) --Socket update frequency
 end
