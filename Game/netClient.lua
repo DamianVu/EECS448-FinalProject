@@ -23,14 +23,12 @@ function disconnectFromServer()
 end
 
 
+
+
+function getPlayerList()
+  
+
+end
+
 -- General method for sending data to server.
-
-
-
-
-
-
-
-
-
 function sendToServer(data) udp:send(data) end

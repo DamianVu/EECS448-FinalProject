@@ -150,12 +150,15 @@ function love.keypressed(key)
     if key == 'r' then -- reset position
         player.x = 0
         player.y = 0
+        sendToServer(USERNAME.. " moveto " .. player.x .. " " .. player.y)
     end
     if key == 'tab' then
         debugMode = not debugMode
+        print(unpack(getPlayerList()))
     end
 end
 
 function love.quit()
+  disconnectFromServer()
   print("Game instance has been closed")
 end
