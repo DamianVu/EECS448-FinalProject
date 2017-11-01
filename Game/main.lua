@@ -29,7 +29,7 @@ function love.load()
     debugMode = false
     base_slowdown_counter = 5 -- Game will wait this many game ticks before velocity comes to a halt
 
-
+    -- Initialize player by calling cObject constructor
     player = cObject(nil, love.graphics.newImage('images/sprites/player.png'), 1, 96, 96, 32, 32)
 
     movingObjects[#movingObjects + 1] = player
