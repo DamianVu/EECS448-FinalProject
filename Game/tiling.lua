@@ -122,14 +122,15 @@ function highlight(tilex, tiley)
 	local width = ts.tileWidth
 	local height = ts.tileHeight
 
-	love.graphics.setColor(color_dict[ts.map.tiles[tiley][tilex].id])
+    local r,g,b,a = love.graphics.getColor() -- Get old color
+	love.graphics.setColor(unpack(color_dict[ts.map.tiles[tiley][tilex].id]))
 	love.graphics.rectangle("line", (ts.startx + ((tilex - 1) * width)) + (tilex ~= 1 and 0 or 1), (ts.starty + ((tiley - 1) * height)) + (tiley ~= 1 and 0 or 1), width - 1, height - 1)
+	love.graphics.setColor(r,g,b,a) -- Reset to old color
 end
 
--- EVERYTHING IS WORST CASE SCENARIO ON PURPOSE
 
 -- This function will take in an objects x, y coords and its width/height. This will allow us to highlight tiles around it.
-function highlightTiles(x, y, width, height) -- Assumption: x, y is in the center of the sprite
+function highlightTiles(cObj) -- Assumption: x, y is in the center of the sprite
 	-- We know we're in a tile if our width + x/2 or width - x/2 along with height + y/2 and height -y/2 overlaps with a tile.
 
 	-- Initial testing. This will not utilize width/height yet.
@@ -138,9 +139,9 @@ function highlightTiles(x, y, width, height) -- Assumption: x, y is in the cente
 
 	local ptiles = {}
 
-	ptiles[1] = {math.floor((x - (width/2) + ts.startx) / ts.tileWidth) + 1, math.floor((y - (height/2) + ts.starty) / ts.tileHeight) + 1}
-	ptiles[2] = {math.floor((x + (width/2) + ts.startx) / ts.tileWidth) + 1, math.floor((y - (height/2) + ts.starty) / ts.tileHeight) + 1}
-	ptiles[3] = {math.floor((x - (width/2) + ts.startx) / ts.tileWidth) + 1, math.floor((y + (height/2) + ts.starty) / ts.tileHeight) + 1}
+	ptiles[1] = {math.floor((cObj.x - (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1, math.floor((cObj.y - (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1}
+	ptiles[2] = {math.floor((cObj.x + (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1, math.floor((cObj.y - (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1}
+	ptiles[3] = {math.floor((cObj.x - (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1, math.floor((cObj.y + (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1}
 	--ptiles[4] = {math.floor((x + (width/2) + ts.startx) / ts.tileWidth) + 1, math.floor((y + (height/2) + ts.starty) / ts.tileHeight) + 1}
 	-- Don't need the bottom right vertex of the character
 
@@ -148,8 +149,7 @@ function highlightTiles(x, y, width, height) -- Assumption: x, y is in the cente
 
 	local offsetx = 0
 	local offsety = 0
-	local currentx = ptiles[1][1]
-	local currenty = ptiles[1][2]
+	local currentx, currenty = unpack(ptiles[1])
 
 
 	if (currentx ~= ptiles[2][1] or currenty ~= ptiles[2][2]) then
@@ -165,6 +165,67 @@ function highlightTiles(x, y, width, height) -- Assumption: x, y is in the cente
 		end
 	end
 
+end
+
+
+-- Class that contains coordinates
+CoordinateList = class("CoordinateList", {list = {}})
+function CoordinateList:init(unique)
+	self.unique = unique or true
+end
+
+function CoordinateList:add(coord)
+	if self.unique then
+		if not self:contains(coord) then
+			self.list[#self.list + 1] = coord
+		end
+	else
+		self.list[#self.list + 1] = coord
+	end
+end
+
+function CoordinateList:contains(coord)
+	local ix, iy = unpack(coord)
+	for i = 1, #self.list do
+		local cx, cy = unpack(self.list[i])
+		if cx == ix and cy == iy then
+			return true
+		end
+	end
+	return false
+end
+
+function CoordinateList:size()
+	return #self.list
+end
+
+function get_cObjectPositionInfo(cObj)
+	-- This should return current tiles and adjacent tiles
+	-- We know cObj has an x,y, width, height, and offset values
+
+	x1 = math.floor((cObj.x - (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1
+	y1 = math.floor((cObj.y - (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1
+	x2 = math.floor((cObj.x + (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1
+	y2 = math.floor((cObj.y - (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1
+	x3 = math.floor((cObj.x - (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1
+	y3 = math.floor((cObj.y + (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1
+	x4 = math.floor((cObj.x + (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1
+	y4 = math.floor((cObj.y + (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1
+
+	cList = CoordinateList(true)
+
+	cList:add({x1, y1})
+	cList:add({x2, y2})
+	cList:add({x3, y3})
+	cList:add({x4, y4})
+
+	aList = CoordinateList(true)
+
+	for i = 1, #cList.list do
+		
+	end
+
+	return cList
 end
 
 

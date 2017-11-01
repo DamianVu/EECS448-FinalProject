@@ -1,11 +1,13 @@
 -- Current functionality is just movement and mouse cursor until we get maps and tiling implemented
 
-local CH = require "collisionhandler"
 require "tiling"
+require "collisionhandler"
 require "cObject"
 
 mouse = {}
 player = {}
+
+movingObjects = {}
 
 function love.load()
     windowWidth = 1600
@@ -22,21 +24,21 @@ function love.load()
     love.mouse.setVisible(false)
 
 
+    -- Collision Handler initialization --
+    CH = CollisionHandler()
+
+
     -- Global Game variables
     base_speed = 250
     debugMode = false
+    base_slowdown_counter = 5 -- Game will wait this many game ticks before velocity comes to a halt
 
 
-    -- Player initialization - With a 64x64px sprite, this will place it in the center.
-    player.x = 96
-    player.y = 96
-    player.speed = 1 -- (We can scale this number later to have speed modifiers)
-    player.img = love.graphics.newImage('images/sprites/player.png')
-    -- End Player initialization
+    player = cObject(nil, love.graphics.newImage('images/sprites/player.png'), 1, 96, 96, 32, 32)
 
-    -- Hitbox initialization
-    player.hb = cObject:new(0, 0, 32, 32, -16, -16)
+    movingObjects[#movingObjects + 1] = player
 
+    CH:addObj(player)
 
     -- Code that will cap FPS at 144
     min_dt = 1/144
@@ -47,30 +49,24 @@ end
 function love.draw()
 
     -- These values are used to move the camera, and also to get the absolute mouse position relative to the map --
-    local x_translate_val = (windowWidth / 2) - player.x
-    local y_translate_val = (windowHeight / 2) - player.y
-
+    x_translate_val = (windowWidth / 2) - player.x
+    y_translate_val = (windowHeight / 2) - player.y
     -- This stack push begins the code that makes our camera follow our player. Everything that needs to stay in place should be here
     love.graphics.push()
     love.graphics.translate(x_translate_val, y_translate_val)
 
     draw_tiles() -- from tiling.lua
-    local r,g,b,a = love.graphics.getColor() -- Get old color
     if debugMode then
-        highlightTiles(player.x, player.y, 32, 32)
+        highlightTiles(player)
     end
-    love.graphics.setColor(r,g,b,a) -- Reset to old color
 
     -- Draw player --
-    love.graphics.draw(player.img, player.x, player.y, 0, .5, .5, 32, 32)
-
+    player:draw()
+    --love.graphics.circle("fill", player.x, player.y, 2) -- Dot at center of player
     
-
-
-    
-
-    player.hb:setLocation(player.x, player.y)
-    player.hb:drawHitbox()
+    if debugMode then
+        player:drawHitbox()
+    end
 
     love.graphics.pop()
     -- This stack pop ends the code for the camera following. Anything that should stay in place on screen should follow this
@@ -79,16 +75,10 @@ function love.draw()
     love.graphics.setColor(255, 255, 255)
     love.graphics.circle("line", mouse.x, mouse.y, 5) -- "line" is outline, 5 is radius
 
+    drawMonitors()
 
-    -- Text in the top left
-    love.graphics.setColor(0, 203, 255)
-    love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 10)
-    love.graphics.print("Wubba lubba dub dub!", 10, 30)
-    love.graphics.print("Debug Mode(tab): " .. tostring(debugMode), 10, 50)
     if debugMode then
-        love.graphics.print("Player Location: " .. tostring(math.floor(player.x)) .. "," .. tostring(math.floor(player.y)), 10, 70)
-        love.graphics.print("Mouse Screen Location: " .. tostring(math.floor(mouse.x)) .. "," .. tostring(math.floor(mouse.y)), 10, 90)
-        love.graphics.print("Mouse Abs Location: " .. tostring(math.floor(mouse.x - x_translate_val)) .. "," .. tostring(math.floor(mouse.y - y_translate_val)), 10, 110)
+        drawDebug()
     end
     -- End Text in the top left
     --love.graphics.circle("fill", windowWidth/2, windowHeight/2, 2)            This code draws a dot in the center of the screen
@@ -109,6 +99,7 @@ function love.update(dt)
     -- Get current mouse position and store in object mouse
     mouse.x, mouse.y = love.mouse.getPosition()
 
+    --[=====[
     -- Listen for keypresses to move player (if a player holds 'w' and 's', they will be stationary. Same with 'a' and 'd')
     if love.keyboard.isDown('d') then
         player.x = player.x + (player.speed * base_speed * dt)
@@ -122,7 +113,49 @@ function love.update(dt)
     if love.keyboard.isDown('s') then
         player.y = player.y + (player.speed * base_speed * dt)
     end
+    ]=====]--
 
+    if love.keyboard.isDown('d') then
+        player.x_vel = player.speed * base_speed * dt
+    end
+    if love.keyboard.isDown('a') then
+        player.x_vel = -player.speed * base_speed * dt
+    end
+    if love.keyboard.isDown('w') then
+        player.y_vel = -player.speed * base_speed * dt
+    end
+    if love.keyboard.isDown('s') then
+        player.y_vel = player.speed * base_speed * dt
+    end
+
+    if not (love.keyboard.isDown('d') or love.keyboard.isDown('a')) then
+        if (player.x_vel_counter < 1) then
+            player.x_vel = 0
+        else
+            player.x_vel_counter = player.x_vel_counter - 1
+        end
+    else
+        player.x_vel_counter = base_slowdown_counter
+    end
+
+    if not (love.keyboard.isDown('w') or love.keyboard.isDown('s')) then
+        if (player.y_vel_counter < 1) then
+            player.y_vel = 0
+        else
+            player.y_vel_counter = player.y_vel_counter - 1
+        end
+    else
+        player.y_vel_counter = base_slowdown_counter
+    end
+
+
+
+    -- This should only update once every dt anyways...
+    --player:move()
+
+    for i = 1, #movingObjects do
+        movingObjects[i]:move()
+    end
 
 end
 
@@ -134,6 +167,25 @@ function love.keypressed(key)
     if key == 'tab' then
         debugMode = not debugMode
     end
+    if debugMode then
+
+    end
+end
+
+function drawMonitors()
+    love.graphics.setColor(0, 203, 255)
+    love.graphics.print("Wubba lubba dub dub!", 10, 10)
+    love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 30)
+    love.graphics.print("Debug Mode(tab): " .. tostring(debugMode), 10, 50)
+end
+
+function drawDebug()
+    love.graphics.setColor(0, 203, 255)
+    love.graphics.print("Player Location: " .. tostring(math.floor(player.x)) .. "," .. tostring(math.floor(player.y)), 10, 70)
+    love.graphics.print("Mouse Screen Location: " .. tostring(math.floor(mouse.x)) .. "," .. tostring(math.floor(mouse.y)), 10, 90)
+    love.graphics.print("Mouse Abs Location: " .. tostring(math.floor(mouse.x - x_translate_val)) .. "," .. tostring(math.floor(mouse.y - y_translate_val)), 10, 110)
+    cl = get_cObjectPositionInfo(player)
+    love.graphics.print("Player is standing in " .. cl:size() .. " tile(s)", 10 , 130)
 end
 
 function love.quit()
