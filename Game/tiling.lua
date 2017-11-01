@@ -5,7 +5,7 @@ class = require '30log'					--| Object orientation framework
 -- TODO Tile Objects will have all information for a given tile that needs to be realized. Render position, size, collision enable, etc.
 --Tile-- Class definition and constructor, new_tile
 Tile = class {id, x, y, width, height, collision} -- Will likely need to add parameters
-function new_tile(id, x, y, width, height, collision)
+function new_tile(id, x, y, width, height, collision, bumpFactor)
 	local tile = Tile()
 	tile.id = id							 --|int - integer representation of Tile
 	tile.x = x								 --|int - x coordinate of upper-left corner
@@ -13,6 +13,7 @@ function new_tile(id, x, y, width, height, collision)
 	tile.width = width				 --|int - Tile width
 	tile.height = height			 --|int - Tile height
 	tile.collision = collision --|bool - collision enabled
+	tile.bumpFactor = bumpFactor or 1
 	return tile
 end
 -- End --
@@ -40,7 +41,7 @@ function new_map(grid, id_dict)
 		map.tiles[rowIndex] = {}
 		for columnIndex = 1, #row do
 			local id = row[columnIndex]
-			local nthTile = new_tile(id, x, y, width, height, map.id_dict[id].collision)
+			local nthTile = new_tile(id, x, y, width, height, map.id_dict[id].collision, map.id_dict[id].bumpFactor)
 			map.tiles[rowIndex][columnIndex] = nthTile
 		end
 	end
@@ -73,15 +74,16 @@ function load_tileset()
 		{1,2,2,2,2,2,2,1},
 		{1,2,3,3,2,2,2,1},
 		{1,2,2,2,2,2,2,1,1,1,1},
-		{1,1,1,2,2,2,2,1},
-		{1,2,2,2,2,1,1,1},
-		{1,2,2,2,2,2,2,1},
-		{1,1,1,1,1,1,1,1}
+		{1,1,1,2,2,2,2,2,2,2,1},
+		{1,2,2,2,2,1,1,1,1,2,1},
+		{1,2,2,2,2,2,2,2,2,2,1},
+		{1,1,1,1,1,1,1,1,1,1,1}
 	}
 	test_id_dict = {}								--Tile IDs in the map
-	test_id_dict[1] = {collision = true}		--Properties of each Tile ID. Only have collision for now
+	test_id_dict[1] = {collision = true, bumpFactor = 1}		--Properties of each Tile ID. Only have collision for now
 	test_id_dict[2] = {collision = false}
 	test_id_dict[3] = {collision = true}
+	test_id_dict[4] = {collision = false, bumpFactor = 3} 
 	test_map = new_map(test_grid, test_id_dict)
 end
 
@@ -106,6 +108,15 @@ function load_tilesets()
 
 end
 
+function getTileAnchorPoint(tilex, tiley)
+	-- Return the pixel location in the center of the tile.
+	return ((tilex - 1) * ts.tileWidth) + ts.tileWidth/2, ((tiley - 1) * ts.tileHeight) + ts.tileHeight / 2
+end
+
+function validTile(tilex, tiley)
+	return not (tilex < 1 or tiley < 1 or tiley > #ts.map.tiles or tilex > #ts.map.tiles[tiley])
+end
+
 color_dict = {}
 color_dict[1] = {255, 0, 0}
 color_dict[2] = {0, 255, 0}
@@ -114,7 +125,7 @@ color_dict[3] = {255, 255, 0}
 
 -- This tilex and tiley corresponds to the location in ts.map.tiles
 function highlight(tilex, tiley)
-	if (tilex < 1 or tiley < 1 or tiley > #ts.map.tiles or tilex > #ts.map.tiles[tiley]) then 
+	if not validTile(tilex, tiley) then
 		return
 	end
 	-- Good to go. Let's highlight it based on tile id
@@ -122,14 +133,14 @@ function highlight(tilex, tiley)
 	local width = ts.tileWidth
 	local height = ts.tileHeight
 
-	love.graphics.setColor(color_dict[ts.map.tiles[tiley][tilex].id])
+    local r,g,b,a = love.graphics.getColor() -- Get old color
+	love.graphics.setColor(unpack(color_dict[ts.map.tiles[tiley][tilex].id]))
 	love.graphics.rectangle("line", (ts.startx + ((tilex - 1) * width)) + (tilex ~= 1 and 0 or 1), (ts.starty + ((tiley - 1) * height)) + (tiley ~= 1 and 0 or 1), width - 1, height - 1)
+	love.graphics.setColor(r,g,b,a) -- Reset to old color
 end
 
--- EVERYTHING IS WORST CASE SCENARIO ON PURPOSE
-
 -- This function will take in an objects x, y coords and its width/height. This will allow us to highlight tiles around it.
-function highlightTiles(x, y, width, height) -- Assumption: x, y is in the center of the sprite
+function highlightTiles(cObj) -- Assumption: x, y is in the center of the sprite
 	-- We know we're in a tile if our width + x/2 or width - x/2 along with height + y/2 and height -y/2 overlaps with a tile.
 
 	-- Initial testing. This will not utilize width/height yet.
@@ -138,9 +149,9 @@ function highlightTiles(x, y, width, height) -- Assumption: x, y is in the cente
 
 	local ptiles = {}
 
-	ptiles[1] = {math.floor((x - (width/2) + ts.startx) / ts.tileWidth) + 1, math.floor((y - (height/2) + ts.starty) / ts.tileHeight) + 1}
-	ptiles[2] = {math.floor((x + (width/2) + ts.startx) / ts.tileWidth) + 1, math.floor((y - (height/2) + ts.starty) / ts.tileHeight) + 1}
-	ptiles[3] = {math.floor((x - (width/2) + ts.startx) / ts.tileWidth) + 1, math.floor((y + (height/2) + ts.starty) / ts.tileHeight) + 1}
+	ptiles[1] = {math.floor((cObj.x - (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1, math.floor((cObj.y - (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1}
+	ptiles[2] = {math.floor((cObj.x + (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1, math.floor((cObj.y - (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1}
+	ptiles[3] = {math.floor((cObj.x - (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1, math.floor((cObj.y + (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1}
 	--ptiles[4] = {math.floor((x + (width/2) + ts.startx) / ts.tileWidth) + 1, math.floor((y + (height/2) + ts.starty) / ts.tileHeight) + 1}
 	-- Don't need the bottom right vertex of the character
 
@@ -148,8 +159,7 @@ function highlightTiles(x, y, width, height) -- Assumption: x, y is in the cente
 
 	local offsetx = 0
 	local offsety = 0
-	local currentx = ptiles[1][1]
-	local currenty = ptiles[1][2]
+	local currentx, currenty = unpack(ptiles[1])
 
 
 	if (currentx ~= ptiles[2][1] or currenty ~= ptiles[2][2]) then
@@ -165,6 +175,92 @@ function highlightTiles(x, y, width, height) -- Assumption: x, y is in the cente
 		end
 	end
 
+end
+
+
+-- Class that contains coordinates
+CoordinateList = class("CoordinateList", {list = {}})
+function CoordinateList:init(unique)
+	self.unique = unique or true
+end
+
+function CoordinateList:add(coord)
+	local x,y = unpack(coord)
+	if self.unique then
+		if not self:contains(coord) then
+			if validTile(x,y) then 
+				self.list[#self.list + 1] = coord
+			end
+		end
+	else
+		if validTile(x,y) then 
+			self.list[#self.list + 1] = coord
+		end
+	end
+end
+
+function CoordinateList:contains(coord)
+	local ix, iy = unpack(coord)
+	for i = 1, #self.list do
+		local cx, cy = unpack(self.list[i])
+		if cx == ix and cy == iy then
+			return true, i
+		end
+	end
+	return false
+end
+
+function CoordinateList:size()
+	return #self.list
+end
+
+function CoordinateList.subset(outerList, innerList)
+	local rList = CoordinateList(true)
+
+	for i = 1, #outerList.list do
+		local x,y = unpack(outerList.list[i])
+		if not innerList:contains({x,y}) then
+			rList:add({x,y})
+		end
+	end
+
+	return rList
+end
+
+function get_cObjectPositionInfo(cObj)
+	-- This should return current tiles and adjacent tiles
+	-- We know cObj has an x,y, width, height, and offset values
+
+	local x1 = math.floor((cObj.x - (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1
+	local y1 = math.floor((cObj.y - (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1
+	local x2 = math.floor((cObj.x + (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1
+	local y2 = math.floor((cObj.y - (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1
+	local x3 = math.floor((cObj.x - (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1
+	local y3 = math.floor((cObj.y + (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1
+	local x4 = math.floor((cObj.x + (cObj.x_offset * cObj.scaleX) + ts.startx) / ts.tileWidth) + 1
+	local y4 = math.floor((cObj.y + (cObj.y_offset * cObj.scaleY) + ts.starty) / ts.tileHeight) + 1
+
+	cList = CoordinateList(true)
+
+	cList:add({x1, y1})
+	cList:add({x2, y2})
+	cList:add({x3, y3})
+	cList:add({x4, y4})
+
+	tList = CoordinateList(true) -- temp list
+
+	for i = 1, #cList.list do
+		local x,y = unpack(cList.list[i])
+		for j = x-1, x + 1 do
+			for k = y-1, y + 1 do
+				tList:add({j,k})
+			end 
+		end
+	end
+
+	aList = CoordinateList.subset(tList, cList)
+
+	return cList, aList
 end
 
 
