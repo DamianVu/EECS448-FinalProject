@@ -1,13 +1,21 @@
 -- Current functionality is just movement and mouse cursor until we get maps and tiling implemented
 
 local CH = require "collisionhandler"
+
+require "netClient"
 require "tiling"
 require "cObject"
 
 mouse = {}
 player = {}
 
+SERVER_ADDRESS, SERVER_PORT = "localhost", 25560
+
 function love.load()
+
+    connectToServer()
+
+
     windowWidth = 1600
     windowHeight = 900
 
@@ -64,10 +72,10 @@ function love.draw()
     -- Draw player --
     love.graphics.draw(player.img, player.x, player.y, 0, .5, .5, 32, 32)
 
-    
 
 
-    
+
+
 
     player.hb:setLocation(player.x, player.y)
     player.hb:drawHitbox()
@@ -103,6 +111,12 @@ function love.draw()
 end
 
 function love.update(dt)
+
+    --Network
+    bufferPull()
+
+
+
     -- Code that will cap FPS at 144
     next_time = next_time + min_dt
 
