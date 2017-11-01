@@ -120,7 +120,7 @@ end
 -- For walls, direction can only be one of 4 values, and collisionType = 1
 function CollisionHandler:bump(mId, direction, bumpFactor, collisionType) -- Direction should be ?radians? or ?degrees?
 	if self.playerMovement == true then
-		local bumpAmt = .25 * bumpFactor
+		local bumpAmt = .5 * bumpFactor
 
 		if collisionType == 1 then
 			-- Wall bounce

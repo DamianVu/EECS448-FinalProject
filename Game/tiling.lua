@@ -9,12 +9,13 @@ test_id_dict = {}
 test_id_dict[1] = {collision = true, bumpFactor = 1}		
 test_id_dict[2] = {collision = false}
 test_id_dict[3] = {collision = true}
-test_id_dict[4] = {collision = false, bumpFactor = 3} 
+test_id_dict[4] = {collision = true, bumpFactor = 3} 
 
 color_dict = {}
 color_dict[1] = {255, 0, 0}
 color_dict[2] = {0, 255, 0}
 color_dict[3] = {255, 255, 0}
+color_dict[4] = {255, 0, 0}
 
 
 
@@ -121,14 +122,12 @@ end
 
 function CoordinateList.subset(outerList, innerList)
 	local rList = CoordinateList(true)
-
 	for i = 1, #outerList.list do
 		local x,y = unpack(outerList.list[i])
 		if not innerList:contains({x,y}) then
 			rList:add({x,y})
 		end
 	end
-
 	return rList
 end
 
@@ -148,6 +147,9 @@ function load_tileset()
 		{1,2,2,2,2,2,2,1,1,1,1},
 		{1,1,1,2,2,2,2,2,2,2,1},
 		{1,2,2,2,2,1,1,1,1,2,1},
+		{1,2,2,2,2,2,2,2,2,2,1},
+		{1,2,2,2,2,2,2,2,2,2,1},
+		{1,2,2,4,4,4,4,2,2,2,1},
 		{1,2,2,2,2,2,2,2,2,2,1},
 		{1,1,1,1,1,1,1,1,1,1,1}
 	}

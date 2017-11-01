@@ -47,13 +47,11 @@ end
 function love.draw()
 
     -- These values are used to move the camera, and also to get the absolute mouse position relative to the map --
-    x_translate_val = (windowWidth / 2) - player.x
-    y_translate_val = (windowHeight / 2) - player.y
-
-    if not CH.playerMovement then
-        x_translate_val = 0
-        y_translate_val = 0
+    if CH.playerMovement then
+        x_translate_val = (windowWidth / 2) - player.x
+        y_translate_val = (windowHeight / 2) - player.y
     end
+
     -- This stack push begins the code that makes our camera follow our player. Everything that needs to stay in place should be here
     love.graphics.push()
     love.graphics.translate(x_translate_val, y_translate_val)
