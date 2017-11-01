@@ -78,8 +78,8 @@ function love.draw()
     love.graphics.setColor(255, 255, 255)
     love.graphics.circle("line", mouse.x, mouse.y, 5) -- "line" is outline, 5 is radius
 
+    -- From debugging.lua
     drawMonitors()
-
     if debugMode then
         drawDebug()
     end
