@@ -25,8 +25,8 @@ end
 
 
 
-function getPlayerList()
-  
+function retrievePlayerList()
+
 
 end
 

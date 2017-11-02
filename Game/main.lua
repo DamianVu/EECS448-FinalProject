@@ -1,6 +1,6 @@
 -- Current functionality is just movement and mouse cursor until we get maps and tiling implemented
 
-local CH = require "collisionhandler"
+CH = require "collisionhandler"
 
 require "netClient"
 require "tiling"
@@ -14,13 +14,11 @@ player = {}
 movingObjects = {}
 -- Server connection information
 SERVER_ADDRESS, SERVER_PORT = "localhost", 25560
-
 USERNAME = "user"
 
 function love.load()
 
-    -- Networking
-    -- setClientUser(USERNAME)
+    -- Initialize connection to server
     connectToServer(SERVER_ADDRESS, SERVER_PORT)
 
 
@@ -173,11 +171,10 @@ function love.keypressed(key)
     if key == 'r' then -- reset position
         player.x = 0
         player.y = 0
-        sendToServer(USERNAME.. " moveto " .. player.x .. " " .. player.y)
+        -- sendToServer(USERNAME.. " moveto " .. player.x .. " " .. player.y)
     end
     if key == 'tab' then
         debugMode = not debugMode
-        print(unpack(getPlayerList()))
     end
     if debugMode then
 
