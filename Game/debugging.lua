@@ -6,9 +6,15 @@ function drawMonitors()
     love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 30)
     love.graphics.print("Debug Mode(tab): " .. tostring(debugMode), 10, 50)
     love.graphics.setColor(255, 0, 0)
+
+
+
+
     love.graphics.print("Game State: " .. gameState, 1450, 10)
     love.graphics.print("Messages sent: " .. messageCount, 1450, 30)
-    love.graphics.print(lastMessage, 1450, 50)
+    love.graphics.print(onlinePlayerCount, 1450, 50)
+    love.graphics.print("Peer table size: " .. #peers, 1450, 70)
+    love.graphics.print("Our Ent Name: " .. (entity or ""), 1450, 90)
 end
 
 function drawDebug()

@@ -8,8 +8,7 @@ require "networktesting"
 
 local socket = require("socket")
 local address, port = "104.131.9.165", 5005
-local entity
-local updateRate = 1
+local updateRate = .1
 
 mouse = {}
 player = {}
@@ -60,7 +59,7 @@ function love.load()
     local r,g,b = unpack(player.color)
     udp:send(entity .. " 999 " .. player.x .. "," .. player.y .. " " .. r .. "," .. g .. "," .. b)
     messageCount = 0
-    lastMessage = ""
+    onlinePlayerCount = ""
 
     -- Code that will cap FPS at 144
     min_dt = 1/144
@@ -83,6 +82,10 @@ function love.draw()
     draw_tiles() -- from tiling.lua
     if debugMode then
         highlightTiles(player)
+    end
+
+    for i = 1, #peers do
+        peers[i]:draw()
     end
 
     -- Draw player --
@@ -150,6 +153,15 @@ function love.update(dt)
         rdata, msg = udp:receive()
 
         if rdata then
+            local resp = tostring(rdata)
+
+            local type, rest = resp:match("(%d+) (.*)")
+
+            if tonumber(type) == 0 then
+                onlinePlayerCount = rest
+            elseif tonumber(type) == 1 then
+                updatePeer(rest:match("(.+) (-*%d+.*%d*),(-*%d+.*%d*) (%d+),(%d+),(%d+)"))
+            end
 
             lastMessage = tostring(rdata)
         elseif msg~= 'timeout' then
@@ -214,7 +226,6 @@ function love.update(dt)
     for i = 1, #movingObjects do
         movingObjects[i]:move()
     end
-
 end
 
 function love.keypressed(key)
