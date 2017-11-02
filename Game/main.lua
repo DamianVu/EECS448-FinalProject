@@ -4,9 +4,17 @@ require "tiling"
 require "libraries.collisionhandler"
 require "libraries.cObject"
 require "debugging"
+require "networktesting"
+
+local socket = require("socket")
+local address, port = "104.131.9.165", 5005
+local entity
+local updateRate = 1
 
 mouse = {}
 player = {}
+
+peers = {}
 
 movingObjects = {}
 
@@ -14,7 +22,9 @@ function love.load()
     windowWidth = 1600
     windowHeight = 900
 
-    love.window.setMode(windowWidth, windowHeight, {resizable=false, vsync=false, minwidth=800, minheight=600, borderless=true, msaa=2})
+    gameState = 1 -- Moving
+
+    love.window.setMode(windowWidth, windowHeight, {resizable=false, vsync=false, minwidth=800, minheight=600, borderless=false, msaa=2})
     --love.window.setFullscreen(true, "desktop")
 
     -- Load tileset
@@ -30,13 +40,27 @@ function love.load()
     base_slowdown_counter = 5 -- Game will wait this many game ticks before velocity comes to a halt
 
     -- Initialize player by calling cObject constructor
-    player = cObject(nil, love.graphics.newImage('images/sprites/player.png'), 1, 96, 96, 32, 32)
+    player = cObject(nil, love.graphics.newImage('images/sprites/player.png'), nil, 1, 96, 96, 32, 32)
 
     movingObjects[#movingObjects + 1] = player
 
     -- Collision Handler initialization --
     CH = CollisionHandler()
     CH:addObj(player)
+
+
+    -- Test networking
+    prevUpdate = 0
+    udp = socket.udp()
+    udp:settimeout(0)
+    udp:setpeername(address, port)
+    math.randomseed(os.time()) 
+    entity = tostring(math.random(99999))
+    --entity = "Damian"
+    local r,g,b = unpack(player.color)
+    udp:send(entity .. " 999 " .. player.x .. "," .. player.y .. " " .. r .. "," .. g .. "," .. b)
+    messageCount = 0
+    lastMessage = ""
 
     -- Code that will cap FPS at 144
     min_dt = 1/144
@@ -101,6 +125,47 @@ function love.update(dt)
     -- Get current mouse position and store in object mouse
     mouse.x, mouse.y = love.mouse.getPosition()
 
+    -- Network testing
+    prevUpdate = prevUpdate + dt
+    if prevUpdate > updateRate then
+        local data
+        if gameState == 1 then
+            local datax = player.x
+            local datay = player.y
+            data = string.format("%s %d %f,%f", entity, gameState, datax, datay)
+        elseif gameState == 2 then
+            data = "This is a long string that i'm sending to test the capabilities of udp transmission and I'm not sure if this whole string is even possible to send over udp........"
+            gameState = 0
+        else
+            data = string.format("%s %d fffffffffff", entity, gameState)
+        end
+
+        udp:send(data)
+        messageCount = messageCount + 1
+
+        prevUpdate = prevUpdate - updateRate
+    end
+
+    repeat
+        rdata, msg = udp:receive()
+
+        if rdata then
+
+            lastMessage = tostring(rdata)
+        elseif msg~= 'timeout' then
+            error("Network error: " ..tostring(msg))
+        end
+    until not rdata
+
+
+    -- End of network testing
+
+    if player.x_vel ~= 0 or player.y_vel ~= 0 then
+        gameState = 1
+    else
+        gameState = 0
+    end
+
     if CH.playerMovement then
 
         if love.keyboard.isDown('d') then
@@ -144,9 +209,8 @@ function love.update(dt)
             CH.playerMovementDisableCount = CH.playerMovementDisableCount - 1
         end
     end
-    if debugMode then
-        CH:checkCollisions() -- This will handle and resolve collisions right before movement.
-    end
+
+    CH:checkCollisions() -- This will handle and resolve collisions right before movement.
     for i = 1, #movingObjects do
         movingObjects[i]:move()
     end
@@ -161,6 +225,9 @@ function love.keypressed(key)
     if key == 'tab' then
         debugMode = not debugMode
     end
+    if key == 'g' then
+        gameState = 2
+    end
     if debugMode then
 
     end
@@ -170,4 +237,7 @@ end
 
 function love.quit()
   print("Game instance has been closed")
+  udp:send(entity .. " -1 QUITTING")
+  local r,g,b = unpack(player.color)
+  print(r .. "," .. g .. "," .. b)
 end
