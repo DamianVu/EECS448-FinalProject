@@ -1,11 +1,8 @@
 -- Current functionality is just movement and mouse cursor until we get maps and tiling implemented
 
-<<<<<<< HEAD
-=======
 local CH = require "collisionhandler"
 
 require "netClient"
->>>>>>> netsys
 require "tiling"
 require "libraries.collisionhandler"
 require "libraries.cObject"
@@ -14,14 +11,11 @@ require "debugging"
 mouse = {}
 player = {}
 
-<<<<<<< HEAD
 movingObjects = {}
-=======
 -- Server connection information
 SERVER_ADDRESS, SERVER_PORT = "localhost", 25560
 
 USERNAME = "user"
->>>>>>> netsys
 
 function love.load()
 
@@ -81,24 +75,12 @@ function love.draw()
     end
 
     -- Draw player --
-<<<<<<< HEAD
     player:draw()
     --love.graphics.circle("fill", player.x, player.y, 2) -- Dot at center of player
-    
+
     if debugMode then
         player:drawHitbox()
     end
-=======
-    love.graphics.draw(player.img, player.x, player.y, 0, .5, .5, 32, 32)
-
-
-
-
-
-
-    player.hb:setLocation(player.x, player.y)
-    player.hb:drawHitbox()
->>>>>>> netsys
 
     love.graphics.pop()
     -- This stack pop ends the code for the camera following. Anything that should stay in place on screen should follow this
@@ -135,7 +117,6 @@ function love.update(dt)
     -- Get current mouse position and store in object mouse
     mouse.x, mouse.y = love.mouse.getPosition()
 
-<<<<<<< HEAD
     if CH.playerMovement then
 
         if love.keyboard.isDown('d') then
@@ -184,24 +165,6 @@ function love.update(dt)
     end
     for i = 1, #movingObjects do
         movingObjects[i]:move()
-=======
-    -- Listen for keypresses to move player (if a player holds 'w' and 's', they will be stationary. Same with 'a' and 'd')
-    if love.keyboard.isDown('d') then
-        player.x = player.x + (player.speed * base_speed * dt)
-        sendToServer(USERNAME.. " moveto " .. player.x .. " " .. player.y)
-    end
-    if love.keyboard.isDown('a') then
-        player.x = player.x - (player.speed * base_speed * dt)
-        sendToServer(USERNAME.. " moveto " .. player.x .. " " .. player.y)
-    end
-    if love.keyboard.isDown('w') then
-        player.y = player.y - (player.speed * base_speed * dt)
-        sendToServer(USERNAME.. " moveto " .. player.x .. " " .. player.y)
-    end
-    if love.keyboard.isDown('s') then
-        player.y = player.y + (player.speed * base_speed * dt)
-        sendToServer(USERNAME.. " moveto " .. player.x .. " " .. player.y)
->>>>>>> netsys
     end
 
 end
