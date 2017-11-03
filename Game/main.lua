@@ -8,7 +8,7 @@ require "networktesting"
 
 local socket = require("socket")
 --local address, port = "104.131.9.165", 5005
-local address, port = "13.58.15.46", 5005 -- AWS EC2 Instance
+local address, port = "127.0.0.1", 5005 -- AWS EC2 Instance
 local updateRate = .1
 
 mouse = {}
