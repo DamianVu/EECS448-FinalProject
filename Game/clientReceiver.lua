@@ -4,10 +4,10 @@ local socket = require "socket"
 local rc = love.thread.getChannel("receiver")
 
 
-
-
 while rc:peek() != "disconnect" do
   print("Test")
   -- data = udp:receive()
   -- print(tostring(data))
 end
+udp:close()
+print("Closing receiver thread...")
