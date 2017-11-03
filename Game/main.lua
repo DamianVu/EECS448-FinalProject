@@ -1,12 +1,13 @@
 -- Current functionality is just movement and mouse cursor until we get maps and tiling implemented
 
-CH = require "collisionhandler"
 
 require "netClient"
 require "tiling"
 require "libraries.collisionhandler"
 require "libraries.cObject"
 require "debugging"
+require "libraries.gamestate"
+require "handlers.maphandler"
 
 mouse = {}
 player = {}
@@ -14,8 +15,8 @@ player = {}
 movingObjects = {}
 
 -- Server connection information (Currently the AWS server info)
-SERVER_ADDRESS, SERVER_PORT = "13.58.15.46", 5050
-USERNAME = "user"
+--SERVER_ADDRESS, SERVER_PORT = "13.58.15.46", 5050
+--USERNAME = "user"
 -- sX, sY, sR, sG, sB = 96, 96, 255, 255, 255 TODO
 
 
@@ -23,10 +24,10 @@ function love.load()
 
 
     -- Initialize connection to server
-    connectToServer(SERVER_ADDRESS, SERVER_PORT)
+    --connectToServer(SERVER_ADDRESS, SERVER_PORT)
 
     -- Spawn receiver thread to receive buffer updates from the server
-    spawnReceiver()
+    --spawnReceiver()
 
 
     windowWidth = 1600
@@ -41,6 +42,9 @@ function love.load()
     -- Make mouse invisible so we can use a custom cursor --
     love.mouse.setVisible(false)
 
+    GS = GameStateHandler()
+
+    MH = MapHandler()
 
     -- Global Game variables
     base_speed = 250
@@ -99,6 +103,7 @@ function love.draw()
     if debugMode then
         drawDebug()
     end
+    drawStateMonitoring()
     -- End Text in the top left
     --love.graphics.circle("fill", windowWidth/2, windowHeight/2, 2)            This code draws a dot in the center of the screen
     -- Code that will cap FPS at 144 --
@@ -158,9 +163,11 @@ function love.update(dt)
         end
 
         -- Send movement to server
+        --[=====[
         if player.y_vel ~= 0 or player.x_vel ~= 0 then
           sendToServer(USERNAME.." moveto "..player.x.." "..player.y)
         end
+        ]=====]--
 
     else
         if CH.playerMovementDisableCount < 1 then
@@ -184,13 +191,14 @@ function love.keypressed(key)
     -- Handle keypresses
     if key == 'r' then player.x, player.y = 0, 0 end -- Reset position
     if key == 'tab' then debugMode = not debugMode end
-    if key == 'l' then sendToServer(USERNAME.." listplayers") end
+    --if key == 'l' then sendToServer(USERNAME.." listplayers") end
+    if key == 'b' then MH:loadMap(nil) end
 
 end
 
 
 
 function love.quit()
-  disconnectFromServer()
+  --disconnectFromServer()
   print("Game instance has been closed")
 end

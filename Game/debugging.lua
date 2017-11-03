@@ -22,6 +22,13 @@ function drawDebug()
     --love.graphics.print("Adj: " .. coordListString(al.list), 10, 210)
 end
 
+function drawStateMonitoring()
+    local stateNum = GS:getGameState()
+    local stateDesc = GS.states[stateNum]
+    love.graphics.setColor(255, 0, 0)
+    love.graphics.print("Game State - " .. stateNum .. ": " .. (stateDesc or "uh"), 1450, 10)
+end
+
 function coordListString(list)
     local tempString = ""
 
