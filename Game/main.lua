@@ -12,14 +12,21 @@ mouse = {}
 player = {}
 
 movingObjects = {}
--- Server connection information
-SERVER_ADDRESS, SERVER_PORT = "localhost", 25560
+
+-- Server connection information (Currently the AWS server info)
+SERVER_ADDRESS, SERVER_PORT = "13.58.15.46", 5050
 USERNAME = "user"
+-- sX, sY, sR, sG, sB = 96, 96, 255, 255, 255 TODO
+
 
 function love.load()
 
+
     -- Initialize connection to server
     connectToServer(SERVER_ADDRESS, SERVER_PORT)
+
+    -- Spawn receiver thread to receive buffer updates from the server
+    spawnReceiver()
 
 
     windowWidth = 1600
@@ -77,7 +84,7 @@ function love.draw()
     --love.graphics.circle("fill", player.x, player.y, 2) -- Dot at center of player
 
     if debugMode then
-        player:drawHitbox()
+      player:drawHitbox()
     end
 
     love.graphics.pop()
@@ -150,6 +157,11 @@ function love.update(dt)
             player.y_vel_counter = base_slowdown_counter
         end
 
+        -- Send movement to server
+        if player.y_vel ~= 0 or player.x_vel ~= 0 then
+          sendToServer(USERNAME.." moveto "..player.x.." "..player.y)
+        end
+
     else
         if CH.playerMovementDisableCount < 1 then
             CH.playerMovementDisableCount = 10
@@ -168,17 +180,12 @@ function love.update(dt)
 end
 
 function love.keypressed(key)
-    if key == 'r' then -- reset position
-        player.x = 0
-        player.y = 0
-        -- sendToServer(USERNAME.. " moveto " .. player.x .. " " .. player.y)
-    end
-    if key == 'tab' then
-        debugMode = not debugMode
-    end
-    if debugMode then
 
-    end
+    -- Handle keypresses
+    if key == 'r' then player.x, player.y = 0, 0 end -- Reset position
+    if key == 'tab' then debugMode = not debugMode end
+    if key == 'l' then sendToServer(USERNAME.." listplayers") end
+
 end
 
 
