@@ -1,8 +1,8 @@
 
 RawMaps = {
 	map1 = {
-		startx = 2,
-		starty = 2,
+		startx = 10,
+		starty = 10,
 		img = "testset.png",
 		id_dict = {
 			[1] = {collision = true, bumpFactor = 0},
@@ -32,6 +32,8 @@ RawMaps = {
 	},
 
 	map2 = {
+		startx = 2,
+		starty = 2,
 		img = "testset.png",
 		id_dict = {
 			[1] = {collision = true, bumpFactor = 0},

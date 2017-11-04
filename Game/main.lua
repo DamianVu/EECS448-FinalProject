@@ -36,14 +36,15 @@ function love.load()
     --love.window.setFullscreen(true, "desktop")
 
     -- Load tileset
-    load_tileset()
+    --load_tileset()
 
     -- Make mouse invisible so we can use a custom cursor --
     love.mouse.setVisible(false)
 
     GS = GameStateHandler()
 
-    MH = MapHandler()
+
+
 
     -- Global Game variables
     base_speed = 250
@@ -58,6 +59,9 @@ function love.load()
     -- Collision Handler initialization --
     CH = CollisionHandler()
     CH:addObj(player)
+
+    MH = MapHandler()
+    MH:loadMap(nil)
 
     -- Code that will cap FPS at 144
     min_dt = 1/144
