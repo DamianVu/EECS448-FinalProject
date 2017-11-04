@@ -1,6 +1,5 @@
 -- Current functionality is just movement and mouse cursor until we get maps and tiling implemented
 
-
 require "netClient"
 require "tiling"
 require "libraries.collisionhandler"
