@@ -61,7 +61,7 @@ function love.load()
     CH:addObj(player)
 
     MH = MapHandler()
-    MH:loadMap(nil)
+    MH:loadMap(2,2)
 
     -- Code that will cap FPS at 144
     min_dt = 1/144
