@@ -8,14 +8,17 @@ function drawMonitors()
     love.graphics.print("Current FPS: "..tostring(love.timer.getFPS()), 10, 30)
     love.graphics.print("Debug Mode(tab): " .. tostring(debugMode), 10, 50)
 
+    
+
+end
+
+function drawNetworkMonitors()
     -- Network Monitors
     love.graphics.setColor(255, 0, 0)
-    love.graphics.print("Game State: " .. gameState, 1450, 10)
-    love.graphics.print("Messages sent: " .. messageCount, 1450, 30)
-    love.graphics.print(playerList, 1450, 50)
-    love.graphics.print("Peer table size: " .. #peers, 1450, 70)
-    love.graphics.print("Our Ent Name: " .. (USERNAME or ""), 1450, 90)
-
+    love.graphics.print("Messages sent: " .. messageCount, 1450, 10)
+    love.graphics.print(playerList, 1450, 30)
+    love.graphics.print("Peer table size: " .. #peers, 1450, 50)
+    love.graphics.print("Our Ent Name: " .. (USERNAME or ""), 1450, 70)
 end
 
 function drawDebug()
@@ -32,13 +35,6 @@ function drawDebug()
     love.graphics.print("Noclip mode: " .. tostring(noclip) .. " (press 'n' to toggle)", 10 , 210)
     --love.graphics.print("Current: " .. coordListString(cl.list), 10, 190)
     --love.graphics.print("Adj: " .. coordListString(al.list), 10, 210)
-end
-
-function drawStateMonitoring()
-    local stateNum = GS:getGameState()
-    local stateDesc = GS.states[stateNum]
-    love.graphics.setColor(255, 0, 0)
-    love.graphics.print("Game State - " .. stateNum .. ": " .. (stateDesc or "uh"), 1450, 10)
 end
 
 function coordListString(list)
