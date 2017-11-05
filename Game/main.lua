@@ -1,7 +1,6 @@
 -- Current functionality is just movement and mouse cursor until we get maps and tiling implemented
 
 
-require "tiling"
 require "libraries.collisionhandler"
 require "libraries.cObject"
 require "debugging"
@@ -88,7 +87,7 @@ function love.draw()
     love.graphics.push()
     love.graphics.translate(x_translate_val, y_translate_val)
 
-    draw_tiles() -- from tiling.lua
+    MH:drawMap()
     if debugMode then
         highlightTiles(player)
     end

@@ -29,14 +29,16 @@ function CollisionHandler:getNumberOfPossibleCollisions(id) -- Object id
 	local currentTiles, adjacentTiles = get_cObjectPositionInfo(self.collisionEntities[id])
 	for i = 1, #adjacentTiles.list do
 		local x,y = unpack(adjacentTiles.list[i])
-		if currentMap.map.tiles[y][x].collision then
+		local collision, _ = MH:getTileInfo(x,y)
+		if collision then
 			adjCount = adjCount + 1
 			adjList:add({x,y})
 		end
 	end
 	for i = 1, #currentTiles.list do
 		local x,y = unpack(currentTiles.list[i])
-		if currentMap.map.tiles[y][x].collision then
+		local collision, _ = MH:getTileInfo(x,y)
+		if collision then
 			collisionCount = collisionCount + 1
 			collisionList:add({x,y})
 		end
@@ -70,7 +72,9 @@ function CollisionHandler:handleTileCollision(mId, coord)
 	local py = self.collisionEntities[mId].y
 	local cx,cy = unpack(coord)
 	local x,y = getTileAnchorPoint(cx,cy)
-	local bumpFactor = currentMap.map.tiles[cy][cx].bumpFactor
+
+	-- underscore is a var we wont use
+	local _, bumpFactor = MH:getTileInfo(cx,cy)
 
 	local diffx = px - x
 	local diffy = py - y
