@@ -1,11 +1,12 @@
 -- Current functionality is just movement and mouse cursor until we get maps and tiling implemented
 
 
-require "libraries.collisionhandler"
+require "handlers.CollisionHandler"
+require "handlers.GamestateHandler"
+require "handlers.MapHandler"
+
 require "libraries.cObject"
 require "debugging"
-require "libraries.gamestate"
-require "handlers.maphandler"
 require "netClient"
 
 mouse = {}
@@ -56,6 +57,8 @@ function love.load()
 
     MH = MapHandler()
     MH:loadMap(2,2)
+
+    noclip = false -- if true then no collision should happen.
 
     -- Code that will cap FPS at 144
     min_dt = 1/144
@@ -173,7 +176,7 @@ function love.update(dt)
     end
 
     -- Handle collisions
-    if not debugMode then CH:checkCollisions() end
+    if not noclip then CH:checkCollisions() end
 
     -- Move the moving objects after collisions have been handled
     for i = 1, #movingObjects do movingObjects[i]:move() end
@@ -185,6 +188,7 @@ function love.keypressed(key)
     -- Handle keypresses
     if key == 'r' then player.x, player.y = 0, 0 end -- Reset position
     if key == 'b' then MH:loadMap(nil) end
+    if key == 'n' then noclip = not noclip end
     if key == 'g' then gameState = 2 end  -- Change gamestate (testing)
     if key == 'l' then sendToServer(USERNAME.." listplayers") end -- List online players (testing)
     if key == 'tab' then debugMode = not debugMode end -- Toggle debug mode

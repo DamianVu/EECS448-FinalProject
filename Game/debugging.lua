@@ -29,6 +29,7 @@ function drawDebug()
     local coll, track = CH:getNumberOfPossibleCollisions(1)
     love.graphics.print("Current # of collisions: " .. coll, 10, 170)
     love.graphics.print("We should be tracking " .. track .. " possible collisions", 10, 190)
+    love.graphics.print("Noclip mode: " .. tostring(noclip) .. " (press 'n' to toggle)", 10 , 210)
     --love.graphics.print("Current: " .. coordListString(cl.list), 10, 190)
     --love.graphics.print("Adj: " .. coordListString(al.list), 10, 210)
 end
