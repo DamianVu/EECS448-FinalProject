@@ -6,10 +6,6 @@ OnlineGame = {}
 local movingObj = {}
 
 function OnlineGame:init() -- init is only called once
-	-- Server connection information (Currently the AWS server info)
-	SERVER_ADDRESS, SERVER_PORT = "13.58.15.46", 5050
-	USERNAME = tostring(math.random(99999)) -- String eventually
-	updateRate = 0.1
 
 end
 
@@ -141,6 +137,7 @@ function OnlineGame:keypressed(key)
     if debugMode and key == 'r' then player.x, player.y = 0, 0 end -- Reset position
     if key == 'n' then noclip = not noclip end
     if key == 'tab' then debugMode = not debugMode end -- Toggle debug mode
+    if key == 'escape' then Gamestate.switch(Mainmenu) end
 end
 
 

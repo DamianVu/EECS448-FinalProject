@@ -59,6 +59,14 @@ function Menu:keypressed(key)
 		end
 	end
 
+	if key == "escape" then
+		if self.currentMenu == 1 then
+			love.event.quit()
+		elseif self.currentMenu == 2 then
+			self.currentMenu = 1
+		end
+	end
+
 	if self.currentMenu ~= 2 then
 	if key == "w" or key == "up" then
 		if self.selection == 1 then

@@ -21,6 +21,11 @@ player = {}
 
 math.randomseed(os.time())
 
+-- Server connection information (Currently the AWS server info)
+SERVER_ADDRESS, SERVER_PORT = "13.58.15.46", 5050
+USERNAME = tostring(math.random(99999)) -- String eventually
+updateRate = 0.1
+
 
 function love.load()
 
