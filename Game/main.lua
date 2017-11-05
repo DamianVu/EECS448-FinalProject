@@ -1,9 +1,12 @@
 -- Current functionality is just movement and mouse cursor until we get maps and tiling implemented
 
+
 require "tiling"
 require "libraries.collisionhandler"
 require "libraries.cObject"
 require "debugging"
+require "libraries.gamestate"
+require "handlers.maphandler"
 require "netClient"
 
 mouse = {}
@@ -27,10 +30,12 @@ function love.load()
     --love.window.setFullscreen(true, "desktop")
 
     -- Load tileset
-    load_tileset()
+    --load_tileset()
 
     -- Make mouse invisible so we can use a custom cursor --
     love.mouse.setVisible(false)
+
+    GS = GameStateHandler()
 
     -- Global Game variables
     gameState = 1 -- Moving
@@ -49,6 +54,9 @@ function love.load()
     -- Collision Handler initialization --
     CH = CollisionHandler()
     CH:addObj(player)
+
+    MH = MapHandler()
+    MH:loadMap(2,2)
 
     -- Code that will cap FPS at 144
     min_dt = 1/144
@@ -104,7 +112,9 @@ function love.draw()
 
     -- Debugging information (from debugging.lua)
     drawMonitors()
+
     if debugMode then drawDebug() end
+    drawStateMonitoring()
 
     -- End Text in the top left
     --love.graphics.circle("fill", windowWidth/2, windowHeight/2, 2)            This code draws a dot in the center of the screen
@@ -175,6 +185,7 @@ function love.keypressed(key)
 
     -- Handle keypresses
     if key == 'r' then player.x, player.y = 0, 0 end -- Reset position
+    if key == 'b' then MH:loadMap(nil) end
     if key == 'g' then gameState = 2 end  -- Change gamestate (testing)
     if key == 'l' then sendToServer(USERNAME.." listplayers") end -- List online players (testing)
     if key == 'tab' then debugMode = not debugMode end -- Toggle debug mode
