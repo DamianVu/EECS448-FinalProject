@@ -1,7 +1,5 @@
 -- Current functionality is just movement and mouse cursor until we get maps and tiling implemented
 
-CH = require "collisionhandler"
-
 require "tiling"
 require "libraries.collisionhandler"
 require "libraries.cObject"
