@@ -1,10 +1,21 @@
 -- This file will contain Debug message drawing functions along with small functions to aid debugging
 
+-- NOTE: Uses variables from main and netClient
+
 function drawMonitors()
     love.graphics.setColor(0, 203, 255)
     love.graphics.print("Wubba lubba dub dub!", 10, 10)
-    love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 30)
+    love.graphics.print("Current FPS: "..tostring(love.timer.getFPS()), 10, 30)
     love.graphics.print("Debug Mode(tab): " .. tostring(debugMode), 10, 50)
+
+    -- Network Monitors
+    love.graphics.setColor(255, 0, 0)
+    love.graphics.print("Game State: " .. gameState, 1450, 10)
+    love.graphics.print("Messages sent: " .. messageCount, 1450, 30)
+    love.graphics.print(playerList, 1450, 50)
+    love.graphics.print("Peer table size: " .. #peers, 1450, 70)
+    love.graphics.print("Our Ent Name: " .. (USERNAME or ""), 1450, 90)
+
 end
 
 function drawDebug()

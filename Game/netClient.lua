@@ -2,51 +2,102 @@
 
 socket = require "socket" -- Lua Socket Library
 
-connected = false
-ephemeralPort = -1
+verbose_debug = true -- Enable to print packet flow for each client
 
--- Connect to server (UDP socket initialization)
+connected = false
+
+peers = {}
+
+-- Connect to server (Socket initialization)
 function connectToServer(address, port)
+
+  --UDP socket initialization
   udp = socket.udp()
   udp:setpeername(address, port)
   udp:settimeout(0)
-  sendToServer(USERNAME.." join 0 0 255 255 255")
-  -- holePunch()
+
+  -- Initialize player info relevant to server
+  local r,g,b = unpack(player.color)
+  messageCount = 0
+  playerList = ""
+
+  -- Send join signal
+  sendToServer(USERNAME.." join "..player.x.." "..player.y.." "..r.." "..g.." "..b)
   connected = true
+
 end
 
--- function holePunch()
---   data = udp:receive()
---   holepunched = false
---   repeat
---     if data then
---         portflag, port, etc = data:match("^(%S*) (%S*) (.*)")
---         if portflag == "port" then
---           ephemeralPort = port
---           holepunched = true
---         end
---         print(tostring(data))
---     end
---   until holepunched
--- end
-
--- Disconnect from the server (UDP socket closure)
+-- Disconnect from the server (Socket closure)
 function disconnectFromServer()
   sendToServer(USERNAME.." leave")
   udp:close()
   print("Disconnecting from server...")
-  receiverChannel:push("disconnect")
   connected = false
 end
 
--- Spawn the thread to allow receiving of data from server
-function spawnReceiver()
-  receiverThread = love.thread.newThread("clientReceiver.lua")
-  receiverChannel = love.thread.getChannel("receiver")
-  receiverChannel:push("Test stack")
-  receiverThread:start()
+-- The receiver loop used by the client to get data from the server
+function receiver()
+  repeat
+      -- Read and parse packet
+      receivedData, msg = udp:receive()
+      if receivedData then
+          if verbose_debug then print(receivedData) end
+          -- Grammar definition
+          local entity, cmd, parms = tostring(receivedData):match("^(%S*) (%S*) (.*)")
+          if entity ~= USERNAME then
+            if cmd == 'join' then
+              local px, py, pr, pg, pb = parms:match("(-*%d+.*%d*) (-*%d+.*%d*) (%d+) (%d+) (%d+)")
+              addPeer(entity, px, py, pr, pg, pb)
+            end
+            if cmd == 'leave' then
+              table.remove(peers, peerIndex(entity))
+            end
+            if cmd == 'moveto' then
+                local x, y = parms:match("^(%-?[%d.e]*) (%-?[%d.e]*)$")
+                updatePeer(entity, x, y)
+            end
+          end
+      elseif msg~= 'timeout' then error("Network error: " ..tostring(msg))
+      end
+  until not receivedData
 end
 
 
--- General method for sending data to server.
-function sendToServer(data) udp:send(data) end
+function peerIndex(ent)
+	for i = 1, #peers do
+		if peers[i].id == ent then return i end
+	end
+	return -1
+end
+
+function addPeer(name, x, y, r, g, b)
+  print("Adding peer with color ",r,g,b)
+	peers[#peers+1] = cObject(name, love.graphics.newImage('images/sprites/player.png'), {r,g,b}, 1, x, y, 32, 32)
+  playerList = playerList..", "..name
+end
+
+function updatePeer(name, x, y, r, g, b)
+	if name ~= USERNAME then
+		local i = peerIndex(name)
+		if i == -1 then addPeer(name, x, y, r, g, b)
+		else
+      local p = peers[i]
+      p.x, p.y, p.r, p.g, p.b = x or p.x, y or p.y, r or p.r, g or p.g, b or p.b
+    end
+	end
+end
+
+-- Spawn the thread to allow receiving of data from server
+-- function spawnReceiver()
+--   receiverThread = love.thread.newThread("clientReceiver.lua")
+--   receiverChannel = love.thread.getChannel("receiver")
+--   receiverChannel:push("Test stack")
+--   receiverThread:start()
+-- end
+
+
+-- Semantically convenient helper for sending data to server.
+function sendToServer(data)
+  udp:send(data)
+  messageCount = messageCount + 1
+end

@@ -8,9 +8,11 @@ class = require 'libraries.ext.30log'
 cObject = class("cObject", {x_vel = 0, y_vel = 0, x_vel_counter = 10, y_vel_counter = 10})
 
 -- Initialization
-function cObject:init(id, sprite, speed, x, y, width, height, x_offset, y_offset, rotation)
+function cObject:init(id, sprite, color, speed, x, y, width, height, x_offset, y_offset, rotation)
 	self.id = id or "player"
 	self.sprite = sprite
+	math.randomseed(os.time())
+	self.color = color or {math.random(0,255), math.random(0,255), math.random(0,255)}
 	self.speed = speed or 1
 	self.x = x
 	self.y = y
@@ -42,7 +44,7 @@ function cObject:drawHitbox()
 end
 
 function cObject:draw()
-	love.graphics.setColor(255,255,255,255)
+	love.graphics.setColor(self.color)
 	love.graphics.draw(self.sprite, self.x, self.y, self.rotation, self.scaleX, self.scaleY, self.x_offset, self.y_offset)
 end
 
