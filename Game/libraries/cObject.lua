@@ -29,10 +29,15 @@ end
 -- Will return 4 coordinates that the object currently spans. In top-left, top-right, bottom-left, bottom-right order
 function cObject:getSpan()
 	local spanList = CoordinateList()
-	spanList:add({math.floor((self.x - (self.x_offset * self.scaleX) + currentMap.startx) / currentMap.tileWidth) + 1, math.floor((self.y - (self.y_offset * self.scaleY) + currentMap.starty) / currentMap.tileHeight) + 1})
-	spanList:add({math.floor((self.x + (self.x_offset * self.scaleX) + currentMap.startx) / currentMap.tileWidth) + 1, math.floor((self.y - (self.y_offset * self.scaleY) + currentMap.starty) / currentMap.tileHeight) + 1})
-	spanList:add({math.floor((self.x - (self.x_offset * self.scaleX) + currentMap.startx) / currentMap.tileWidth) + 1, math.floor((self.y + (self.y_offset * self.scaleY) + currentMap.starty) / currentMap.tileHeight) + 1})
-	spanList:add({math.floor((self.x + (self.x_offset * self.scaleX) + currentMap.startx) / currentMap.tileWidth) + 1, math.floor((self.y + (self.y_offset * self.scaleY) + currentMap.starty) / currentMap.tileHeight) + 1})
+
+	local origin, tileWidth, tileHeight = MH:getCurrentMapDimensions()
+
+	local startx,starty = unpack(origin)
+
+	spanList:add({math.floor((self.x - (self.x_offset * self.scaleX) + startx) / tileWidth) + 1, math.floor((self.y - (self.y_offset * self.scaleY) + starty) / tileHeight) + 1})
+	spanList:add({math.floor((self.x + (self.x_offset * self.scaleX) + startx) / tileWidth) + 1, math.floor((self.y - (self.y_offset * self.scaleY) + starty) / tileHeight) + 1})
+	spanList:add({math.floor((self.x - (self.x_offset * self.scaleX) + startx) / tileWidth) + 1, math.floor((self.y + (self.y_offset * self.scaleY) + starty) / tileHeight) + 1})
+	spanList:add({math.floor((self.x + (self.x_offset * self.scaleX) + startx) / tileWidth) + 1, math.floor((self.y + (self.y_offset * self.scaleY) + starty) / tileHeight) + 1})
 	return spanList
 end
 
