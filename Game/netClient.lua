@@ -43,7 +43,7 @@ function receiver()
       if receivedData then
           if verbose_debug then print(receivedData) end
           -- Grammar definition
-          local entity, cmd, parms = tostring(receivedData):match("^(%S*) (%S*) (.*)")
+          local entity, cmd, parms = tostring(receivedData):match("^(%S*) (%S*) *(.*)")
           if entity ~= USERNAME then
             if cmd == 'join' then
               local px, py, pr, pg, pb = parms:match("(-*%d+.*%d*) (-*%d+.*%d*) (%d+) (%d+) (%d+)")
