@@ -52,7 +52,7 @@ function receiver()
 	    print("Received Packet from " .. tostring(fromIP) .. ":" .. tostring(fromPort) .. " ->\n    "  .. tostring(data)) -- (Print Debug)
 
 			-- Read packet (Packet grammar: <Entity> <Command> <p1> <p...> <pN> where p1...pN represent N parameters
-      entity, cmd, parms = data:match("^(%S*) (%S*) (.*)")
+      entity, cmd, parms = data:match("^(%S*) (%S*) *(.*)")
 
       -- Grammar definition
       if cmd == 'join' then
@@ -67,6 +67,7 @@ function receiver()
 					end
       elseif cmd == 'leave' then
 					broadcast(data, entity)
+					print("Player left, attempting to remove index " .. indexOf(entity))
 					table.remove(players, indexOf(entity))
 			elseif cmd == 'moveto' then
 					broadcast(data, entity)
