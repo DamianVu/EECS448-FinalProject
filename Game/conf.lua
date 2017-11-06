@@ -1,4 +1,5 @@
----
+--- Configurations.
+-- This function contains the configuration for the game
 function love.conf(t)
 	t.identity = "Wubba"
 	t.console = false

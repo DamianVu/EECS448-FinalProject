@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>ldoc</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/conf.html">conf</a></li>
+  <li><a href="../modules/debugging.html">debugging</a></li>
+  <li><a href="../modules/handlers.CollisionHandler.html">handlers.CollisionHandler</a></li>
+  <li><a href="../modules/handlers.MapHandler.html">handlers.MapHandler</a></li>
+  <li><a href="../modules/libraries.cObject.html">libraries.cObject</a></li>
+  <li><a href="../modules/netClient.html">netClient</a></li>
+  <li><a href="../modules/states.characterselection.html">states.characterselection</a></li>
+  <li><a href="../modules/states.debugstate.html">states.debugstate</a></li>
+  <li><a href="../modules/states.mainmenu.html">states.mainmenu</a></li>
+  <li><strong>states.multiplayer</strong></li>
+  <li><a href="../modules/states.playgame.html">states.playgame</a></li>
+  <li><a href="../modules/states.singleplayer.html">states.singleplayer</a></li>
+  <li><a href="../modules/states.splashscreen.html">states.splashscreen</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>states.multiplayer</code></h1>
+<p>State online game (module)
+ This state allows us to make network connections and play online</p>
+<p></p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#OnlineGame:init">OnlineGame:init ()</a></td>
+	<td class="summary">Called only when this module is initialized (in main.lua)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnlineGame:enter">OnlineGame:enter ()</a></td>
+	<td class="summary">Called whenever this state has been entered</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnlineGame:draw">OnlineGame:draw ()</a></td>
+	<td class="summary">Called on game ticks for drawing operations</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnlineGame:update">OnlineGame:update (dt)</a></td>
+	<td class="summary">Called every game tick</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnlineGame:leave">OnlineGame:leave ()</a></td>
+	<td class="summary">Called when this state has been left</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnlineGame:quit">OnlineGame:quit ()</a></td>
+	<td class="summary">Called if the game is exited in this state</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnlineGame:keypressed">OnlineGame:keypressed (key)</a></td>
+	<td class="summary">Event handler binding to listen for keypresses</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "OnlineGame:init"></a>
+    <strong>OnlineGame:init ()</strong>
+    </dt>
+    <dd>
+    Called only when this module is initialized (in main.lua)
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnlineGame:enter"></a>
+    <strong>OnlineGame:enter ()</strong>
+    </dt>
+    <dd>
+    Called whenever this state has been entered
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnlineGame:draw"></a>
+    <strong>OnlineGame:draw ()</strong>
+    </dt>
+    <dd>
+    Called on game ticks for drawing operations
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnlineGame:update"></a>
+    <strong>OnlineGame:update (dt)</strong>
+    </dt>
+    <dd>
+    Called every game tick
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">dt</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnlineGame:leave"></a>
+    <strong>OnlineGame:leave ()</strong>
+    </dt>
+    <dd>
+    Called when this state has been left
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnlineGame:quit"></a>
+    <strong>OnlineGame:quit ()</strong>
+    </dt>
+    <dd>
+    Called if the game is exited in this state
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnlineGame:keypressed"></a>
+    <strong>OnlineGame:keypressed (key)</strong>
+    </dt>
+    <dd>
+    Event handler binding to listen for keypresses
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">key</span>
+        if key == 'l' then sendToServer(USERNAME.." listplayers") end -- List online players (testing)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2017-11-05 23:53:08 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

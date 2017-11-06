@@ -8,7 +8,8 @@ connected = false
 
 peers = {}
 
--- Connect to server (Socket initialization)
+--- Connect to server (Socket initialization).
+-- Connects the client to the server upon multiplayer mode
 function connectToServer(address, port)
 
   --UDP socket initialization
@@ -35,6 +36,7 @@ function disconnectFromServer()
   connected = false
 end
 
+--- Client-side receiver that connects to the server.
 -- The receiver loop used by the client to get data from the server
 function receiver()
   repeat
@@ -68,7 +70,8 @@ function receiver()
   until not receivedData
 end
 
-
+--- Get peer index.
+-- Gets the index of a peer in the peer table.
 function peerIndex(ent)
 	for i = 1, #peers do
 		if peers[i].id == ent then return i end
@@ -76,12 +79,16 @@ function peerIndex(ent)
 	return -1
 end
 
+--- Add a peer to the peer table.
+-- Adds a peer to the peer table for a given client
 function addPeer(name, x, y, r, g, b)
   print("Adding peer with color ",r,g,b)
 	peers[#peers+1] = cObject(name, love.graphics.newImage('images/sprites/player.png'), {r,g,b}, 1, x, y, 32, 32)
   playerList = playerList..", "..name
 end
 
+--- Update a peer's information.
+-- Updates the data for a peer in the peer table.
 function updatePeer(name, x, y, r, g, b)
 	if name ~= USERNAME then
 		local i = peerIndex(name)
@@ -93,15 +100,7 @@ function updatePeer(name, x, y, r, g, b)
 	end
 end
 
--- Spawn the thread to allow receiving of data from server
--- function spawnReceiver()
---   receiverThread = love.thread.newThread("clientReceiver.lua")
---   receiverChannel = love.thread.getChannel("receiver")
---   receiverChannel:push("Test stack")
---   receiverThread:start()
--- end
-
-
+--- Send data to the server.
 -- Semantically convenient helper for sending data to server.
 function sendToServer(data)
   udp:send(data)

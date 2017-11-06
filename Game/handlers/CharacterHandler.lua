@@ -3,15 +3,21 @@ require "libraries.ext.30log"
 
 CharacterHandler = class("CharacterHandler", {})
 
+--- Initializes Character Handler.
+-- This function initializes the handler for character creation/management.
 function CharacterHandler:init()
 	-- Load users from character save folder
 	self.characterFiles = love.filesystem.getDirectoryItems("characters")
 end
 
+--- Refreshes Character Handler.
+-- This function refreshes the character handler
 function CharacterHandler:refresh()
 	self.characterFiles = love.filesystem.getDirectoryItems("characters")
 end
 
+--- Gets the characters saved on the machine.
+-- This function gets the characters to display in the character handler
 function CharacterHandler:getCharacters()
 	-- Process each character file
 	local characters = {}
@@ -40,10 +46,17 @@ function CharacterHandler:getCharacters()
 	return characters
 end
 
+--- Saves the current character.
+-- Saves the current character in the character handler
 function CharacterHandler:saveCurrentCharacter()
 
 end
 
+<<<<<<< HEAD
+=======
+--- Add a character to the character handler
+-- Add a character to the character handler
+>>>>>>> 216ddce73ef625b046097179b06ca1896154ed5c
 function CharacterHandler:addCharacter(name, color)
 	local r,g,b = unpack(color)
 

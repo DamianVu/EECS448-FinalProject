@@ -1,0 +1,237 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>ldoc</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/conf.html">conf</a></li>
+  <li><a href="../modules/debugging.html">debugging</a></li>
+  <li><a href="../modules/handlers.CollisionHandler.html">handlers.CollisionHandler</a></li>
+  <li><a href="../modules/handlers.MapHandler.html">handlers.MapHandler</a></li>
+  <li><a href="../modules/libraries.cObject.html">libraries.cObject</a></li>
+  <li><strong>netClient</strong></li>
+  <li><a href="../modules/states.characterselection.html">states.characterselection</a></li>
+  <li><a href="../modules/states.debugstate.html">states.debugstate</a></li>
+  <li><a href="../modules/states.mainmenu.html">states.mainmenu</a></li>
+  <li><a href="../modules/states.multiplayer.html">states.multiplayer</a></li>
+  <li><a href="../modules/states.playgame.html">states.playgame</a></li>
+  <li><a href="../modules/states.singleplayer.html">states.singleplayer</a></li>
+  <li><a href="../modules/states.splashscreen.html">states.splashscreen</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>netClient</code></h1>
+<p>Connect to server (Socket initialization).</p>
+<p>
+ Connects the client to the server upon multiplayer mode</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#receiver">receiver ()</a></td>
+	<td class="summary">Client-side receiver that connects to the server.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#peerIndex">peerIndex (ent)</a></td>
+	<td class="summary">Get peer index.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#addPeer">addPeer (name, x, y, r, g, b)</a></td>
+	<td class="summary">Add a peer to the peer table.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#updatePeer">updatePeer (name, x, y, r, g, b)</a></td>
+	<td class="summary">Update a peer's information.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#sendToServer">sendToServer (data)</a></td>
+	<td class="summary">Send data to the server.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "receiver"></a>
+    <strong>receiver ()</strong>
+    </dt>
+    <dd>
+    Client-side receiver that connects to the server.
+ The receiver loop used by the client to get data from the server
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "peerIndex"></a>
+    <strong>peerIndex (ent)</strong>
+    </dt>
+    <dd>
+    Get peer index.
+ Gets the index of a peer in the peer table.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ent</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "addPeer"></a>
+    <strong>addPeer (name, x, y, r, g, b)</strong>
+    </dt>
+    <dd>
+    Add a peer to the peer table.
+ Adds a peer to the peer table for a given client
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">name</span>
+
+        </li>
+        <li><span class="parameter">x</span>
+
+        </li>
+        <li><span class="parameter">y</span>
+
+        </li>
+        <li><span class="parameter">r</span>
+
+        </li>
+        <li><span class="parameter">g</span>
+
+        </li>
+        <li><span class="parameter">b</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "updatePeer"></a>
+    <strong>updatePeer (name, x, y, r, g, b)</strong>
+    </dt>
+    <dd>
+    Update a peer's information.
+ Updates the data for a peer in the peer table.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">name</span>
+
+        </li>
+        <li><span class="parameter">x</span>
+
+        </li>
+        <li><span class="parameter">y</span>
+
+        </li>
+        <li><span class="parameter">r</span>
+
+        </li>
+        <li><span class="parameter">g</span>
+
+        </li>
+        <li><span class="parameter">b</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "sendToServer"></a>
+    <strong>sendToServer (data)</strong>
+    </dt>
+    <dd>
+    Send data to the server.
+ Semantically convenient helper for sending data to server.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">data</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2017-11-05 23:53:08 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
