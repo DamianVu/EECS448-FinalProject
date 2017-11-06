@@ -1,12 +1,14 @@
----
+--- Splash screen state (module)
 Splash = {}
 
 local centerX, centerY = love.graphics.getWidth()/2, love.graphics.getHeight()/2
 
+--- Called when state is entered
 function Splash:enter()
 	self.duration = 5 -- 4 seconds
 end
 
+--- Called on every game tick
 function Splash:update(dt)
 	self.duration = self.duration - dt
 	if self.duration < 0 then
@@ -14,6 +16,7 @@ function Splash:update(dt)
 	end
 end
 
+--- Draws logo to screen
 function Splash:draw()
 	love.graphics.setColor(255,255,255, 255/(self.duration*self.duration))
 	love.graphics.setNewFont(60)
@@ -24,6 +27,8 @@ function Splash:draw()
 	love.graphics.print("1. I am in great pain, please help me.", centerX + 10, centerY + 105)
 end
 
+--- Listens for key presses
+-- Enters main menu if anything is pressed prior to 5 seconds finishing
 function Splash:keypressed(key)
 	if key then
 		Gamestate.switch(Mainmenu)

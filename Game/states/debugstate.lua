@@ -1,4 +1,5 @@
----
+--- A state used for debugging purposes only.
+-- This separate state allows us to use a separate environment when testing functionality
 Debugging = {}
 
 local centerX, centerY = love.graphics.getWidth()/2, love.graphics.getHeight()/2

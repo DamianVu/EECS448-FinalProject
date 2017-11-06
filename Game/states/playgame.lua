@@ -1,19 +1,22 @@
----
+--- State play menu (module)
 Play = {}
 
 local centerX, centerY = love.graphics.getWidth()/2, love.graphics.getHeight()/2
 
+--- Called on initialization (in main.lua)
 function Play:init()
 	self.options = {
 		{"Singleplayer", "Multiplayer", "Back to character selection"}
 	}
 end
 
+--- Called whenever this state is entered
 function Play:enter()
 	self.currentMenu = 1
 	self.selection = 1
 end
 
+--- Called on game ticks to draw
 function Play:draw()
 	if self.currentMenu == 1 then
 		love.graphics.setColor(255,255,255,255)
@@ -31,6 +34,7 @@ function Play:draw()
 	end
 end
 
+--- Event binding to listen for key presses
 function Play:keypressed(key)
 	if key == "return" then
 		if self.currentMenu == 1 then
