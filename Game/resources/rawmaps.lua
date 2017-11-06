@@ -70,7 +70,7 @@ RawMaps = {
 	map3 = {
 		startingLocations = {
 			{10,10},
-			{5,5}
+			{3,3}
 		},
 		img = "testset.png",
 		id_dict = {
