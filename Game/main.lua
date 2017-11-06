@@ -17,6 +17,7 @@ Singleplayer = require "states.singleplayer"
 Multiplayer = require "states.multiplayer"
 Debugging = require "states.debugstate"
 CharacterSelection = require "states.characterselection"
+PlayMenu = require "states.playgame"
 
 mouse = {}
 movingObjects = {}
@@ -44,7 +45,7 @@ function love.load()
     --love.window.setMode(windowWidth, windowHeight, {resizable=false, vsync=false, minwidth=800, minheight=600, borderless=true, msaa=2})
 
     Gamestate.registerEvents()
-    Gamestate.switch(CharacterSelection)
+    Gamestate.switch(SplashScreen)
 
     love.mouse.setVisible(false)
 

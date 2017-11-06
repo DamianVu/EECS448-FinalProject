@@ -112,6 +112,8 @@ function CS:keypressed(key)
 		if currentMenu == 1 then
 			if currentItem == 2 then
 				-- Go to Single/multiplayer select
+				USERNAME = characters[currentCharacter].name .. tostring(characters[currentCharacter].salt)
+				Gamestate.switch(PlayMenu)
 			elseif currentItem == 3 then
 				-- Create a player
 				currentMenu = 2

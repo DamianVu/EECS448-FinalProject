@@ -2,7 +2,7 @@
 Menu = {}
 
 options = {
-	{"Play Singleplayer", "Play Multiplayer", "Options", "Exit"},
+	{"Play", "Options", "Exit"},
 	{"No options yet..."}
 }
 
@@ -18,13 +18,12 @@ function Menu:draw()
 		love.graphics.setColor(255,255,255,255)
 		love.graphics.setNewFont(30)
 
-		love.graphics.print("Play 1p", centerX, centerY)
-		love.graphics.print("Play Online", centerX, centerY + 50)
-		love.graphics.print("Options", centerX, centerY + 100)
-		love.graphics.print("Exit", centerX, centerY + 150)
+		love.graphics.print(options[self.currentMenu][1], centerX - 100, centerY - 100)
+		love.graphics.print(options[self.currentMenu][2], centerX - 100, centerY - 50)
+		love.graphics.print(options[self.currentMenu][3], centerX - 100, centerY)
 
 		love.graphics.setColor(0,255,230,255)
-		love.graphics.print("--->", centerX - 65, centerY + ((self.selection - 1) * 50) - 2)
+		love.graphics.print("--->", centerX - 165, centerY - 100 + ((self.selection - 1) * 50) - 2)
 
 	elseif self.currentMenu == 2 then
 		love.graphics.setColor(255,255,255,255)
@@ -42,19 +41,17 @@ function Menu:keypressed(key)
 	if key == "return" then 
 		if self.currentMenu == 1 then
 			if self.selection == 1 then
-				Gamestate.switch(Singleplayer)
+				Gamestate.switch(CharacterSelection)
 			elseif self.selection == 2 then
-				Gamestate.switch(Multiplayer)
-			elseif self.selection == 3 then
 				self.currentMenu = 2
 				self.selection = 2
-			elseif self.selection == 4 then
+			elseif self.selection == 3 then
 				love.event.quit()
 			end
 		elseif self.currentMenu == 2 then
 			if self.selection == 2 then
 				self.currentMenu = 1
-				self.selection = 3
+				self.selection = 2
 			end
 		end
 	end

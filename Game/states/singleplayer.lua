@@ -114,7 +114,7 @@ function SoloGame:keypressed(key)
     if debugMode and key == 'r' then player.x, player.y = 0, 0 end -- Reset position
     if key == 'n' then noclip = not noclip end
     if key == 'tab' then debugMode = not debugMode end -- Toggle debug mode
-    if key == 'escape' then Gamestate.switch(Mainmenu) end
+    if key == 'escape' then Gamestate.switch(PlayMenu) end
 end
 
 
