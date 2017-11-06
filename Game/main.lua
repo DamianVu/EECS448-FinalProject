@@ -3,6 +3,7 @@
 
 require "handlers.CollisionHandler"
 require "handlers.MapHandler"
+require "handlers.CharacterHandler"
 
 require "libraries.cObject"
 require "debugging"
@@ -14,6 +15,8 @@ SplashScreen = require "states.splashscreen"
 Mainmenu = require "states.mainmenu"
 Singleplayer = require "states.singleplayer"
 Multiplayer = require "states.multiplayer"
+Debugging = require "states.debugstate"
+CharacterSelection = require "states.characterselection"
 
 mouse = {}
 movingObjects = {}
@@ -29,13 +32,19 @@ updateRate = 0.1
 
 function love.load()
 
+    if not love.filesystem.exists("characters") then
+        love.filesystem.createDirectory("characters")
+    end
+
+    CharHandler = CharacterHandler()
+
     -- Set up window
-    windowWidth = 1600
-    windowHeight = 900
-    love.window.setMode(windowWidth, windowHeight, {resizable=false, vsync=false, minwidth=800, minheight=600, borderless=true, msaa=2})
+    --windowWidth = 1600
+    --windowHeight = 900
+    --love.window.setMode(windowWidth, windowHeight, {resizable=false, vsync=false, minwidth=800, minheight=600, borderless=true, msaa=2})
 
     Gamestate.registerEvents()
-    Gamestate.switch(SplashScreen)
+    Gamestate.switch(CharacterSelection)
 
     love.mouse.setVisible(false)
 
