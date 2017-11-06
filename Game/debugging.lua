@@ -2,6 +2,8 @@
 
 -- NOTE: Uses variables from main and netClient
 
+
+---This function handles printing information on the screen during the game.
 function drawMonitors()
     love.graphics.setColor(0, 203, 255)
     love.graphics.print("Wubba lubba dub dub!", 10, 10)
@@ -10,6 +12,7 @@ function drawMonitors()
     love.graphics.print("Debug Mode(tab): " .. tostring(debugMode), 10, 70)
 end
 
+---This function handles the player customizations such as color and username.
 function drawNetworkMonitors()
     -- Network Monitors
     love.graphics.setColor(255, 0, 0)
@@ -19,6 +22,7 @@ function drawNetworkMonitors()
     love.graphics.print("Our Ent Name: " .. (USERNAME or ""), 1450, 70)
 end
 
+---This function handles printing things such as the map and player position.
 function drawDebug()
     love.graphics.setColor(0, 203, 255)
     love.graphics.print("Player Location: " .. tostring(math.floor(player.x)) .. "," .. tostring(math.floor(player.y)), 10, 90)
@@ -35,6 +39,7 @@ function drawDebug()
     --love.graphics.print("Adj: " .. coordListString(al.list), 10, 210)
 end
 
+---This function returns the list of coordinations.
 function coordListString(list)
     local tempString = ""
 
