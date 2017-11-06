@@ -6,9 +6,11 @@ local centerX, centerY = love.graphics.getWidth()/2, love.graphics.getHeight()/2
 function Debugging:init()
 	characterDir = "characters"
 
-	success, message = love.filesystem.write("characters/test.dat", "THIS IS A TEST")
+	--success, message = love.filesystem.write("characters/test.dat", "THIS IS A TEST\nThis should be on the second line\nAnd this the third")
 
-	files = love.filesystem.getDirectoryItems(characterDir)
+	--CharacterHandler:getCharacters()
+
+	--files = love.filesystem.getDirectoryItems(characterDir)
 end
 
 function Debugging:load()

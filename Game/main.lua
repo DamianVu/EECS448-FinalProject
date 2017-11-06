@@ -16,6 +16,7 @@ Mainmenu = require "states.mainmenu"
 Singleplayer = require "states.singleplayer"
 Multiplayer = require "states.multiplayer"
 Debugging = require "states.debugstate"
+CharacterSelection = require "states.characterselection"
 
 mouse = {}
 movingObjects = {}
@@ -35,7 +36,7 @@ function love.load()
         love.filesystem.createDirectory("characters")
     end
 
-    CharacterHandler = CharacterHandler()
+    CharHandler = CharacterHandler()
 
     -- Set up window
     --windowWidth = 1600
@@ -43,7 +44,7 @@ function love.load()
     --love.window.setMode(windowWidth, windowHeight, {resizable=false, vsync=false, minwidth=800, minheight=600, borderless=true, msaa=2})
 
     Gamestate.registerEvents()
-    Gamestate.switch(Debugging)
+    Gamestate.switch(CharacterSelection)
 
     love.mouse.setVisible(false)
 
