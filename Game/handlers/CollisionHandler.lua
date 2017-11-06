@@ -1,4 +1,4 @@
---- This module will hopefully be able to handle collisions
+--- This module will hopefully be able to handle collisions.
 class = require 'libraries.ext.30log'
 
 CollisionHandler = class("CollisionHandler", {collisionEntities = {}})

@@ -1,4 +1,4 @@
-
+---
 Play = {}
 
 local centerX, centerY = love.graphics.getWidth()/2, love.graphics.getHeight()/2
@@ -32,7 +32,7 @@ function Play:draw()
 end
 
 function Play:keypressed(key)
-	if key == "return" then 
+	if key == "return" then
 		if self.currentMenu == 1 then
 			if self.selection == 1 then
 				Gamestate.switch(Singleplayer)

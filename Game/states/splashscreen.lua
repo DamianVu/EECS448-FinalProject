@@ -1,4 +1,4 @@
-
+---
 Splash = {}
 
 local centerX, centerY = love.graphics.getWidth()/2, love.graphics.getHeight()/2

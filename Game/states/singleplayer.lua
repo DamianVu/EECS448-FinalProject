@@ -1,4 +1,4 @@
-
+---
 SoloGame = {}
 
 local movingObj = {}

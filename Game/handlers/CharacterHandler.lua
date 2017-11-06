@@ -1,4 +1,4 @@
-
+---
 require "libraries.ext.30log"
 
 CharacterHandler = class("CharacterHandler", {})
@@ -44,7 +44,7 @@ function CharacterHandler:saveCurrentCharacter()
 
 end
 
-function CharacterHandler:addCharacter(name, color)	
+function CharacterHandler:addCharacter(name, color)
 	local r,g,b = unpack(color)
 
 	local data = name .. "\n" .. tostring(math.random(99999)) .. "\n" .. r .. "," .. g .. "," .. b

@@ -1,3 +1,4 @@
+---
 local socket = require "socket"
 
 -- Set up thread-to-thread communication on channel

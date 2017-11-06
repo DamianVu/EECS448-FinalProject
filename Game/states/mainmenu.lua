@@ -1,4 +1,4 @@
-
+---
 Menu = {}
 
 options = {
@@ -38,7 +38,7 @@ function Menu:draw()
 end
 
 function Menu:keypressed(key)
-	if key == "return" then 
+	if key == "return" then
 		if self.currentMenu == 1 then
 			if self.selection == 1 then
 				Gamestate.switch(CharacterSelection)

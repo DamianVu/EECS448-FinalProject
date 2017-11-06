@@ -1,4 +1,4 @@
--- This file will contain Debug message drawing functions along with small functions to aid debugging
+--- This file will contain Debug message drawing functions along with small functions to aid debugging.
 
 -- NOTE: Uses variables from main and netClient
 

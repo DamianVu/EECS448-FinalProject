@@ -1,4 +1,4 @@
-
+---
 function love.conf(t)
 	t.identity = "Wubba"
 	t.console = false
@@ -11,6 +11,6 @@ function love.conf(t)
 	-- Modules: Disable unused to save memory!!!
 	t.modules.joystick = false
 	t.modules.physics = false
-	
+
 
 end

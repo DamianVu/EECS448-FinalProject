@@ -1,4 +1,4 @@
--- Current functionality is just movement and mouse cursor until we get maps and tiling implemented
+---Current functionality is just movement and mouse cursor until we get maps and tiling implemented.
 
 
 require "handlers.CollisionHandler"
