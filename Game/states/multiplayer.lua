@@ -19,7 +19,7 @@ function OnlineGame:enter() -- enter is called everytime this state occurs
   -- Map Handler initialization
   love.graphics.setNewFont(16)
   MH = MapHandler()
-  MH:loadMap(2,2)
+  MH:loadMap(3,30)
 
   -- Initialize player and register to table of moving objects
   player = cObject(USERNAME, love.graphics.newImage('images/sprites/player.png'), nil, 1, 96, 96, 32, 32)

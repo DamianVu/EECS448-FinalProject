@@ -1,24 +1,28 @@
--- This module will hopefully be able to handle collisions
+--- This module will hopefully be able to handle collisions
 class = require 'libraries.ext.30log'
 
 CollisionHandler = class("CollisionHandler", {collisionEntities = {}})
 
+---this function creates the collision handler.
 function CollisionHandler:init()
 	self.playerMovement = true
 	self.playerMovementDisableCount = 10
 end
 
-function CollisionHandler:addObj(cObj) 
+---This function adds collision to the object that is to be collided with.
+function CollisionHandler:addObj(cObj)
 	self.collisionEntities[#self.collisionEntities+1] = cObj
 end
 
+---This function resets collision things.
 function CollisionHandler:reset()
 	-- Take some time to do stuff then finally reset the table altogether
 
 
-	self.collisionEntities = {} 
+	self.collisionEntities = {}
 end
 
+---this function counts the number of possible collisions and returns the count of possible collisions, the list of collisions, the list of adjacent things, and the list of possible adjacent thing.
 function CollisionHandler:getNumberOfPossibleCollisions(id) -- Object id
 	-- This needs nearby other entities (use some pixel amount to quantify nearby)
 	local collisionList = CoordinateList()
@@ -49,7 +53,7 @@ function CollisionHandler:getNumberOfPossibleCollisions(id) -- Object id
 end
 
 
--- Only checking wall collisions for now!!!!!!
+--- this function is only checking wall collisions for now!!!!!!.
 function CollisionHandler:checkCollisions()
 	for i = 1, #self.collisionEntities do
 		local colCount, adjCount, colList, adjList = self:getNumberOfPossibleCollisions(i)
@@ -61,12 +65,13 @@ function CollisionHandler:checkCollisions()
 	end
 end
 
--- mId is the object "moving"
+--- mId is the object "moving".
 -- oId is the object mId is colliding with
 function CollisionHandler:handleCollision(mId, oId)
 	-- work on this after testing tile collision
 end
 
+--- this function checks to see it the player is trying to collide with tiles that can't be collided with.
 function CollisionHandler:handleTileCollision(mId, coord)
 	local px = self.collisionEntities[mId].x
 	local py = self.collisionEntities[mId].y
@@ -127,7 +132,7 @@ function CollisionHandler:handleTileCollision(mId, coord)
 
 end
 
--- For walls, direction can only be one of 4 values, and collisionType = 1
+--- For walls, direction can only be one of 4 values, and collisionType = 1.
 -- Change is how far we should reset them
 function CollisionHandler:bump(mId, direction, bumpFactor, collisionType, change) -- Direction should be ?radians? or ?degrees?
 	if self.playerMovement == true then
