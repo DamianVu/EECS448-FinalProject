@@ -22,6 +22,7 @@ function CS:enter()
 	currentItem = 1
 	currentCharacter = 1
 	characters = CharHandler:getCharacters()
+	sprite = love.graphics.newImage('images/sprites/player.png')
 end
 
 function CS:draw()
@@ -29,10 +30,30 @@ function CS:draw()
 
 		love.graphics.setNewFont(40)
 		if #characters > 0 then
-			love.graphics.print(characters[currentCharacter].name, centerX, 40)
+			if currentItem == 1 then
+				love.graphics.setColor(0,0,255)
+			else
+				love.graphics.setColor(255,255,255)
+			end
+			love.graphics.print("<--", centerX - 200, 40)
+			love.graphics.print("-->", centerX + 200, 40)
+			love.graphics.setColor(characters[currentCharacter].color)
+			love.graphics.print(characters[currentCharacter].name, centerX - 80, 40)
+			love.graphics.draw(sprite, centerX - 60, 150)
+		else
+			love.graphics.setColor(255,0,0)
+			love.graphics.print("NO CHARACTERS", centerX, 40)
 		end
 
+		love.graphics.setColor(255,255,255)
+		love.graphics.print(menus[currentMenu][2], centerX - 200, 400)
+		love.graphics.print(menus[currentMenu][3], centerX - 200, 450)
+		love.graphics.print(menus[currentMenu][4], centerX - 200, 500)
 
+		love.graphics.setColor(0,0,255)
+		if currentItem ~= 1 then
+			love.graphics.print("-->", centerX - 300, 300 + (50 * currentItem))
+		end
 
 	end
 end
@@ -68,7 +89,7 @@ function CS:keypressed(key)
 		if currentItem == #menus[currentMenu] then
 			currentItem = 1
 		else
-			
+			currentItem = currentItem + 1
 		end
 	end
 

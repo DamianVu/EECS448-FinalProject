@@ -33,10 +33,6 @@ function CharacterHandler:getCharacters()
 		characters[#characters + 1] = char
 	end
 
-	for i = 1, #characters do
-		print(characters[i].name)
-	end
-
 	return characters
 end
 
