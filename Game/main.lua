@@ -23,7 +23,7 @@ math.randomseed(os.time())
 
 -- Server connection information (Currently the AWS server info)
 SERVER_ADDRESS, SERVER_PORT = "13.58.15.46", 5050
-USERNAME = tostring(math.random(99999)) -- String eventually
+USERNAME = "Lane" -- String eventually
 updateRate = 0.1
 
 
@@ -52,9 +52,9 @@ function love.load()
 
 end
 
-function love.draw()    
+function love.draw()
     love.graphics.setColor(255, 255, 255)
-    love.graphics.circle("line", mouse.x, mouse.y, 5) 
+    love.graphics.circle("line", mouse.x, mouse.y, 5)
 end
 
 function love.update(dt)
@@ -64,7 +64,7 @@ function love.update(dt)
     -- Get current mouse position and store in object mouse
     mouse.x, mouse.y = love.mouse.getPosition()
 
-    
+
 end
 
 function love.keypressed(key)

@@ -42,19 +42,25 @@ function receiver()
       receivedData, msg = udp:receive()
       if receivedData then
           if verbose_debug then print(receivedData) end
+
           -- Grammar definition
           local entity, cmd, parms = tostring(receivedData):match("^(%S*) (%S*) *(.*)")
-          if entity ~= USERNAME then
-            if cmd == 'join' then
+          if entity ~= USERNAME then -- Broadcast Type Commands
+            if cmd == 'join' then -- Broadcast Type
               local px, py, pr, pg, pb = parms:match("(-*%d+.*%d*) (-*%d+.*%d*) (%d+) (%d+) (%d+)")
               addPeer(entity, px, py, pr, pg, pb)
             end
-            if cmd == 'leave' then
+            if cmd == 'leave' then -- Broadcast Type
               table.remove(peers, peerIndex(entity))
+              -- playerList = playerList:match("(.*), (%S+)") -- Remove from player list (This pattern only strips last one)
             end
-            if cmd == 'moveto' then
+            if cmd == 'moveto' then -- Broadcast Type
                 local x, y = parms:match("^(%-?[%d.e]*) (%-?[%d.e]*)$")
                 updatePeer(entity, x, y)
+            end
+          else -- Response Type Commands
+            if cmd == 'rejoin' then -- Response Type
+              player.x, player.y, player.r, player.g, player.b = parms:match("(-*%d+.*%d*) (-*%d+.*%d*) (%d+) (%d+) (%d+)")
             end
           end
       elseif msg~= 'timeout' then error("Network error: " ..tostring(msg))
