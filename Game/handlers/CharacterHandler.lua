@@ -8,6 +8,10 @@ function CharacterHandler:init()
 	self.characterFiles = love.filesystem.getDirectoryItems("characters")
 end
 
+function CharacterHandler:refresh()
+	self.characterFiles = love.filesystem.getDirectoryItems("characters")
+end
+
 function CharacterHandler:getCharacters()
 	-- Process each character file
 	local characters = {}
@@ -43,4 +47,22 @@ end
 function CharacterHandler:addCharacter(name, color)	
 	local r,g,b = unpack(color)
 
+	local data = name .. "\n" .. tostring(math.random(99999)) .. "\n" .. r .. "," .. g .. "," .. b
+
+	local fname = name:gsub('%W', '')
+
+	if love.filesystem.exists("characters/" .. fname .. ".dat") then
+		local created = false
+		local i = 1
+		repeat
+			if love.filesystem.exists("characters/" .. fname .. "(" .. i .. ").dat") then
+				i = i + 1
+			else
+				love.filesystem.write("characters/" .. fname .. "(" .. i .. ").dat", data)
+				created = true
+			end
+		until created
+	else
+		love.filesystem.write("characters/" .. fname .. ".dat", data)
+	end
 end
