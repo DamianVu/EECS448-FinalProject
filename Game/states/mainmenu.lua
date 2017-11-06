@@ -1,4 +1,5 @@
-
+--- State main menu (module)
+-- This handles all menu operations after the splash screen
 Menu = {}
 
 options = {
@@ -8,11 +9,13 @@ options = {
 
 local centerX, centerY = love.graphics.getWidth()/2, love.graphics.getHeight()/2
 
+-- Called when this state is entered
 function Menu:enter()
 	self.currentMenu = 1
 	self.selection = 1
 end
 
+-- Called every game tick (for drawing operations)
 function Menu:draw()
 	if self.currentMenu == 1 then
 		love.graphics.setColor(255,255,255,255)
@@ -37,6 +40,7 @@ function Menu:draw()
 	end
 end
 
+-- Binds handler for key presses
 function Menu:keypressed(key)
 	if key == "return" then 
 		if self.currentMenu == 1 then
