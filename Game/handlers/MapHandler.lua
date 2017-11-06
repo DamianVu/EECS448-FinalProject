@@ -10,12 +10,13 @@ function MapHandler:init()
 end
 
 -- Eventually this parameter will tell the game which map to load
--- startPoint: If maps have multiple load points, we can select them
+--- startPoint: If maps have multiple load points, we can select them.
 function MapHandler:loadMap(map, startIndex)
 	-- Revamp for project 4
 	local maps = {
 		RawMaps.map1,
-		RawMaps.map2
+		RawMaps.map2,
+		RawMaps.map3
 	}
 
 	local rawTS = maps[map]
@@ -156,12 +157,12 @@ function CoordinateList:add(coord)
 	local x,y = unpack(coord)
 	if self.unique then
 		if not self:contains(coord) then
-			if MH:isValidTile(x,y) then 
+			if MH:isValidTile(x,y) then
 				self.list[#self.list + 1] = coord
 			end
 		end
 	else
-		if MH:isValidTile(x,y) then 
+		if MH:isValidTile(x,y) then
 			self.list[#self.list + 1] = coord
 		end
 	end
@@ -218,12 +219,12 @@ function CoordinateList:add(coord)
 	local x,y = unpack(coord)
 	if self.unique then
 		if not self:contains(coord) then
-			if MH:isValidTile(x,y) then 
+			if MH:isValidTile(x,y) then
 				self.list[#self.list + 1] = coord
 			end
 		end
 	else
-		if MH:isValidTile(x,y) then 
+		if MH:isValidTile(x,y) then
 			self.list[#self.list + 1] = coord
 		end
 	end
