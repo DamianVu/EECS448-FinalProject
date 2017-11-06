@@ -82,7 +82,7 @@ function OnlineGame:draw()
     -- End Code that will cap FPS at 144 --
 end
 
---- Called every game tick 
+--- Called every game tick
 function OnlineGame:update(dt)
     receiver()
 

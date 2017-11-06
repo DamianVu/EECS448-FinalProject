@@ -36,7 +36,7 @@ end
 
 --- Event binding to listen for key presses
 function Play:keypressed(key)
-	if key == "return" then 
+	if key == "return" then
 		if self.currentMenu == 1 then
 			if self.selection == 1 then
 				Gamestate.switch(Singleplayer)

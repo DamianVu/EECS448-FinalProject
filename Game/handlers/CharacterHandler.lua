@@ -1,4 +1,4 @@
-
+---
 require "libraries.ext.30log"
 
 CharacterHandler = class("CharacterHandler", {})
@@ -52,8 +52,11 @@ function CharacterHandler:saveCurrentCharacter()
 
 end
 
+<<<<<<< HEAD
+=======
 --- Add a character to the character handler
 -- Add a character to the character handler
+>>>>>>> 216ddce73ef625b046097179b06ca1896154ed5c
 function CharacterHandler:addCharacter(name, color)
 	local r,g,b = unpack(color)
 

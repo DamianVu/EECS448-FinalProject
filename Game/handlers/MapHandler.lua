@@ -1,4 +1,4 @@
----MapHandler.
+---
 require 'libraries.ext.30log'
 require 'resources.rawmaps' -- Revamp for project 4
 

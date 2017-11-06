@@ -1,4 +1,4 @@
--- Networking Client Interface
+--- Networking Client Interface.
 
 socket = require "socket" -- Lua Socket Library
 

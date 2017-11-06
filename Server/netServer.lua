@@ -1,4 +1,4 @@
--- Networking Server Interface
+--- Networking Server Interface.
 
 local socket = require "socket"
 
