@@ -10,29 +10,26 @@ function OnlineGame:init() -- init is only called once
 end
 
 function OnlineGame:enter() -- enter is called everytime this state occurs
-    debugMode = false
-    noclip = false -- if true then no collision should happen.
+  debugMode = false
+  noclip = false -- if true then no collision should happen.
 
-	CH = CollisionHandler()
+  -- Collision Handler initialization
+  CH = CollisionHandler()
 
-	love.graphics.setNewFont(16)
+  -- Map Handler initialization
+  love.graphics.setNewFont(16)
+  MH = MapHandler()
+  MH:loadMap(2,2)
 
-	peers = {}
+  -- Initialize player and register to table of moving objects
+  player = cObject(USERNAME, love.graphics.newImage('images/sprites/player.png'), nil, 1, 96, 96, 32, 32)
+  CH:addObj(player)
+  movingObj[#movingObjects + 1] = player
 
-	MH = MapHandler()
-    MH:loadMap(2,2)
-
-    messageCount = 0
-
-	player = cObject(USERNAME, love.graphics.newImage('images/sprites/player.png'), nil, 1, 96, 96, 32, 32)
-
-	CH:addObj(player)
-
-
-    movingObj[#movingObjects + 1] = player
-
-
-    connectToServer(SERVER_ADDRESS, SERVER_PORT)
+  -- Initialize peers table and connect to server
+  peers = {}
+  messageCount = 0
+  connectToServer(SERVER_ADDRESS, SERVER_PORT)
 end
 
 function OnlineGame:draw()

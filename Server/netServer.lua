@@ -31,10 +31,12 @@ function retrievePlayerList()
 end
 
 -- Forward packets to clients
-function broadcast(payload, fromPlayer)
+function broadcast(payload)
 	local e = payload:match("^(%S*)")
+	local p = {} -- For looping through players
 	for i=1, #players do
-			if e ~= players[i].id then udp:sendto(payload, players[i].ip, players[i].port) end
+			p = players[i]
+			if e ~= p.id and p.connected then udp:sendto(payload, p.ip, p.port) end
 	end
 end
 
@@ -56,21 +58,24 @@ function receiver()
 
       -- Grammar definition
       if cmd == 'join' then
-					broadcast(data, entity)
+					broadcast(data)
           local lx,ly,lr,lg,lb = parms:match("(-*%d+.*%d*) (-*%d+.*%d*) (%d+) (%d+) (%d+)")
-          players[#players+1] = {ip=fromIP, port=fromPort, id=entity, x=lx, y=ly, r=lr, g=lg, b=lb}
+					local p = indexOf(entity)
+					if p == -1 then -- Add player if never joined before
+						players[#players+1] = {connected=true, ip=fromIP, port=fromPort, id=entity, x=lx, y=ly, r=lr, g=lg, b=lb}
+					else players[p].connected = true end -- Set player's connected property to true
 
 					-- Bounce the current players back to the new player
 					for i=1, #players do
 						local p = players[i]
-						if p.id ~= entity then reply(p.id.." join "..p.x.." "..p.y.." "..p.r.." "..p.g.." "..p.b, fromIP, fromPort) end
+						if p.id ~= entity and p.connected then reply(p.id.." join "..p.x.." "..p.y.." "..p.r.." "..p.g.." "..p.b, fromIP, fromPort) end
 					end
       elseif cmd == 'leave' then
-					broadcast(data, entity)
-					print("Player left, attempting to remove index " .. indexOf(entity))
-					table.remove(players, indexOf(entity))
+					broadcast(data)
+					print("Player left, attempting to set index " .. indexOf(entity) .. "'s property 'connected' to 'false'")
+					players[indexOf(entity)].connected = false
 			elseif cmd == 'moveto' then
-					broadcast(data, entity)
+					broadcast(data)
     			local x, y = parms:match("^(%-?[%d.e]*) (%-?[%d.e]*)$")
           local i = indexOf(entity)
     			players[i].x, players[i].y = x, y
