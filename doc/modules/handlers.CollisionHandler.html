@@ -1,0 +1,281 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>ldoc</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/conf.html">conf</a></li>
+  <li><a href="../modules/debugging.html">debugging</a></li>
+  <li><strong>handlers.CollisionHandler</strong></li>
+  <li><a href="../modules/handlers.MapHandler.html">handlers.MapHandler</a></li>
+  <li><a href="../modules/libraries.cObject.html">libraries.cObject</a></li>
+  <li><a href="../modules/netClient.html">netClient</a></li>
+  <li><a href="../modules/states.characterselection.html">states.characterselection</a></li>
+  <li><a href="../modules/states.debugstate.html">states.debugstate</a></li>
+  <li><a href="../modules/states.mainmenu.html">states.mainmenu</a></li>
+  <li><a href="../modules/states.multiplayer.html">states.multiplayer</a></li>
+  <li><a href="../modules/states.playgame.html">states.playgame</a></li>
+  <li><a href="../modules/states.singleplayer.html">states.singleplayer</a></li>
+  <li><a href="../modules/states.splashscreen.html">states.splashscreen</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>handlers.CollisionHandler</code></h1>
+<p>This module will hopefully be able to handle collisions</p>
+<p></p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#init">init ()</a></td>
+	<td class="summary">this function creates the collision handler.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#addObj">addObj (cObj)</a></td>
+	<td class="summary">This function adds collision to the object that is to be collided with.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#reset">reset ()</a></td>
+	<td class="summary">This function resets collision things.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getNumberOfPossibleCollisions">getNumberOfPossibleCollisions (id)</a></td>
+	<td class="summary">this function counts the number of possible collisions and returns the count of possible collisions, the list of collisions, the list of adjacent things, and the list of possible adjacent thing.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#checkCollisions">checkCollisions ()</a></td>
+	<td class="summary">this function is only checking wall collisions for now!!!!!!.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#handleCollision">handleCollision (mId, oId)</a></td>
+	<td class="summary">mId is the object "moving".</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#handleTileCollision">handleTileCollision (mId, coord)</a></td>
+	<td class="summary">this function checks to see it the player is trying to collide with tiles that can't be collided with.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#bump">bump (mId, direction, bumpFactor, collisionType, change)</a></td>
+	<td class="summary">For walls, direction can only be one of 4 values, and collisionType = 1.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "init"></a>
+    <strong>init ()</strong>
+    </dt>
+    <dd>
+    this function creates the collision handler.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "addObj"></a>
+    <strong>addObj (cObj)</strong>
+    </dt>
+    <dd>
+    This function adds collision to the object that is to be collided with.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">cObj</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "reset"></a>
+    <strong>reset ()</strong>
+    </dt>
+    <dd>
+    This function resets collision things.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getNumberOfPossibleCollisions"></a>
+    <strong>getNumberOfPossibleCollisions (id)</strong>
+    </dt>
+    <dd>
+    this function counts the number of possible collisions and returns the count of possible collisions, the list of collisions, the list of adjacent things, and the list of possible adjacent thing.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+        Object id This needs nearby other entities (use some pixel amount to quantify nearby)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "checkCollisions"></a>
+    <strong>checkCollisions ()</strong>
+    </dt>
+    <dd>
+    this function is only checking wall collisions for now!!!!!!.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "handleCollision"></a>
+    <strong>handleCollision (mId, oId)</strong>
+    </dt>
+    <dd>
+    mId is the object "moving".
+ oId is the object mId is colliding with
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">mId</span>
+
+        </li>
+        <li><span class="parameter">oId</span>
+        work on this after testing tile collision
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "handleTileCollision"></a>
+    <strong>handleTileCollision (mId, coord)</strong>
+    </dt>
+    <dd>
+    this function checks to see it the player is trying to collide with tiles that can't be collided with.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">mId</span>
+
+        </li>
+        <li><span class="parameter">coord</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "bump"></a>
+    <strong>bump (mId, direction, bumpFactor, collisionType, change)</strong>
+    </dt>
+    <dd>
+    For walls, direction can only be one of 4 values, and collisionType = 1.
+ Change is how far we should reset them
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">mId</span>
+
+        </li>
+        <li><span class="parameter">direction</span>
+
+        </li>
+        <li><span class="parameter">bumpFactor</span>
+
+        </li>
+        <li><span class="parameter">collisionType</span>
+
+        </li>
+        <li><span class="parameter">change</span>
+        Direction should be ?radians? or ?degrees?
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2017-11-05 23:53:08 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

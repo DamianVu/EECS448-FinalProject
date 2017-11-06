@@ -1,0 +1,440 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>ldoc</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+<li><a href="#Fields">Fields</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/conf.html">conf</a></li>
+  <li><a href="../modules/debugging.html">debugging</a></li>
+  <li><a href="../modules/handlers.CollisionHandler.html">handlers.CollisionHandler</a></li>
+  <li><strong>handlers.MapHandler</strong></li>
+  <li><a href="../modules/libraries.cObject.html">libraries.cObject</a></li>
+  <li><a href="../modules/netClient.html">netClient</a></li>
+  <li><a href="../modules/states.characterselection.html">states.characterselection</a></li>
+  <li><a href="../modules/states.debugstate.html">states.debugstate</a></li>
+  <li><a href="../modules/states.mainmenu.html">states.mainmenu</a></li>
+  <li><a href="../modules/states.multiplayer.html">states.multiplayer</a></li>
+  <li><a href="../modules/states.playgame.html">states.playgame</a></li>
+  <li><a href="../modules/states.singleplayer.html">states.singleplayer</a></li>
+  <li><a href="../modules/states.splashscreen.html">states.splashscreen</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>handlers.MapHandler</code></h1>
+<p>MapHandler.</p>
+<p></p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#init">init ()</a></td>
+	<td class="summary">Called on initialization</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#loadMap">loadMap (map, startIndex)</a></td>
+	<td class="summary">Loads map</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#drawMap">drawMap ()</a></td>
+	<td class="summary">Each map needs it's own tileset, definitions for those tiles, color for debug mode, and layout.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getCurrentMapDimensions">getCurrentMapDimensions ()</a></td>
+	<td class="summary">Finally an opportunity to use getters (discovery of private variables).</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getTile">getTile (tilex, tiley)</a></td>
+	<td class="summary">TEMPORARY UNTIL I ADD COLOR DICT AND ID DICT INTO TILESET CLASS.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Tile:init">Tile:init (id, x, y, width, height, collision, bumpFactor)</a></td>
+	<td class="summary">TODO Tile Objects will have all information for a given tile that needs to be realized.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Map:init">Map:init (grid, id_dict)</a></td>
+	<td class="summary">Class defn</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Tileset:init">Tileset:init (map, img, width, height, tileWidth, tileHeight, cdict, originx, originy)</a></td>
+	<td class="summary">Init</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#CoordinateList:init">CoordinateList:init (unique)</a></td>
+	<td class="summary">Init</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getTileAnchorPoint">getTileAnchorPoint (tilex, tiley)</a></td>
+	<td class="summary">Functions				---------</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#highlight">highlight (tilex, tiley)</a></td>
+	<td class="summary">This tilex and tiley corresponds to the location in self.currentMap.map.tiles.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#highlightTiles">highlightTiles (cObj)</a></td>
+	<td class="summary">This function will take in an objects x, y coords and its width/height.</td>
+	</tr>
+</table>
+<h2><a href="#Fields">Fields</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Tile">Tile</a></td>
+	<td class="summary">Classes					---------</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "init"></a>
+    <strong>init ()</strong>
+    </dt>
+    <dd>
+    Called on initialization
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "loadMap"></a>
+    <strong>loadMap (map, startIndex)</strong>
+    </dt>
+    <dd>
+    Loads map
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">map</span>
+
+        </li>
+        <li><span class="parameter">startIndex</span>
+        Revamp for project 4
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "drawMap"></a>
+    <strong>drawMap ()</strong>
+    </dt>
+    <dd>
+    Each map needs it's own tileset, definitions for those tiles, color for debug mode, and layout.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getCurrentMapDimensions"></a>
+    <strong>getCurrentMapDimensions ()</strong>
+    </dt>
+    <dd>
+    Finally an opportunity to use getters (discovery of private variables).
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getTile"></a>
+    <strong>getTile (tilex, tiley)</strong>
+    </dt>
+    <dd>
+    TEMPORARY UNTIL I ADD COLOR DICT AND ID DICT INTO TILESET CLASS.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tilex</span>
+
+        </li>
+        <li><span class="parameter">tiley</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Tile:init"></a>
+    <strong>Tile:init (id, x, y, width, height, collision, bumpFactor)</strong>
+    </dt>
+    <dd>
+    TODO Tile Objects will have all information for a given tile that needs to be realized.  Render position, size, collision enable, etc.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+
+        </li>
+        <li><span class="parameter">x</span>
+
+        </li>
+        <li><span class="parameter">y</span>
+
+        </li>
+        <li><span class="parameter">width</span>
+
+        </li>
+        <li><span class="parameter">height</span>
+
+        </li>
+        <li><span class="parameter">collision</span>
+
+        </li>
+        <li><span class="parameter">bumpFactor</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Map:init"></a>
+    <strong>Map:init (grid, id_dict)</strong>
+    </dt>
+    <dd>
+    Class defn
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">grid</span>
+
+        </li>
+        <li><span class="parameter">id_dict</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Tileset:init"></a>
+    <strong>Tileset:init (map, img, width, height, tileWidth, tileHeight, cdict, originx, originy)</strong>
+    </dt>
+    <dd>
+    Init
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">map</span>
+
+        </li>
+        <li><span class="parameter">img</span>
+
+        </li>
+        <li><span class="parameter">width</span>
+
+        </li>
+        <li><span class="parameter">height</span>
+
+        </li>
+        <li><span class="parameter">tileWidth</span>
+
+        </li>
+        <li><span class="parameter">tileHeight</span>
+
+        </li>
+        <li><span class="parameter">cdict</span>
+
+        </li>
+        <li><span class="parameter">originx</span>
+
+        </li>
+        <li><span class="parameter">originy</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "CoordinateList:init"></a>
+    <strong>CoordinateList:init (unique)</strong>
+    </dt>
+    <dd>
+    Init
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">unique</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getTileAnchorPoint"></a>
+    <strong>getTileAnchorPoint (tilex, tiley)</strong>
+    </dt>
+    <dd>
+    Functions				---------
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tilex</span>
+
+        </li>
+        <li><span class="parameter">tiley</span>
+        Return the pixel location in the center of the tile.
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "highlight"></a>
+    <strong>highlight (tilex, tiley)</strong>
+    </dt>
+    <dd>
+    This tilex and tiley corresponds to the location in self.currentMap.map.tiles.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tilex</span>
+
+        </li>
+        <li><span class="parameter">tiley</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "highlightTiles"></a>
+    <strong>highlightTiles (cObj)</strong>
+    </dt>
+    <dd>
+    This function will take in an objects x, y coords and its width/height.  This will allow us to highlight tiles around it.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">cObj</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Fields"></a>Fields</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "Tile"></a>
+    <strong>Tile</strong>
+    </dt>
+    <dd>
+    Classes					---------
+
+
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2017-11-05 23:53:08 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

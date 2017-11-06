@@ -44,9 +44,9 @@
   <li><a href="../modules/handlers.MapHandler.html">handlers.MapHandler</a></li>
   <li><a href="../modules/libraries.cObject.html">libraries.cObject</a></li>
   <li><a href="../modules/netClient.html">netClient</a></li>
-  <li><strong>states.characterselection</strong></li>
+  <li><a href="../modules/states.characterselection.html">states.characterselection</a></li>
   <li><a href="../modules/states.debugstate.html">states.debugstate</a></li>
-  <li><a href="../modules/states.mainmenu.html">states.mainmenu</a></li>
+  <li><strong>states.mainmenu</strong></li>
   <li><a href="../modules/states.multiplayer.html">states.multiplayer</a></li>
   <li><a href="../modules/states.playgame.html">states.playgame</a></li>
   <li><a href="../modules/states.singleplayer.html">states.singleplayer</a></li>
@@ -57,34 +57,25 @@
 
 <div id="content">
 
-<h1>Module <code>states.characterselection</code></h1>
-<p>State Character Selection (Module)
- This state handles character creation/selection</p>
+<h1>Module <code>states.mainmenu</code></h1>
+<p>State main menu (module)
+ This handles all menu operations after the splash screen</p>
 <p></p>
 
 
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#CS:init">CS:init ()</a></td>
-	<td class="summary">Default constructor</td>
+	<td class="name" nowrap><a href="#Menu:enter">Menu:enter ()</a></td>
+	<td class="summary">Called when this state is entered</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#CS:enter">CS:enter ()</a></td>
-	<td class="summary">Called whenever this state is entered</td>
+	<td class="name" nowrap><a href="#Menu:draw">Menu:draw ()</a></td>
+	<td class="summary">Called every game tick (for drawing operations)</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#CS:draw">CS:draw ()</a></td>
-	<td class="summary">Called every game tick to draw to the screen</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#CS:update">CS:update (dt)</a></td>
-	<td class="summary">Called every game tick
- Functionality: Checks if we should be checking for keyboard input as text</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#CS:keypressed">CS:keypressed (key)</a></td>
-	<td class="summary">Event listener for keypresses</td>
+	<td class="name" nowrap><a href="#Menu:keypressed">Menu:keypressed (key)</a></td>
+	<td class="summary">Binds handler for key presses</td>
 	</tr>
 </table>
 
@@ -96,11 +87,11 @@
 
     <dl class="function">
     <dt>
-    <a name = "CS:init"></a>
-    <strong>CS:init ()</strong>
+    <a name = "Menu:enter"></a>
+    <strong>Menu:enter ()</strong>
     </dt>
     <dd>
-    Default constructor
+    Called when this state is entered
 
 
 
@@ -110,11 +101,11 @@
 
 </dd>
     <dt>
-    <a name = "CS:enter"></a>
-    <strong>CS:enter ()</strong>
+    <a name = "Menu:draw"></a>
+    <strong>Menu:draw ()</strong>
     </dt>
     <dd>
-    Called whenever this state is entered
+    Called every game tick (for drawing operations)
 
 
 
@@ -124,46 +115,11 @@
 
 </dd>
     <dt>
-    <a name = "CS:draw"></a>
-    <strong>CS:draw ()</strong>
+    <a name = "Menu:keypressed"></a>
+    <strong>Menu:keypressed (key)</strong>
     </dt>
     <dd>
-    Called every game tick to draw to the screen
-
-
-
-
-
-
-
-</dd>
-    <dt>
-    <a name = "CS:update"></a>
-    <strong>CS:update (dt)</strong>
-    </dt>
-    <dd>
-    Called every game tick
- Functionality: Checks if we should be checking for keyboard input as text
-
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">dt</span>
-
-        </li>
-    </ul>
-
-
-
-
-
-</dd>
-    <dt>
-    <a name = "CS:keypressed"></a>
-    <strong>CS:keypressed (key)</strong>
-    </dt>
-    <dd>
-    Event listener for keypresses
+    Binds handler for key presses
 
 
     <h3>Parameters:</h3>

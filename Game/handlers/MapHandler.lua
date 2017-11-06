@@ -4,13 +4,13 @@ require 'resources.rawmaps' -- Revamp for project 4
 
 MapHandler = class("MapHandler", {})
 
+--- Called on initialization
 function MapHandler:init()
 	-- Eventually load maps from xml files.
 	-- For project 3 we will load everything manually in the beginning portion of loadMap()
 end
 
--- Eventually this parameter will tell the game which map to load
---- startPoint: If maps have multiple load points, we can select them.
+--- Loads map
 function MapHandler:loadMap(map, startIndex)
 	-- Revamp for project 4
 	local maps = {
@@ -48,8 +48,6 @@ function MapHandler:loadMap(map, startIndex)
 end
 
 --- Each map needs it's own tileset, definitions for those tiles, color for debug mode, and layout.
-
-
 function MapHandler:drawMap()
 	local start_x, start_y = unpack(self.currentMap.origin)
 
@@ -100,9 +98,8 @@ end
 ---------------------------------------------------------
 
 
--- TODO Tile Objects will have all information for a given tile that needs to be realized. Render position, size, collision enable, etc.
---Tile-- Class definition and constructor, new_tile
-Tile = class("Tile", {}) -- Will likely need to add parameters
+Tile = class("Tile", {})
+--- TODO Tile Objects will have all information for a given tile that needs to be realized. Render position, size, collision enable, etc.
 function Tile:init(id, x, y, width, height, collision, bumpFactor)
 	self.id = id							 	--|int - integer representation of Tile
 	self.x = x								 	--|int - x coordinate of upper-left corner
@@ -113,8 +110,8 @@ function Tile:init(id, x, y, width, height, collision, bumpFactor)
 	self.bumpFactor = bumpFactor or 0			--|num - bumping factor (not too functional yet)
 end
 
---Map-- Class definition and constructor, new_map
 Map = class("Map", {})
+--- Class defn
 function Map:init(grid, id_dict)
 	self.tiles = {}
 	self.id_dict = id_dict
@@ -133,6 +130,7 @@ end
 
 --Tileset-- Class definition and constructor, new_tileset
 Tileset = class("Tileset", {map = {}})
+--- Init
 function Tileset:init(map, img, width, height, tileWidth, tileHeight, cdict, originx, originy)
 	self.map = map                        				-- map  		|2d array of Tile objects
 	self.img = img										-- img  		|love.graphics.newImage('image/path.png')
@@ -146,9 +144,8 @@ function Tileset:init(map, img, width, height, tileWidth, tileHeight, cdict, ori
 	self.origin = {originx,originy}						-- startx 		|starting position to draw map. DEFAULT IS 0,0   -   No reason to use anything else atm
 end
 -- End --
-
--- Class that contains coordinates
 CoordinateList = class("CoordinateList", {list = {}})
+--- Init
 function CoordinateList:init(unique)
 	self.unique = unique or true
 end

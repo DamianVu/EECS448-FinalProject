@@ -44,47 +44,42 @@
   <li><a href="../modules/handlers.MapHandler.html">handlers.MapHandler</a></li>
   <li><a href="../modules/libraries.cObject.html">libraries.cObject</a></li>
   <li><a href="../modules/netClient.html">netClient</a></li>
-  <li><strong>states.characterselection</strong></li>
+  <li><a href="../modules/states.characterselection.html">states.characterselection</a></li>
   <li><a href="../modules/states.debugstate.html">states.debugstate</a></li>
   <li><a href="../modules/states.mainmenu.html">states.mainmenu</a></li>
   <li><a href="../modules/states.multiplayer.html">states.multiplayer</a></li>
   <li><a href="../modules/states.playgame.html">states.playgame</a></li>
   <li><a href="../modules/states.singleplayer.html">states.singleplayer</a></li>
-  <li><a href="../modules/states.splashscreen.html">states.splashscreen</a></li>
+  <li><strong>states.splashscreen</strong></li>
 </ul>
 
 </div>
 
 <div id="content">
 
-<h1>Module <code>states.characterselection</code></h1>
-<p>State Character Selection (Module)
- This state handles character creation/selection</p>
+<h1>Module <code>states.splashscreen</code></h1>
+<p>Splash screen state (module)</p>
 <p></p>
 
 
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#CS:init">CS:init ()</a></td>
-	<td class="summary">Default constructor</td>
+	<td class="name" nowrap><a href="#Splash:enter">Splash:enter ()</a></td>
+	<td class="summary">Called when state is entered</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#CS:enter">CS:enter ()</a></td>
-	<td class="summary">Called whenever this state is entered</td>
+	<td class="name" nowrap><a href="#Splash:update">Splash:update (dt)</a></td>
+	<td class="summary">Called on every game tick</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#CS:draw">CS:draw ()</a></td>
-	<td class="summary">Called every game tick to draw to the screen</td>
+	<td class="name" nowrap><a href="#Splash:draw">Splash:draw ()</a></td>
+	<td class="summary">Draws logo to screen</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#CS:update">CS:update (dt)</a></td>
-	<td class="summary">Called every game tick
- Functionality: Checks if we should be checking for keyboard input as text</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#CS:keypressed">CS:keypressed (key)</a></td>
-	<td class="summary">Event listener for keypresses</td>
+	<td class="name" nowrap><a href="#Splash:keypressed">Splash:keypressed (key)</a></td>
+	<td class="summary">Listens for key presses
+ Enters main menu if anything is pressed prior to 5 seconds finishing</td>
 	</tr>
 </table>
 
@@ -96,11 +91,11 @@
 
     <dl class="function">
     <dt>
-    <a name = "CS:init"></a>
-    <strong>CS:init ()</strong>
+    <a name = "Splash:enter"></a>
+    <strong>Splash:enter ()</strong>
     </dt>
     <dd>
-    Default constructor
+    Called when state is entered
 
 
 
@@ -110,40 +105,11 @@
 
 </dd>
     <dt>
-    <a name = "CS:enter"></a>
-    <strong>CS:enter ()</strong>
+    <a name = "Splash:update"></a>
+    <strong>Splash:update (dt)</strong>
     </dt>
     <dd>
-    Called whenever this state is entered
-
-
-
-
-
-
-
-</dd>
-    <dt>
-    <a name = "CS:draw"></a>
-    <strong>CS:draw ()</strong>
-    </dt>
-    <dd>
-    Called every game tick to draw to the screen
-
-
-
-
-
-
-
-</dd>
-    <dt>
-    <a name = "CS:update"></a>
-    <strong>CS:update (dt)</strong>
-    </dt>
-    <dd>
-    Called every game tick
- Functionality: Checks if we should be checking for keyboard input as text
+    Called on every game tick
 
 
     <h3>Parameters:</h3>
@@ -159,11 +125,26 @@
 
 </dd>
     <dt>
-    <a name = "CS:keypressed"></a>
-    <strong>CS:keypressed (key)</strong>
+    <a name = "Splash:draw"></a>
+    <strong>Splash:draw ()</strong>
     </dt>
     <dd>
-    Event listener for keypresses
+    Draws logo to screen
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Splash:keypressed"></a>
+    <strong>Splash:keypressed (key)</strong>
+    </dt>
+    <dd>
+    Listens for key presses
+ Enters main menu if anything is pressed prior to 5 seconds finishing
 
 
     <h3>Parameters:</h3>

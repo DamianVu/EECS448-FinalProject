@@ -4,6 +4,7 @@ Debugging = {}
 
 local centerX, centerY = love.graphics.getWidth()/2, love.graphics.getHeight()/2
 
+--- Called on initialization
 function Debugging:init()
 	characterDir = "characters"
 
@@ -14,11 +15,13 @@ function Debugging:init()
 	--files = love.filesystem.getDirectoryItems(characterDir)
 end
 
-function Debugging:load()
+--- Called whenever this is entered
+function Debugging:enter()
 	files = love.filesystem.getDirectoryItems(characterDir)
 	saveDir = love.filesystem.getSaveDirectory()
 end
 
+--- Called on every game tick
 function Debugging:draw()
 	love.graphics.setNewFont(40)
 	love.graphics.print("Files: " .. #files, centerX, 40)

@@ -44,11 +44,11 @@
   <li><a href="../modules/handlers.MapHandler.html">handlers.MapHandler</a></li>
   <li><a href="../modules/libraries.cObject.html">libraries.cObject</a></li>
   <li><a href="../modules/netClient.html">netClient</a></li>
-  <li><strong>states.characterselection</strong></li>
+  <li><a href="../modules/states.characterselection.html">states.characterselection</a></li>
   <li><a href="../modules/states.debugstate.html">states.debugstate</a></li>
   <li><a href="../modules/states.mainmenu.html">states.mainmenu</a></li>
   <li><a href="../modules/states.multiplayer.html">states.multiplayer</a></li>
-  <li><a href="../modules/states.playgame.html">states.playgame</a></li>
+  <li><strong>states.playgame</strong></li>
   <li><a href="../modules/states.singleplayer.html">states.singleplayer</a></li>
   <li><a href="../modules/states.splashscreen.html">states.splashscreen</a></li>
 </ul>
@@ -57,34 +57,28 @@
 
 <div id="content">
 
-<h1>Module <code>states.characterselection</code></h1>
-<p>State Character Selection (Module)
- This state handles character creation/selection</p>
+<h1>Module <code>states.playgame</code></h1>
+<p>State play menu (module)</p>
 <p></p>
 
 
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#CS:init">CS:init ()</a></td>
-	<td class="summary">Default constructor</td>
+	<td class="name" nowrap><a href="#Play:init">Play:init ()</a></td>
+	<td class="summary">Called on initialization (in main.lua)</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#CS:enter">CS:enter ()</a></td>
+	<td class="name" nowrap><a href="#Play:enter">Play:enter ()</a></td>
 	<td class="summary">Called whenever this state is entered</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#CS:draw">CS:draw ()</a></td>
-	<td class="summary">Called every game tick to draw to the screen</td>
+	<td class="name" nowrap><a href="#Play:draw">Play:draw ()</a></td>
+	<td class="summary">Called on game ticks to draw</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#CS:update">CS:update (dt)</a></td>
-	<td class="summary">Called every game tick
- Functionality: Checks if we should be checking for keyboard input as text</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#CS:keypressed">CS:keypressed (key)</a></td>
-	<td class="summary">Event listener for keypresses</td>
+	<td class="name" nowrap><a href="#Play:keypressed">Play:keypressed (key)</a></td>
+	<td class="summary">Event binding to listen for key presses</td>
 	</tr>
 </table>
 
@@ -96,11 +90,11 @@
 
     <dl class="function">
     <dt>
-    <a name = "CS:init"></a>
-    <strong>CS:init ()</strong>
+    <a name = "Play:init"></a>
+    <strong>Play:init ()</strong>
     </dt>
     <dd>
-    Default constructor
+    Called on initialization (in main.lua)
 
 
 
@@ -110,8 +104,8 @@
 
 </dd>
     <dt>
-    <a name = "CS:enter"></a>
-    <strong>CS:enter ()</strong>
+    <a name = "Play:enter"></a>
+    <strong>Play:enter ()</strong>
     </dt>
     <dd>
     Called whenever this state is entered
@@ -124,11 +118,11 @@
 
 </dd>
     <dt>
-    <a name = "CS:draw"></a>
-    <strong>CS:draw ()</strong>
+    <a name = "Play:draw"></a>
+    <strong>Play:draw ()</strong>
     </dt>
     <dd>
-    Called every game tick to draw to the screen
+    Called on game ticks to draw
 
 
 
@@ -138,32 +132,11 @@
 
 </dd>
     <dt>
-    <a name = "CS:update"></a>
-    <strong>CS:update (dt)</strong>
+    <a name = "Play:keypressed"></a>
+    <strong>Play:keypressed (key)</strong>
     </dt>
     <dd>
-    Called every game tick
- Functionality: Checks if we should be checking for keyboard input as text
-
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">dt</span>
-
-        </li>
-    </ul>
-
-
-
-
-
-</dd>
-    <dt>
-    <a name = "CS:keypressed"></a>
-    <strong>CS:keypressed (key)</strong>
-    </dt>
-    <dd>
-    Event listener for keypresses
+    Event binding to listen for key presses
 
 
     <h3>Parameters:</h3>
