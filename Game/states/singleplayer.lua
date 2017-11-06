@@ -1,13 +1,16 @@
-
+--- State Single player (module).
+-- This module runs the single player game
 SoloGame = {}
 
 local movingObj = {}
 
-
+--- This is called only when the the module has been initialized (in main.lua)
 function SoloGame:init() -- init is only called once
 
 end
 
+
+--- Called whenever this state is entered
 function SoloGame:enter() -- enter is called everytime this state occurs
     noclip = false -- if true then no collision should happen.
     debugMode = false
@@ -26,6 +29,7 @@ function SoloGame:enter() -- enter is called everytime this state occurs
 
 end
 
+--- Called on game ticks for drawing operations
 function SoloGame:draw()
 	if CH.playerMovement then
         x_translate_val = (love.graphics.getWidth() / 2) - player.x
@@ -72,6 +76,7 @@ function SoloGame:draw()
     -- End Code that will cap FPS at 144 --
 end
 
+--- Called every game tick to update game data
 function SoloGame:update(dt)
 	if CH.playerMovement then
 
@@ -109,6 +114,7 @@ function SoloGame:update(dt)
 
 end
 
+--- Event binding to listen for key presses
 function SoloGame:keypressed(key)
 -- Handle keypresses
     if debugMode and key == 'r' then player.x, player.y = 0, 0 end -- Reset position

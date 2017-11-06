@@ -1,4 +1,5 @@
-
+--- State Character Selection (Module)
+-- This state handles character creation/selection
 CS = {}
 
 local menus = {
@@ -18,8 +19,9 @@ local centerX, centerY = love.graphics.getWidth()/2, love.graphics.getHeight()/2
 
 local textInput = false
 
-local badKeys = { -- Lol let's make this a library next time!!!!
-	"rshift","lshift", -- Gotta remove these later so we can have capital letters.....
+--- List of keys that don't constitue input
+local badKeys = {
+	"rshift","lshift",
 	"kp0","kp1","kp2","kp3","kp4","kp5","kp6","kp7","kp8","kp9","kp.","kp,","kp/","kp*","kp-","kp+","kpenter","kp=",
 	"right","left","home","end","pageup","pagedown","insert","tab","clear","return","delete",
 	"f1","f2","f3","f4","f5","f6","f7","f8","f9","f10","f11","f12","f13","f14","f15","f16","f17","f18",
@@ -28,6 +30,7 @@ local badKeys = { -- Lol let's make this a library next time!!!!
 	"pause","help","printscreen","sysreq","menu","application","power","currencyunit","undo"
 }
 
+--- Checks if key is contained in the badKeys table
 local function isBadKey(key)
 	for i = 1, #badKeys do
 		if key == badKeys[i] then
@@ -37,10 +40,12 @@ local function isBadKey(key)
 	return false
 end
 
+--- Default constructor
 function CS:init()
 
 end
 
+--- Called whenever this state is entered
 function CS:enter()
 	currentMenu = 1
 	currentItem = 1
@@ -50,6 +55,7 @@ function CS:enter()
 	createName = ""
 end
 
+--- Called every game tick to draw to the screen
 function CS:draw()
 	if currentMenu == 1 then
 
@@ -98,6 +104,8 @@ function CS:draw()
 	end
 end
 
+--- Called every game tick
+-- Functionality: Checks if we should be checking for keyboard input as text
 function CS:update(dt)
 	if currentMenu == 2 and currentItem == 1 then
 		textInput = true
@@ -106,6 +114,7 @@ function CS:update(dt)
 	end
 end
 
+--- Event listener for keypresses
 function CS:keypressed(key)
 
 	if key == 'return' then

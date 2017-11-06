@@ -1,14 +1,17 @@
-
+--- State online game (module)
+-- This state allows us to make network connections and play online
 OnlineGame = {}
 
 -- Collision Handler initialization --
 
 local movingObj = {}
 
+--- Called only when this module is initialized (in main.lua)
 function OnlineGame:init() -- init is only called once
 
 end
 
+--- Called whenever this state has been entered
 function OnlineGame:enter() -- enter is called everytime this state occurs
   debugMode = false
   noclip = false -- if true then no collision should happen.
@@ -32,6 +35,7 @@ function OnlineGame:enter() -- enter is called everytime this state occurs
   connectToServer(SERVER_ADDRESS, SERVER_PORT)
 end
 
+--- Called on game ticks for drawing operations
 function OnlineGame:draw()
 	if CH.playerMovement then
         x_translate_val = (love.graphics.getWidth() / 2) - player.x
@@ -78,6 +82,7 @@ function OnlineGame:draw()
     -- End Code that will cap FPS at 144 --
 end
 
+--- Called every game tick 
 function OnlineGame:update(dt)
     receiver()
 
@@ -121,14 +126,17 @@ function OnlineGame:update(dt)
 
 end
 
+--- Called when this state has been left
 function OnlineGame:leave()
 	disconnectFromServer()
 end
 
+--- Called if the game is exited in this state
 function OnlineGame:quit()
 	disconnectFromServer()
 end
 
+--- Event handler binding to listen for keypresses
 function OnlineGame:keypressed(key)
 	--if key == 'l' then sendToServer(USERNAME.." listplayers") end -- List online players (testing)
     if debugMode and key == 'r' then player.x, player.y = 0, 0 end -- Reset position
