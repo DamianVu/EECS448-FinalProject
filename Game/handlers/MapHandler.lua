@@ -1,4 +1,4 @@
-
+---MapHandler.
 require 'libraries.ext.30log'
 require 'resources.rawmaps' -- Revamp for project 4
 
@@ -47,7 +47,7 @@ function MapHandler:loadMap(map, startIndex)
 	player.y = ((starty - 1) * tw) + (th/2)
 end
 
--- Each map needs it's own tileset, definitions for those tiles, color for debug mode, and layout
+--- Each map needs it's own tileset, definitions for those tiles, color for debug mode, and layout.
 
 
 function MapHandler:drawMap()
@@ -69,7 +69,7 @@ function MapHandler:drawMap()
 	end
 end
 
--- Finally an opportunity to use getters (discovery of private variables)
+--- Finally an opportunity to use getters (discovery of private variables).
 function MapHandler:getCurrentMapDimensions()
 	return self.currentMap.origin, self.currentMap.tileWidth, self.currentMap.tileHeight
 end
@@ -90,7 +90,7 @@ end
 
 
 
--- TEMPORARY UNTIL I ADD COLOR DICT AND ID DICT INTO TILESET CLASS
+--- TEMPORARY UNTIL I ADD COLOR DICT AND ID DICT INTO TILESET CLASS.
 function MapHandler:getTile(tilex, tiley)
 	return self.currentMap.map.tiles[tiley][tilex]
 end
@@ -180,7 +180,7 @@ function CoordinateList:contains(coord)
 end
 
 -- This returns a new, larger CoordinateList containing every tile in the previous AND every adjacent tile attached
--- I don't see why this function would ever be ran if self.unique = false, but we can cross that bridge when the time comes
+--- I don't see why this function would ever be ran if self.unique = false, but we can cross that bridge when the time comes.
 function CoordinateList:fullSpan()
 	local rList = CoordinateList()
 	for i = 1, #self.list do
@@ -242,7 +242,7 @@ function CoordinateList:contains(coord)
 end
 
 -- This returns a new, larger CoordinateList containing every tile in the previous AND every adjacent tile attached
--- I don't see why this function would ever be ran if self.unique = false, but we can cross that bridge when the time comes
+--- I don't see why this function would ever be ran if self.unique = false, but we can cross that bridge when the time comes.
 function CoordinateList:fullSpan()
 	local rList = CoordinateList()
 	for i = 1, #self.list do
@@ -282,7 +282,7 @@ function getTileAnchorPoint(tilex, tiley)
 	return ((tilex - 1) * tileWidth) + tileWidth/2, ((tiley - 1) * tileHeight) + tileHeight / 2
 end
 
--- This tilex and tiley corresponds to the location in self.currentMap.map.tiles
+--- This tilex and tiley corresponds to the location in self.currentMap.map.tiles.
 function highlight(tilex, tiley)
 	if not MH:isValidTile(tilex, tiley) then
 		return
@@ -299,7 +299,7 @@ function highlight(tilex, tiley)
 	love.graphics.setColor(r,g,b,a) -- Reset to old color
 end
 
--- This function will take in an objects x, y coords and its width/height. This will allow us to highlight tiles around it.
+--- This function will take in an objects x, y coords and its width/height. This will allow us to highlight tiles around it.
 function highlightTiles(cObj)
 	local spanList = cObj:getSpan():fullSpan()
 
