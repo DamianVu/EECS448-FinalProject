@@ -1,13 +1,14 @@
--- Named: cObject for collisionObject
--- Features:
--- Auto scaling of cObject based on chosen sprite dimensions and chosen width/height
+---
+-- This module defines a collisionObject for us. 
+-- It utilizes the 30log library
+
+
 defaultSize = 64
 
 class = require 'libraries.ext.30log'
-
 cObject = class("cObject", {x_vel = 0, y_vel = 0, x_vel_counter = 10, y_vel_counter = 10})
 
--- Initialization
+--- Initialization (default constructor)
 function cObject:init(id, sprite, color, speed, x, y, width, height, x_offset, y_offset, rotation)
 	self.id = id or "player"
 	self.sprite = sprite
@@ -26,6 +27,7 @@ function cObject:init(id, sprite, color, speed, x, y, width, height, x_offset, y
 	self.rotation = rotation or 0
 end
 
+--- Span function.
 -- Will return 4 coordinates that the object currently spans. In top-left, top-right, bottom-left, bottom-right order
 function cObject:getSpan()
 	local spanList = CoordinateList()
@@ -41,6 +43,7 @@ function cObject:getSpan()
 	return spanList
 end
 
+--- Draws a hitbox for the player
 function cObject:drawHitbox()
 	local r,g,b,a = love.graphics.getColor() -- Get old color
 	love.graphics.setColor(247, 176, 34)
@@ -48,11 +51,13 @@ function cObject:drawHitbox()
 	love.graphics.setColor(r,g,b,a) -- Reset to old color
 end
 
+--- Draws player on screen
 function cObject:draw()
 	love.graphics.setColor(self.color)
 	love.graphics.draw(self.sprite, self.x, self.y, self.rotation, self.scaleX, self.scaleY, self.x_offset, self.y_offset)
 end
 
+--- Moves player according to their velocity
 function cObject:move()
 	self.x = self.x + self.x_vel
 	self.y = self.y + self.y_vel
