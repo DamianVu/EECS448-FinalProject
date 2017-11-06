@@ -1,4 +1,5 @@
-
+--- Configurations.
+-- This function contains the configuration for the game
 function love.conf(t)
 	t.identity = "Wubba"
 	t.console = false
@@ -11,6 +12,6 @@ function love.conf(t)
 	-- Modules: Disable unused to save memory!!!
 	t.modules.joystick = false
 	t.modules.physics = false
-	
+
 
 end
