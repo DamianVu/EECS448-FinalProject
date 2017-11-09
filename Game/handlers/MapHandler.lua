@@ -13,13 +13,9 @@ end
 --- Loads map
 function MapHandler:loadMap(map, startIndex)
 	-- Revamp for project 4
-	local maps = {
-		RawMaps.map1,
-		RawMaps.map2,
-		RawMaps.map3
-	}
+	
 
-	local rawTS = maps[map]
+	local rawTS = RawMaps[map]
 	-- Revamp for project 4 ^^
 
 	if startIndex == nil then startIndex = 1 end

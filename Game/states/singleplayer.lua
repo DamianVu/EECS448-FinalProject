@@ -25,10 +25,8 @@ function SoloGame:enter() -- enter is called everytime this state occurs
     player = cObject(USERNAME, spriteImg, nil, 1, 96, 96, 32, 32)
     badGuy = cObject("badguy", spriteImg, {0,0,255}, .005, 192, 192, 32, 32)
 
-	MH = MapHandler()
-    MH:loadMap(2,2)
-
     LH = LevelHandler()
+    LH:startGame()
 
 
 	CH:addObj(player)
@@ -136,9 +134,9 @@ function SoloGame:keypressed(key)
     if key == 'escape' then Gamestate.switch(PlayMenu) end
     if key == 'l' then 
         if switched then
-            MH:loadMap(2,2)
+            LH:loadLevel(2,2)
         else
-            MH:loadMap(1,1) 
+            LH:loadLevel(1,1) 
         end
         switched = not switched
     end
