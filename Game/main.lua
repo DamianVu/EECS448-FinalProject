@@ -4,6 +4,7 @@
 require "handlers.CollisionHandler"
 require "handlers.MapHandler"
 require "handlers.CharacterHandler"
+require "handlers.LevelHandler"
 
 require "libraries.cObject"
 require "debugging"

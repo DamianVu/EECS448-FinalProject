@@ -2,6 +2,8 @@
 -- This module runs the single player game
 SoloGame = {}
 
+switched = false
+
 local movingObj = {}
 
 --- This is called only when the the module has been initialized (in main.lua)
@@ -18,13 +20,16 @@ function SoloGame:enter() -- enter is called everytime this state occurs
 
 	love.graphics.setNewFont(16)
 
+    spriteImg = love.graphics.newImage('images/sprites/player.png')
+
+    player = cObject(USERNAME, spriteImg, nil, 1, 96, 96, 32, 32)
+    badGuy = cObject("badguy", spriteImg, {0,0,255}, .005, 192, 192, 32, 32)
+
 	MH = MapHandler()
     MH:loadMap(2,2)
 
-    spriteImg = love.graphics.newImage('images/sprites/player.png')
+    LH = LevelHandler()
 
-	player = cObject(USERNAME, spriteImg, nil, 1, 96, 96, 32, 32)
-    badGuy = cObject("badguy", spriteImg, {0,0,255}, .005, 192, 192, 32, 32)
 
 	CH:addObj(player)
     CH:addObj(badGuy)
@@ -129,6 +134,14 @@ function SoloGame:keypressed(key)
     if key == 'n' then noclip = not noclip end
     if key == 'tab' then debugMode = not debugMode end -- Toggle debug mode
     if key == 'escape' then Gamestate.switch(PlayMenu) end
+    if key == 'l' then 
+        if switched then
+            MH:loadMap(2,2)
+        else
+            MH:loadMap(1,1) 
+        end
+        switched = not switched
+    end
 end
 
 
