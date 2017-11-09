@@ -22,14 +22,19 @@ function SoloGame:enter() -- enter is called everytime this state occurs
     MH:loadMap(2,2)
 
     spriteImg = love.graphics.newImage('images/sprites/player.png')
+    badImg = love.graphics.newImage('images/sprites/badguy.png')
+    healthImg = love.graphics.newImage('images/sprites/HealthBar.png')
 
 	player = cObject(USERNAME, spriteImg, nil, 1, 96, 96, 32, 32)
-    badGuy = cObject("badguy", spriteImg, {0,0,255}, .005, 192, 192, 32, 32)
+    p_health = cObject ("health", healthImg, {255,255,255}, 1, 96, 96, 28, 10)
+    badGuy = cObject("badguy", badImg, {255,50,0}, .005, 192, 192, 32, 32)
 
 	CH:addObj(player)
     CH:addObj(badGuy)
+    CH:addObj(p_health)
     movingObj[#movingObj + 1] = player
     movingObj[#movingObj + 1] = badGuy
+    movingObj[#movingObj + 1] = p_health
 
 
 end
@@ -52,6 +57,7 @@ function SoloGame:draw()
     -- Draw all players
     player:draw()
     badGuy:draw()
+    p_health:draw()
 
     if debugMode then
       --player:drawHitbox() no need until we update hitboxes
@@ -119,6 +125,8 @@ function SoloGame:update(dt)
 
     -- Move the moving objects after collisions have been handled
     for i = 1, #movingObj do movingObj[i]:move() end
+    p_health.x = player.x
+    p_health.y = player.y
 
 end
 
