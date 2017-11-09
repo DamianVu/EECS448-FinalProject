@@ -44,6 +44,12 @@ RawMaps = {
 			{2,2},
 			{11,13}
 		},
+		endingLocations = {
+			{2,13}
+		},
+		transitions = {
+			{1,1,1}
+		},
 		img = "testset.png",
 		id_dict = {
 			[1] = {collision = true, bumpFactor = 0},
@@ -72,7 +78,7 @@ RawMaps = {
 			{1,1,1,1,1,1,1,1,1,1,1,1,1,1}
 		}
 	},
-	
+
 	[3] = {
 		startingLocations = {
 			{10,10},

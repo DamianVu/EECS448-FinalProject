@@ -114,7 +114,7 @@ function SoloGame:update(dt)
         else CH.playerMovementDisableCount = CH.playerMovementDisableCount - 1
         end
     end
-
+    LH:update(dt)
     -- Handle collisions
     if not noclip then CH:checkCollisions() end
 
@@ -132,11 +132,11 @@ function SoloGame:keypressed(key)
     if key == 'n' then noclip = not noclip end
     if key == 'tab' then debugMode = not debugMode end -- Toggle debug mode
     if key == 'escape' then Gamestate.switch(PlayMenu) end
-    if key == 'l' then 
+    if key == 'l' then
         if switched then
             LH:loadLevel(2,2)
         else
-            LH:loadLevel(1,1) 
+            LH:loadLevel(1,1)
         end
         switched = not switched
     end

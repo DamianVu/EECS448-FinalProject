@@ -10,6 +10,8 @@ require "libraries.cObject"
 require "debugging"
 require "netClient"
 
+require 'resources.rawmaps' -- Revamp for project 4
+
 Gamestate = require "libraries.ext.gamestate"
 
 SplashScreen = require "states.splashscreen"
