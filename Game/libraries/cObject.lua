@@ -62,3 +62,14 @@ function cObject:move()
 	self.x = self.x + self.x_vel
 	self.y = self.y + self.y_vel
 end
+
+--- This function should be used for enemies to chase global player
+function cObject:chase(dt)
+	local diffx = player.x - self.x
+	local diffy = player.y - self.y
+
+	
+
+	self.x_vel = diffx * self.speed * base_speed * dt
+	self.y_vel = diffy * self.speed * base_speed * dt
+end
