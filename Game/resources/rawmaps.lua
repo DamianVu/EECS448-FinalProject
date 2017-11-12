@@ -1,9 +1,15 @@
 ---
 RawMaps = {
-	map1 = {
+	[1] = {
 		startingLocations = {
 			{10,10},
 			{5,5}
+		},
+		endingLocations = {
+
+		},
+		transitions = {
+
 		},
 		img = "testset.png",
 		id_dict = {
@@ -33,10 +39,16 @@ RawMaps = {
 		}
 	},
 
-	map2 = {
+	[2] = {
 		startingLocations = {
 			{2,2},
 			{11,13}
+		},
+		endingLocations = {
+			{2,13}
+		},
+		transitions = {
+			{1,1,1}
 		},
 		img = "testset.png",
 		id_dict = {
@@ -66,8 +78,8 @@ RawMaps = {
 			{1,1,1,1,1,1,1,1,1,1,1,1,1,1}
 		}
 	},
-	
-	map3 = {
+
+	[3] = {
 		startingLocations = {
 			{10,10},
 			{3,3}
