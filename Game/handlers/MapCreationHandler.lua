@@ -10,7 +10,6 @@ MapCreationHandler = class("MapCreationHandler", {
 	tilesets = {},
 	currentMap = {
 		tileCount = 0,
-		tilesets = {},
 		grid = {}
 	}
 	})
@@ -301,12 +300,63 @@ function MapCreationHandler:placeTile()
 
 
 	-- First check to see if there is already space on grid
+	if #self.currentMap.grid < self.currentTileY then
+		-- Fill in missing tables if there are any
+		for i = #self.currentMap.grid + 1, self.currentTileY do
+			if self.currentMap.grid[i] == nil then
+				self.currentMap.grid[i] = {}
+			end
+		end
+	end
 
+	if #self.currentMap.grid[self.currentTileY] < self.currentTileX then
+		-- Fill in missing slots in array with constructor
+		for i = #self.currentMap.grid[self.currentTileY] + 1, self.currentTileX - 1 do
+			if self.currentMap.grid[self.currentTileY][i] == nil then
+				self.currentMap.grid[self.currentTileY][i] = -1
+			end
+		end
+	end
 
-	-- Afterwards, place the tile.
-	
+	-- Afterwards, place the tile
+	self.currentMap.grid[self.currentTileY][self.currentTileX] = self.currentTile
 end
 
 function MapCreationHandler:removeTile()
+	-- Make sure the tile exists
+	if #self.currentMap.grid >= self.currentTileY then
+		if #self.currentMap.grid[self.currentTileY] >= self.currentTileX then
+			self.currentMap.grid[self.currentTileY][self.currentTileX] = -1
+		end
+	end
+end
 
+function MapCreationHandler:drawMap()
+	love.graphics.setColor(255,255,255,255)
+	local ts = self.tilesets[self.currentTileset]
+	for i = 1, #self.currentMap.grid do
+		for j = 1, #self.currentMap.grid[i] do
+			if self.currentMap.grid[i][j] ~= -1 then
+				love.graphics.draw(ts.image, ts.Quads[self.currentMap.grid[i][j]], (j-1)*64, (i-1)*64)
+			end
+		end
+	end
+end
+
+function MapCreationHandler:getTilesetSize() 
+	-- TO CLARIFY, THIS FUNCTION PULLS THE NUMBER OF TILES IN THE SET. NOT THE AMOUNT OF TILES ON SCREEN
+	return #self.tilesets[self.currentTileset].Quads
+end
+
+function MapCreationHandler:getTileCount()
+	local ts = self.tilesets[self.currentTileset]
+	local count = 0
+	for i = 1, #self.currentMap.grid do
+		for j = 1, #self.currentMap.grid[i] do
+			if self.currentMap.grid[i][j] ~= -1 then
+				count = count + 1
+			end
+		end
+	end
+	return count
 end

@@ -5,7 +5,7 @@ require "handlers.MapCreationHandler"
 
 local checkMouseMovement = false
 
-camera = {x = 400, y = 400, x_vel = 0, y_vel = 0, speed = 2} -- Camera object (will be the focus of the camera translation)
+camera = {x = 400, y = 200, x_vel = 0, y_vel = 0, speed = 2} -- Camera object (will be the focus of the camera translation)
 
 function MapCreator:enter()
 	MCH = MapCreationHandler(64)
@@ -19,11 +19,13 @@ end
 
 function MapCreator:draw()
 	x_translate_val = (love.graphics.getWidth() / 2) - camera.x
-	y_translate_val = (love.graphics.getHeight() / 2) - camera.y
+	y_translate_val = ((love.graphics.getHeight() - MCH.paletteSize) / 2) - camera.y
 
 	love.graphics.push()
 	love.graphics.translate(x_translate_val, y_translate_val)
 	love.graphics.scale(zoom)
+
+	MCH:drawMap()
 
 	MCH:drawMouse()
 
@@ -123,6 +125,32 @@ function MapCreator:mousepressed(x,y,button,_)
 			checkMouseMovement = true
 		end
 	end
+
+	if MCH.mouseOnPalette then
+			-- Check if clicked on some tile in palette
+			local startX = 10
+			local startY = (love.graphics.getHeight() - 138)
+			if x >= startX and x <= startX + 512 and y >= startY and y <= startY + 128 then
+				local ctile = 1
+				local done = false
+				for i = 1, 2 do
+					for j = 1, 8 do
+						if ctile > MCH:getTilesetSize() then break end
+
+						if y < startY + (64*i) and x < startX + (j*64) then
+							done = true
+							MCH.currentTile = ctile
+							break
+						end
+
+						ctile = ctile + 1
+					end
+					if done then
+						break
+					end
+				end
+			end
+		end
 end
 
 function MapCreator:mousereleased(x,y,button,_)
