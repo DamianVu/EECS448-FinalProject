@@ -25,6 +25,7 @@ function cObject:init(id, sprite, color, speed, x, y, width, height, x_offset, y
 	self.scaleX = self.width / imgW
 	self.scaleY = self.height / imgH
 	self.rotation = rotation or 0
+	-- self.health = 
 end
 
 --- Span function.
