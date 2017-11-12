@@ -6,7 +6,14 @@ require "handlers.MapHandler"
 require "handlers.CharacterHandler"
 require "handlers.LevelHandler"
 
-require "libraries.cObject"
+require "libraries.classes.cObject"
+require "libraries.classes.CoordinateList"
+require "libraries.classes.Map"
+require "libraries.classes.Tile"
+require "libraries.classes.TileMapping"
+
+
+
 require "debugging"
 require "netClient"
 
