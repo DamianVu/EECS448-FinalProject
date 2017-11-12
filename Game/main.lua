@@ -96,15 +96,20 @@ end
 
 function love.wheelmoved(x, y)
     if Gamestate.current() == MapCreator then
-        if y < 0 and zoom <= minZoom then 
-            zoom = minZoom
-            return
+        if canZoom then
+            if y < 0 and zoom <= minZoom then 
+                zoom = minZoom
+                return
+            end
+            if y > 0 and zoom >= maxZoom then
+                zoom = maxZoom
+                return
+            end
+            zoom = zoom * (1 + (y * .2))
+        else
+            -- Scroll through tiles
+            MCH:changeTile(y)
         end
-        if y > 0 and zoom >= maxZoom then
-            zoom = maxZoom
-            return
-        end
-        zoom = zoom * (1 + (y * .2))
     end
 end
 

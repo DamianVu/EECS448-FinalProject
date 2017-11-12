@@ -5,11 +5,12 @@ require "handlers.MapCreationHandler"
 
 local checkMouseMovement = false
 
-camera = {x = 0, y = 0, x_vel = 0, y_vel = 0, speed = 2} -- Camera object (will be the focus of the camera translation)
+camera = {x = 400, y = 400, x_vel = 0, y_vel = 0, speed = 2} -- Camera object (will be the focus of the camera translation)
 
 function MapCreator:enter()
 	MCH = MapCreationHandler(64)
-	gridlines = false
+	MCH:loadTilesets()
+	gridlines = true
 	minZoom = .2
 	zoom = 1
 	maxZoom = 5
@@ -24,13 +25,13 @@ function MapCreator:draw()
 	love.graphics.translate(x_translate_val, y_translate_val)
 	love.graphics.scale(zoom)
 
+	MCH:drawMouse()
+
 	if gridlines then MCH:drawGridLines(camera.x, camera.y) end
 
 	-- Draw origin
 	love.graphics.setColor(255,0,0)
 	love.graphics.circle("fill", 0, 0, 5)
-
-	MCH:drawMouse()
 
 	love.graphics.pop()
 
@@ -42,6 +43,13 @@ function MapCreator:draw()
 end
 
 function MapCreator:update(dt)
+
+	MCH:updateMouseOnPalette()
+	if MCH.mode == "Moving" then
+		canZoom = true
+	else
+		canZoom = false
+	end
 
 	
 	if not love.keyboard.isDown('up', 'down') then camera.y_vel = 0 end
@@ -58,7 +66,14 @@ function MapCreator:update(dt)
 		camera.y = math.floor(camera.y + camera.y_vel)
 	end
 
-
+	if MCH.mode == "Editing" then
+		if love.mouse.isDown(1) and MCH.mouseOnValidTile and not MCH.mouseOnPalette then
+			MCH:placeTile()
+		end
+		if love.mouse.isDown(2) and MCH.mouseOnValidTile and not MCH.mouseOnPalette then
+			MCH:removeTile()
+		end
+	end
 
 
 end
@@ -100,7 +115,7 @@ function MapCreator:mousepressed(x,y,button,_)
 	if MCH.mode == "Editing" then
 
 	elseif MCH.mode == "Moving" then
-		if button == 1 then
+		if button == 1 and not MCH.mouseOnPalette then
 			oldMouseX = x
 			oldMouseY = y
 			oldCameraX = camera.x
