@@ -106,6 +106,9 @@ function MapCreator:keypressed(key)
 		if key == 'm' then MCH:changeMode() end
 	end
 
+	if key == ',' then MCH:changePage(true) end
+	if key == '.' then MCH:changePage(false) end
+
 	if key == 'g' then gridlines = not gridlines end
 end
 
@@ -139,7 +142,7 @@ function MapCreator:mousepressed(x,y,button,_)
 
 						if y < startY + (64*i) and x < startX + (j*64) then
 							done = true
-							MCH.currentTile = ctile
+							MCH.currentTile = ctile + ((MCH.currentTilePage-1) * 16)
 							break
 						end
 

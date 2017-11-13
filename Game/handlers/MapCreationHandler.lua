@@ -124,7 +124,7 @@ function MapCreationHandler:drawGUI()
 	end
 
 	love.graphics.setColor(255,255,0)
-	love.graphics.print("TS: " .. self.tilesets[self.currentTileset].name .. ", Page: " .. self.currentTilePage .. " / " .. (math.floor((#self.tilesets[self.currentTileset].Quads - 1) / 16) + 1), paletteX + 10, paletteY + 90)
+	love.graphics.print("TS: " .. self.tilesets[self.currentTileset].name .. ", Page: " .. self.currentTilePage .. " / " .. (math.floor((#self.tilesets[self.currentTileset].Quads - 1) / 16) + 1) .. "   (Use '<' and '>' to navigate pages)", paletteX + 10, paletteY + 90)
 
 	self:drawTilePalette()
 end
@@ -256,7 +256,7 @@ function MapCreationHandler:changeTile(updown)
 			if tilePages > 1 then
 				if self.currentTilePage == 1 then
 					self.currentTilePage = tilePages
-					self.currentTile = ((tilePages - 1) * 16) + (#currentTS.Quads % 16)
+					self.currentTile = (tilePages * 16) + (#currentTS.Quads % 16)
 				else
 					self.currentTilePage = self.currentTilePage - 1
 					self.currentTile = self.currentTilePage * 16
@@ -291,6 +291,27 @@ function MapCreationHandler:changeTile(updown)
 			else
 				self.currentTile = self.currentTile + 1
 			end
+		end
+	end
+end
+
+function MapCreationHandler:changePage(prev)
+	if self:getTilesetSize() <= 16 then return end
+	local tilePages = (math.floor((#self.tilesets[self.currentTileset].Quads - 1) / 16) + 1)
+	if prev then
+		if self.currentTilePage == 1 then
+			self.currentTilePage = tilePages
+			self.currentTile = (tilePages * 16) + (#self.tilesets[self.currentTileset].Quads % 16)
+		else
+			self.currentTilePage = self.currentTilePage - 1
+			self.currentTile = 16
+		end
+	else
+		self.currentTile = 1
+		if self.currentTilePage == tilePages then
+			self.currentTilePage = 1
+		else
+			self.currentTilePage = self.currentTilePage + 1
 		end
 	end
 end
