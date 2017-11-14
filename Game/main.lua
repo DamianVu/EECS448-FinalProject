@@ -11,6 +11,7 @@ require "libraries.classes.CoordinateList"
 require "libraries.classes.Map"
 require "libraries.classes.Tile"
 require "libraries.classes.TileMapping"
+require "libraries.classes.HUD"
 
 
 
