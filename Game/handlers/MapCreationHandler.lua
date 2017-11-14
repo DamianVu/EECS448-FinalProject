@@ -1,12 +1,19 @@
 
 class = require 'libraries.ext.30log'
 
+MCHModes = {
+	[1] = "Moving",
+	[2] = "Editing",
+	[3] = "Object Manager"
+}
+
 MapCreationHandler = class("MapCreationHandler", {
 	gridColor = {180,180,180}, 
 	paletteSize = 250,
 	paletteColor = {80,80,80},
 	textColor = {20,211,255},
-	mode = "Moving",
+	objects = {},
+	mode = MCHModes[3],
 	tilesets = {},
 	currentMap = {
 		tileCount = 0,
@@ -20,6 +27,7 @@ function MapCreationHandler:init(tilesize)
 	self.currentTileY = 0
 	self.mouseOnValidTile = false
 	self.mouseOnPalette = false
+	self.mouseOnObjectMenu = false
 
 	self.currentTileset = 1
 	self.currentTile = 1
@@ -116,7 +124,14 @@ function MapCreationHandler:drawGUI()
 	love.graphics.print("Palette -", paletteX + 10, paletteY + 10)
 	love.graphics.setNewFont(16)
 	love.graphics.print("(can only place tiles in the positve quadrant for now)", paletteX + 125, paletteY + 15)
-	love.graphics.print("Mode: " .. self.mode .. " (Press 'M' to change)", paletteX + 10, paletteY + 40)
+
+	local extraText
+	if self.mode == MCHModes[3] then
+		extraText = " (Click off the menu to close)"
+	else
+		extraText = " (Press 'M' to change)"
+	end
+	love.graphics.print("Mode: " .. self.mode .. extraText, paletteX + 10, paletteY + 40)
 	if self.mouseOnPalette then
 		love.graphics.print("Mouse On Palette", paletteX + 10, paletteY + 60)
 	else
@@ -380,4 +395,103 @@ function MapCreationHandler:getTileCount()
 		end
 	end
 	return count
+end
+
+function MapCreationHandler:resetObjectMenu()
+	self.currentTileset = 1
+	self.currentTile = 1
+	self.currentTilePage = 1
+end
+
+function MapCreationHandler:drawObjectMenu()
+	-- This will draw the frame of the menu
+	local w,h = love.graphics.getDimensions()
+	h = h - self.paletteSize
+
+	-- Now w,h is essentially the size of the window without the palette
+	-- Let's say we want our menu to be a rectangle with the width 2 times its height
+	-- The restraining factor is probably going to be the height based on common screen sizes - self.paletteSize
+
+	local menuHeight = h * .75
+	local menuWidth = menuHeight * 2
+
+	local centerx = w/2
+	local centery = h/2
+
+	local drawx = centerx - (menuWidth / 2)
+	local drawy = centery - (menuHeight / 2)
+
+	love.graphics.setColor(200,200,200,255)
+	love.graphics.rectangle("fill", drawx, drawy, menuWidth, menuHeight)
+
+
+	-- The following can be split into its own functions IF we make some of these local variables into object variables
+
+
+	-- Draw Menu Tiles
+
+	-- Figure out how many tiles we can draw
+
+	-- Say we want to have a border around the left, up, down of at least 20px
+	local borderSize = 40
+
+	-- Col size should be the menu height - (2 * borderSize) all over 64 rounded down
+
+
+	local maxRowSize = math.floor(((menuWidth - (2 * borderSize)) / 2) / 64) -- Max num of tiles per row
+	local maxColSize = math.floor((menuHeight - (2 * borderSize)) / 64)-- Max num of tiles per col
+
+	local tilesPerPage = maxRowSize * maxColSize
+
+	-- We want to center the tilemap vertically as well.
+	local offsetTileY = (menuHeight - (64 * maxColSize)) / 2
+
+	local tileDrawX = drawx + borderSize
+	local tileDrawY = drawy + offsetTileY
+
+	-- Debug stuff
+	--love.graphics.setColor(0,0,255)
+	--love.graphics.rectangle("line", tileDrawX, tileDrawY, maxRowSize * 64, maxColSize * 64)
+
+	-- Draw current page of tiles
+
+
+	-- Draw grid
+	
+	for i = 0, maxRowSize do
+
+	end
+
+	for i = 0, maxColSize do
+
+	end
+
+	-- Draw menu buttons
+
+end
+
+function MapCreationHandler:updateMouseOnObjectMenu()
+	local x,y = love.mouse.getPosition()
+
+	-- Vars from drawing the object menu
+	local w,h = love.graphics.getDimensions()
+	h = h - self.paletteSize
+	local menuHeight = h * .75
+	local menuWidth = menuHeight * 2
+
+	local centerx = w/2
+	local centery = h/2
+
+	local drawx = centerx - (menuWidth / 2)
+	local drawy = centery - (menuHeight / 2)
+	-- End vars from drawing the object menu
+
+	-- Need to check if x,y is within this menu
+
+	if x >= drawx and x <= drawx + menuWidth and y >= drawy and y <= drawy + menuHeight then
+		self.mouseOnObjectMenu = true
+	else
+		self.mouseOnObjectMenu = false
+	end
+
 end

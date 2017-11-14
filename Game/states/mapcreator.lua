@@ -42,11 +42,17 @@ function MapCreator:draw()
 	love.graphics.print("Camera-X: " .. camera.x, 10, 30)
 	love.graphics.print("Camera-Y: " .. camera.y, 10, 50)
 
+	if MCH.mode == MCHModes[3] then
+		MCH:drawObjectMenu()
+	end
+
 end
 
 function MapCreator:update(dt)
 
 	MCH:updateMouseOnPalette()
+	if MCH.mode == MCHModes[3] then MCH:updateMouseOnObjectMenu() end
+
 	if MCH.mode == "Moving" then
 		canZoom = true
 	else
@@ -85,7 +91,7 @@ function MapCreator:keypressed(key)
 	if zoom < 1 then
 		zoomSpeed = 1
 	end
-	if not checkMouseMovement then
+	if not checkMouseMovement and MCH.mode ~= MCHModes[3] then
 		if key == 'up' then 
 			camera.y_vel = -camera.speed * 3 * zoomSpeed
 		end
@@ -127,6 +133,11 @@ function MapCreator:mousepressed(x,y,button,_)
 			oldCameraY = camera.y
 			checkMouseMovement = true
 		end
+	elseif MCH.mode == MCHModes[3] then
+		if button == 1 and not MCH.mouseOnObjectMenu then
+			MCH.mode = MCHModes[1]
+			MCH:resetObjectMenu()
+		end
 	end
 
 	if MCH.mouseOnPalette then
@@ -153,6 +164,8 @@ function MapCreator:mousepressed(x,y,button,_)
 					end
 				end
 			end
+
+			-- 
 		end
 end
 
