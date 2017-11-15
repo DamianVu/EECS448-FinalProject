@@ -32,9 +32,9 @@ function Enemy:drawHitbox()
 	love.graphics.rectangle("line", self.x - (self.x_offset * self.scaleX), self.y - (self.x_offset * self.scaleY), self.width, self.height)
 end
 
-function Enemy:move()
-	self.x = self.x + self.x_vel
-	self.y = self.y + self.y_vel
+function Enemy:move(dt)
+	self.x = self.x + (self.x_vel * base_speed * dt)
+	self.y = self.y + (self.y_vel * base_speed * dt)
 end
 
 function Enemy:chase()

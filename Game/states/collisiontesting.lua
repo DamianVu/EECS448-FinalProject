@@ -32,7 +32,7 @@ function CollisionTesting:enter()
 	terrain[5] = Terrain(128, 128, 64, 64)
 	terrain[6] = Terrain(6 * 64, 5 * 64, 128, 128)
 
-	enemies[#enemies + 1] = Enemy(getNewUID(), nil, {255,0,0}, 2, 1, 400, 400, 32, 32, 20, player)
+	enemies[#enemies + 1] = Enemy(getNewUID(), nil, {255,0,0}, 1, 1, 400, 400, 32, 32, 20, player)
 
 	LH = LevelHandler()
 	LH:startGame()
@@ -97,7 +97,7 @@ function CollisionTesting:update(dt)
 			table.remove(enemies, getObjectPosition(eid, enemies))
 		else
 			enemies[i]:chase()
-			enemies[i]:move()
+			enemies[i]:move(dt)
 		end
 	end
 	
