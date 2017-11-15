@@ -12,7 +12,7 @@ require "libraries.classes.Map"
 require "libraries.classes.Tile"
 require "libraries.classes.TileMapping"
 require "libraries.classes.MCTile"
-
+require "libraries.classes.MapObject"
 
 require "debugging"
 require "netClient"
