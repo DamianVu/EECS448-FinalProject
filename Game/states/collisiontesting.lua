@@ -69,6 +69,11 @@ function CollisionTesting:draw()
 	love.graphics.setColor(255, 255, 255)
 	love.graphics.circle("line", mouse.x, mouse.y, 5)
 
+	
+	love.graphics.setColor(0,255,0)
+	love.graphics.print("Collision: " .. tostring(collision), 10, 10)
+	love.graphics.print("Number of projectiles: " .. #projectiles, 10, 30)
+
 	-- Code that will cap FPS at 144 --
 	local cur_time = love.timer.getTime()
 	if next_time <= cur_time then
@@ -76,9 +81,6 @@ function CollisionTesting:draw()
 		return
 	end
 
-	love.graphics.setColor(0,255,0)
-	love.graphics.print("Collision: " .. tostring(collision), 10, 10)
-	love.graphics.print("Number of projectiles: " .. #projectiles, 10, 30)
 
 	love.timer.sleep(next_time - cur_time)
 	-- End Code that will cap FPS at 144 --
