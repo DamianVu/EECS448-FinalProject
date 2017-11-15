@@ -9,7 +9,7 @@ function LevelHandler:init()
 end
 
 function LevelHandler:startGame()
-	self:loadLevel(2,2)
+	self:loadLevel(4,1)
 end
 
 function LevelHandler:loadLevel(level, startPos)

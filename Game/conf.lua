@@ -5,8 +5,10 @@ function love.conf(t)
 	t.console = false
 
 
-	t.window.width = 1200
-	t.window.height = 600
+	t.window.width = 1600
+	t.window.height = 900
+	t.window.icon = "images/gameicon.jpg"
+
 
 
 	-- Modules: Disable unused to save memory!!!

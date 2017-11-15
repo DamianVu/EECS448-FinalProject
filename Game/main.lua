@@ -1,10 +1,12 @@
 ---Current functionality is just movement and mouse cursor until we get maps and tiling implemented.
 
+class = require 'libraries.ext.30log'
 
 require "handlers.CollisionHandler"
 require "handlers.MapHandler"
 require "handlers.CharacterHandler"
 require "handlers.LevelHandler"
+require "handlers.NewCollisionHandler"
 
 require "libraries.classes.cObject"
 require "libraries.classes.CoordinateList"
@@ -12,13 +14,18 @@ require "libraries.classes.Map"
 require "libraries.classes.Tile"
 require "libraries.classes.TileMapping"
 
+require "libraries.classes.objects.Player"
+require "libraries.classes.objects.Terrain"
+require "libraries.classes.objects.Projectile"
+require "libraries.classes.objects.Enemy"
+
 
 
 require "debugging"
 require "netClient"
 
 require 'resources.rawmaps' -- Revamp for project 4
-
+ 
 
 
 Gamestate = require "libraries.ext.gamestate"
@@ -31,6 +38,7 @@ Debugging = require "states.debugstate"
 CharacterSelection = require "states.characterselection"
 PlayMenu = require "states.playgame"
 MapCreator = require "states.mapcreator"
+CollisionTesting = require "states.collisiontesting"
 
 mouse = {}
 movingObjects = {}
@@ -61,7 +69,7 @@ function love.load()
     --love.window.setMode(windowWidth, windowHeight, {resizable=false, vsync=false, minwidth=800, minheight=600, borderless=true, msaa=2})
 
     Gamestate.registerEvents()
-    Gamestate.switch(Singleplayer)
+    Gamestate.switch(CollisionTesting)
 
 
     -- Physics variables
