@@ -1,7 +1,7 @@
 
 Projectile = class("Projectile", {})
 
-function Projectile:init(id, sprite, x, y, width, height, x_vel, y_vel)
+function Projectile:init(id, sprite, x, y, width, height, x_vel, y_vel, extra)
 	self.id = id
 	self.type = "Projectile"
 	self.sprite = sprite or circleImg
@@ -11,6 +11,8 @@ function Projectile:init(id, sprite, x, y, width, height, x_vel, y_vel)
 	self.y = y
 	self.x_vel = x_vel
 	self.y_vel = y_vel
+
+	self.life = extra.life or 1 -- To add bouncing later!!!
 
 	self.color = {math.random(0,255), math.random(0,255), math.random(0,255)}
 
