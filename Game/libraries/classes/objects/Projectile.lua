@@ -1,7 +1,7 @@
 
 Projectile = class("Projectile", {})
 
-function Projectile:init(id, sprite, x, y, width, height, x_vel, y_vel, extra)
+function Projectile:init(id, sprite, x, y, width, height, x_vel, y_vel, damage, sourceID)
 	self.id = id
 	self.type = "Projectile"
 	self.sprite = sprite or circleImg
@@ -12,7 +12,7 @@ function Projectile:init(id, sprite, x, y, width, height, x_vel, y_vel, extra)
 	self.x_vel = x_vel
 	self.y_vel = y_vel
 
-	self.life = extra.life or 1 -- To add bouncing later!!!
+	self.damage = damage or 1
 
 	self.color = {math.random(0,255), math.random(0,255), math.random(0,255)}
 
@@ -21,6 +21,8 @@ function Projectile:init(id, sprite, x, y, width, height, x_vel, y_vel, extra)
 	self.y_offset = imgH / 2
 	self.scaleX = self.width / imgW
 	self.scaleY = self.height / imgH
+
+	self.sourceID = sourceID
 end
 
 function Projectile:draw()

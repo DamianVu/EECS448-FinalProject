@@ -1,12 +1,12 @@
 
-Player = class("Player", {x_vel = 0, y_vel = 0, x_vel_slowdown = 10, y_vel_slowdown = 10})
+Enemy = class("Enemy", {})
 
-function Player:init(id, sprite, color, speed, x, y, width, height)
+function Enemy:init(id, sprite, color, speed, x, y, width, height, health, chaseObj)
 	self.id = id
-	self.type = "Player"
-	self.sprite = sprite or spriteImg
+	self.type = "Enemy"
+	self.sprite = sprite or enemyImg
 	self.color = color or {math.random(0,255), math.random(0,255), math.random(0,255)}
-	self.speed = speed or 1
+	self.speed = speed or 0 -- 0 means stationary
 	self.x = x
 	self.y = y
 	self.width = width or 32
@@ -17,19 +17,36 @@ function Player:init(id, sprite, color, speed, x, y, width, height)
 	self.scaleX = self.width / imgW
 	self.scaleY = self.height / imgH
 	self.rotation = rotation or 0
+	self.chaseObj = chaseObj or player
+	self.health = health or 10
 end
 
-function Player:draw()
+function Enemy:draw()
 	love.graphics.setColor(self.color)
 	love.graphics.draw(self.sprite, self.x, self.y, self.rotation, self.scaleX, self.scaleY, self.x_offset, self.y_offset)
 end
 
-function Player:drawHitbox()
+function Enemy:drawHitbox()
 	love.graphics.setColor(255,0,0)
 	love.graphics.rectangle("line", self.x - (self.x_offset * self.scaleX), self.y - (self.x_offset * self.scaleY), self.width, self.height)
 end
 
-function Player:move()
+function Enemy:move()
 	self.x = self.x + self.x_vel
 	self.y = self.y + self.y_vel
+end
+
+function Enemy:chase()
+	local angle = math.atan2(self.chaseObj.y - self.y, self.chaseObj.x - self.x)
+
+	self.x_vel = self.speed * math.cos(angle)
+	self.y_vel = self.speed * math.sin(angle)
+end
+
+function Enemy:takeDamage(damage)
+	self.health = self.health - damage
+end
+
+function Enemy:isDead()
+	return self.health <= 0
 end
