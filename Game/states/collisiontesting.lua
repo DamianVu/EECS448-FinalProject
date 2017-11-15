@@ -23,7 +23,7 @@ function CollisionTesting:enter()
 	circleImg = love.graphics.newImage('images/sprites/Circle.png')
 	enemyImg = love.graphics.newImage('images/sprites/badguy.png')
 
-	player = Player(getNewUID(), spriteImg, {255,255,255}, 1.5, 96, 96, 32, 32)
+	player = Player(getNewUID(), spriteImg, {255,255,255}, 1, 96, 96, 32, 32)
 
 	terrain[1] = Terrain(0, 0, 64 * 11, 64)
 	terrain[2] = Terrain(0, 64*9, 64*11, 64)
@@ -32,7 +32,7 @@ function CollisionTesting:enter()
 	terrain[5] = Terrain(128, 128, 64, 64)
 	terrain[6] = Terrain(6 * 64, 5 * 64, 128, 128)
 
-	enemies[#enemies + 1] = Enemy(getNewUID(), nil, {255,0,0}, 1, 1, 400, 400, 32, 32, 20, player)
+	enemies[#enemies + 1] = Enemy(getNewUID(), nil, {255,0,0}, .5, 1, 96, 96, 32, 32, 20, player)
 
 	LH = LevelHandler()
 	LH:startGame()
@@ -91,19 +91,19 @@ function CollisionTesting:update(dt)
 
 
 	for i = #enemies, 1, -1 do
-		if enemies[i]:isDead() then
-			local eid = enemies[i].id
-			table.remove(CH.objects, getObjectPosition(eid, CH.objects))
-			table.remove(enemies, getObjectPosition(eid, enemies))
-		else
-			enemies[i]:chase()
-			enemies[i]:move(dt)
-		end
+		enemies[i]:chase()
+		enemies[i]:move(dt)
 	end
 	
 	for i=#projectiles, 1, -1 do projectiles[i]:move(dt) end
 
 	CH:update()
+
+	for i = #enemies, 1, -1 do
+		if enemies[i]:isDead() then
+			destroyEnemy(enemies[i].id)
+		end
+	end
 end
 
 --- Event binding to listen for key presses
@@ -127,10 +127,14 @@ function CollisionTesting:mousepressed(x, y, button)
 	end
 end
 
-
 function destroyProjectile(id)
 	table.remove(CH.projectiles, getObjectPosition(id, CH.projectiles))
 	table.remove(projectiles, getObjectPosition(id, projectiles))
+end
+
+function destroyEnemy(id)
+	table.remove(CH.objects, getObjectPosition(id, CH.objects))
+	table.remove(enemies, getObjectPosition(id, enemies))
 end
 
 function getObjectPosition(id, table)
