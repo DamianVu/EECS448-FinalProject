@@ -16,7 +16,7 @@ function CollisionTesting:enter()
 	love.graphics.setNewFont(16)
 
 	spriteImg = love.graphics.newImage('images/sprites/player.png')
-	circleImg = love.graphics.newImage('images/sprites/circle.png')
+	circleImg = love.graphics.newImage('images/sprites/Circle.png')
 	enemyImg = love.graphics.newImage('images/sprites/badguy.png')
 
 	player = Player(getNewUID(), spriteImg, {255,255,255}, 1.5, 96, 96, 32, 32)
