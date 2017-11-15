@@ -14,6 +14,9 @@ require "libraries.classes.Map"
 require "libraries.classes.Tile"
 require "libraries.classes.TileMapping"
 
+
+base_slowdown_counter = 2 -- Game will wait this many game ticks before velocity comes to a halt
+
 require "libraries.classes.objects.Player"
 require "libraries.classes.objects.Terrain"
 require "libraries.classes.objects.Projectile"
@@ -74,17 +77,10 @@ function love.load()
 
     -- Physics variables
     base_speed = 250
-    base_slowdown_counter = 5 -- Game will wait this many game ticks before velocity comes to a halt
 
 
     arrowCursor = love.mouse.getSystemCursor("arrow")
     handCursor = love.mouse.getSystemCursor("hand")
-
-    -- Code that will cap FPS at 144
-    min_dt = 1/160
-    next_time = love.timer.getTime()
-    -- End Code that will cap FPS at 144
-
 end
 
 function love.draw()
@@ -96,8 +92,6 @@ function love.draw()
 end
 
 function love.update(dt)
-    -- Code that will cap FPS at 144
-    next_time = next_time + min_dt
 
     -- Get current mouse position and store in object mouse
     mouse.x, mouse.y = love.mouse.getPosition()

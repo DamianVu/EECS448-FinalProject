@@ -1,5 +1,5 @@
 
-Player = class("Player", {x_vel = 0, y_vel = 0, x_vel_slowdown = 10, y_vel_slowdown = 10})
+Player = class("Player", {x_vel = 0, y_vel = 0})
 
 function Player:init(id, sprite, color, speed, x, y, width, height)
 	self.id = id
@@ -29,7 +29,14 @@ function Player:drawHitbox()
 	love.graphics.rectangle("line", self.x - (self.x_offset * self.scaleX), self.y - (self.x_offset * self.scaleY), self.width, self.height)
 end
 
-function Player:move()
-	self.x = self.x + self.x_vel
-	self.y = self.y + self.y_vel
+function Player:move(dt, direction)
+	if direction == 1 then
+			self.y = self.y - (self.speed * base_speed * dt)
+	elseif direction == 2 then
+			self.x = self.x + (self.speed * base_speed * dt)
+	elseif direction == 3 then
+			self.y = self.y + (self.speed * base_speed * dt)
+	elseif direction == 4 then
+			self.x = self.x - (self.speed * base_speed * dt)
+	end
 end

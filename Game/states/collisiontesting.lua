@@ -13,6 +13,10 @@ end
 function CollisionTesting:enter()
 	collision = 0
 
+
+	projectiles = {}
+	enemies = {}
+
 	love.graphics.setNewFont(16)
 
 	spriteImg = love.graphics.newImage('images/sprites/player.png')
@@ -28,7 +32,7 @@ function CollisionTesting:enter()
 	terrain[5] = Terrain(128, 128, 64, 64)
 	terrain[6] = Terrain(6 * 64, 5 * 64, 128, 128)
 
-	enemies[#enemies + 1] = Enemy(getNewUID(), nil, {255,0,0}, 2, 400, 400, 32, 32, 20, player)
+	enemies[#enemies + 1] = Enemy(getNewUID(), nil, {255,0,0}, 2, 1, 400, 400, 32, 32, 20, player)
 
 	LH = LevelHandler()
 	LH:startGame()
@@ -69,44 +73,22 @@ function CollisionTesting:draw()
 	love.graphics.setColor(255, 255, 255)
 	love.graphics.circle("line", mouse.x, mouse.y, 5)
 
-	-- Code that will cap FPS at 144 --
-	local cur_time = love.timer.getTime()
-	if next_time <= cur_time then
-		next_time = cur_time
-		return
-	end
-
 	love.graphics.setColor(0,255,0)
-	love.graphics.print("Collision: " .. tostring(collision), 10, 10)
-	love.graphics.print("Number of projectiles: " .. #projectiles, 10, 30)
+	love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 10, 10)
+	love.graphics.print("Collision: " .. tostring(collision), 10, 30)
+	love.graphics.print("Number of projectiles: " .. #projectiles, 10, 50)
 
-	love.timer.sleep(next_time - cur_time)
-	-- End Code that will cap FPS at 144 --
 end
 
 function CollisionTesting:update(dt)
-	-- Change velocity according to keypresses
-	if love.keyboard.isDown('d') then player.x_vel = player.speed * base_speed * dt end
-    if love.keyboard.isDown('a') then player.x_vel = -player.speed * base_speed * dt end
-	if love.keyboard.isDown('w') then player.y_vel = -player.speed * base_speed * dt end
-	if love.keyboard.isDown('s') then player.y_vel = player.speed * base_speed * dt end
-
-	-- Friction
-	if not love.keyboard.isDown('d','a') then
-		if (player.x_vel_slowdown < 1) then player.x_vel = 0
-		else player.x_vel_slowdown = player.x_vel_slowdown - 1 end
-	else player.x_vel_slowdown = 10
-	end
-	if not love.keyboard.isDown('w','s') then
-		if (player.y_vel_slowdown < 1) then player.y_vel = 0
-		else player.y_vel_slowdown = player.y_vel_slowdown - 1 end
-	else 
-		player.y_vel_slowdown = 10
-	end
 	
 	LH:update(dt)
+	-- Change velocity according to keypresses
+	if love.keyboard.isDown('w') then player:move(dt, 1) end
+    if love.keyboard.isDown('a') then player:move(dt, 4) end
+	if love.keyboard.isDown('s') then player:move(dt, 3) end
+	if love.keyboard.isDown('d') then player:move(dt, 2) end
 
-	player:move()
 
 	for i = #enemies, 1, -1 do
 		if enemies[i]:isDead() then
@@ -119,14 +101,16 @@ function CollisionTesting:update(dt)
 		end
 	end
 	
-	for i=#projectiles, 1, -1 do projectiles[i]:move() end
+	for i=#projectiles, 1, -1 do projectiles[i]:move(dt) end
 
 	CH:update()
 end
 
 --- Event binding to listen for key presses
 function CollisionTesting:keypressed(key)
-
+	if key == 'r' then
+    	Gamestate.switch(CollisionTesting)
+	end
 end
 
 function CollisionTesting:mousepressed(x, y, button)
@@ -138,7 +122,7 @@ function CollisionTesting:mousepressed(x, y, button)
 
 		local index = #projectiles + 1
 
-		projectiles[index] = Projectile(getNewUID(), nil, player.x, player.y, 16, 16, 3 * math.cos(angle), 3 * math.sin(angle), 5, player.id)
+		projectiles[index] = Projectile(getNewUID(), nil, player.x, player.y, 16, 16, 3 * math.cos(angle), 3 * math.sin(angle), 5, 1, player.id)
 		CH.projectiles[#CH.projectiles + 1] = projectiles[index]
 	end
 end

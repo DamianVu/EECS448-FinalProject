@@ -1,9 +1,10 @@
 
 Enemy = class("Enemy", {})
 
-function Enemy:init(id, sprite, color, speed, x, y, width, height, health, chaseObj)
+function Enemy:init(id, sprite, color, speed, bumpFactor, x, y, width, height, health, chaseObj)
 	self.id = id
 	self.type = "Enemy"
+	self.bumpFactor = bumpFactor or 1
 	self.sprite = sprite or enemyImg
 	self.color = color or {math.random(0,255), math.random(0,255), math.random(0,255)}
 	self.speed = speed or 0 -- 0 means stationary
