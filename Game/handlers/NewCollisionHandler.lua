@@ -56,21 +56,21 @@ function NewCollisionHandler:update()
 	-- Check for object to terrain collisions
 	for i = #self.objects, 1, -1 do
 		for j = 1, #self.terrain do
-			self:checkTerrainCollision(self.objects[i], self.terrain[j])
+			self:checkCollision(self.objects[i], self.terrain[j])
 		end
 	end
 
 	-- Check for projectile to terrain collisions
 	for i = #self.projectiles, 1, -1 do
 		for j = 1, #self.terrain do
-			self:checkTerrainCollision(self.projectiles[i], self.terrain[j])
+			self:checkCollision(self.projectiles[i], self.terrain[j])
 		end
 	end
 
 	-- Check for projectile to object collisions
 	for i = #self.projectiles, 1, -1 do
 		for j = #self.objects, 1, -1 do
-			self:checkProjectileCollision(self.projectiles[i], self.objects[j])
+			self:checkCollision(self.projectiles[i], self.objects[j])
 		end
 	end
 
@@ -125,7 +125,23 @@ function NewCollisionHandler:checkProjectileCollision(projectile, object)
 	end
 end
 
+function NewCollisionHandler:checkCollision(object1, object2)
+	if not object1 or not object2 then return end
 
+	if 	(object1.y - (object1.height / 2) < object2.y + object2.height) and
+		(object1.y + (object1.height / 2) > object2.y) and
+		(object1.x - (object1.width / 2) < object2.x + object2.width) and
+		(object1.x + (object1.width / 2) > object2.x) then
+
+		if object2.type == TERRAIN then
+			self:resolveTerrainCollision(object1, object2)
+		elseif object1.type == PROJECTILE and (object2.type == PLAYER or object2.type == ENEMY) and object1.sourceID ~= object2.id then
+			self:resolveProjectileCollision(object1, object2)
+		elseif (object1.type == PLAYER or object1.type == ENEMY) and (object2.type == PLAYER or object2.type == ENEMY) then
+
+		end
+	end
+end
 
 
 -------------------------------------------
@@ -134,7 +150,7 @@ end
 
 --- Resolves a collision between an object and terrain
 function NewCollisionHandler:resolveTerrainCollision(object, terrain)
-	if object.type == "Projectile" then
+	if object.type == PROJECTILE then
 		destroyProjectile(object.id)
 	else
 		self:resolveObjectTerrainCollision(object, terrain)

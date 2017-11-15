@@ -69,14 +69,15 @@ function CollisionTesting:draw()
 
 	love.graphics.pop()
 
-
-	love.graphics.setColor(255, 255, 255)
-	love.graphics.circle("line", mouse.x, mouse.y, 5)
-
 	love.graphics.setColor(0,255,0)
 	love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 10, 10)
 	love.graphics.print("Collision: " .. tostring(collision), 10, 30)
 	love.graphics.print("Number of projectiles: " .. #projectiles, 10, 50)
+
+
+    love.graphics.setColor(255, 255, 255)
+    local mx,my = love.mouse.getPosition()
+    love.graphics.circle("line", mx, my, 8)
 
 end
 

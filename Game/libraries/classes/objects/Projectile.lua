@@ -3,7 +3,7 @@ Projectile = class("Projectile", {})
 
 function Projectile:init(id, sprite, x, y, width, height, x_vel, y_vel, damage, speed, sourceID)
 	self.id = id
-	self.type = "Projectile"
+	self.type = PROJECTILE
 	self.sprite = sprite or circleImg
 	self.width = width
 	self.height = height

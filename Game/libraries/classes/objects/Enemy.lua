@@ -3,7 +3,7 @@ Enemy = class("Enemy", {})
 
 function Enemy:init(id, sprite, color, speed, bumpFactor, x, y, width, height, health, chaseObj)
 	self.id = id
-	self.type = "Enemy"
+	self.type = ENEMY
 	self.bumpFactor = bumpFactor or 1
 	self.sprite = sprite or enemyImg
 	self.color = color or {math.random(0,255), math.random(0,255), math.random(0,255)}

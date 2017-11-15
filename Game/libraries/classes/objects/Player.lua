@@ -3,7 +3,7 @@ Player = class("Player", {x_vel = 0, y_vel = 0})
 
 function Player:init(id, sprite, color, speed, x, y, width, height)
 	self.id = id
-	self.type = "Player"
+	self.type = PLAYER
 	self.sprite = sprite or spriteImg
 	self.color = color or {math.random(0,255), math.random(0,255), math.random(0,255)}
 	self.speed = speed or 1

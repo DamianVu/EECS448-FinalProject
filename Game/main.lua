@@ -2,6 +2,8 @@
 
 class = require 'libraries.ext.30log'
 
+require "GAMECONSTANTS"
+
 require "handlers.CollisionHandler"
 require "handlers.MapHandler"
 require "handlers.CharacterHandler"
@@ -14,15 +16,10 @@ require "libraries.classes.Map"
 require "libraries.classes.Tile"
 require "libraries.classes.TileMapping"
 
-
-base_slowdown_counter = 2 -- Game will wait this many game ticks before velocity comes to a halt
-
 require "libraries.classes.objects.Player"
 require "libraries.classes.objects.Terrain"
 require "libraries.classes.objects.Projectile"
 require "libraries.classes.objects.Enemy"
-
-
 
 require "debugging"
 require "netClient"
@@ -50,9 +47,6 @@ player = {}
 math.randomseed(os.time())
 
 -- Server connection information (Currently the AWS server info)
-SERVER_ADDRESS, SERVER_PORT = "13.58.15.46", 5050
-USERNAME = "Lane" -- String eventually
-updateRate = 0.1
 
 
 function love.load()
@@ -85,17 +79,9 @@ end
 
 function love.draw()
 
-    if Gamestate.current() ~= MapCreator then
-        love.graphics.setColor(255, 255, 255)
-        love.graphics.circle("line", mouse.x, mouse.y, 5)
-    end
 end
 
 function love.update(dt)
-
-    -- Get current mouse position and store in object mouse
-    mouse.x, mouse.y = love.mouse.getPosition()
-
 
 end
 
