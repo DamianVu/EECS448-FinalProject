@@ -19,9 +19,7 @@ function CollisionTesting:enter()
 
 	love.graphics.setNewFont(16)
 
-	spriteImg = love.graphics.newImage('images/sprites/player.png')
-	circleImg = love.graphics.newImage('images/sprites/Circle.png')
-	enemyImg = love.graphics.newImage('images/sprites/badguy.png')
+	
 
 	player = Player(getNewUID(), spriteImg, {255,255,255}, 1, 96, 96, 32, 32)
 
@@ -32,7 +30,7 @@ function CollisionTesting:enter()
 	terrain[5] = Terrain(128, 128, 64, 64)
 	terrain[6] = Terrain(6 * 64, 5 * 64, 128, 128)
 
-	enemies[#enemies + 1] = Enemy(getNewUID(), nil, {255,0,0}, .5, 1, 96, 96, 32, 32, 20, player)
+	enemies[#enemies + 1] = Enemy(getNewUID(), nil, {255,0,0}, .5, 1, 96, 96, 32, 32, 100, player)
 
 	LH = LevelHandler()
 	LH:startGame()
@@ -53,9 +51,6 @@ function CollisionTesting:draw()
 	love.graphics.translate(x_translate_val, y_translate_val)
 
 	MH:drawMap()
-	if debugMode then
-		highlightTiles(player)
-	end
 
 	player:draw()
 	player:drawHitbox()

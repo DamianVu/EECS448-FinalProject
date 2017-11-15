@@ -56,30 +56,28 @@ function NewCollisionHandler:update()
 	-- Check for object to terrain collisions
 	for i = #self.objects, 1, -1 do
 		for j = 1, #self.terrain do
-			self:checkCollision(self.objects[i], self.terrain[j])
+			self:checkTerrainCollision(self.objects[i], self.terrain[j])
 		end
 	end
 
 	-- Check for projectile to terrain collisions
 	for i = #self.projectiles, 1, -1 do
 		for j = 1, #self.terrain do
-			self:checkCollision(self.projectiles[i], self.terrain[j])
+			self:checkTerrainCollision(self.projectiles[i], self.terrain[j])
 		end
 	end
 
 	-- Check for projectile to object collisions
 	for i = #self.projectiles, 1, -1 do
 		for j = #self.objects, 1, -1 do
-			self:checkCollision(self.projectiles[i], self.objects[j])
+			self:checkProjectileCollision(self.projectiles[i], self.objects[j])
 		end
 	end
 
 	-- Check for object to object collisions
 	for i = #self.objects, 1, -1 do
-		for j = #self.objects, 1, -1 do
-			if i ~= j then
-
-			end
+		for j = 1, i - 1, -1 do
+			self:checkObjectCollision(self.objects[j], self.objects[i])
 		end
 	end
 end
@@ -91,7 +89,6 @@ end
 -------------------------------------------
 -- 		Section: Check Functions		 --
 -------------------------------------------
-
 --- Checks for a collision between an object and terrain
 function NewCollisionHandler:checkTerrainCollision(object, terrain)
 
@@ -100,7 +97,6 @@ function NewCollisionHandler:checkTerrainCollision(object, terrain)
 
 	-- There is probably a more optimized way of doing this. For now let's check all 4 cases
 
-	
 	if 	(object.y - (object.height / 2) < terrain.y + terrain.height) and
 		(object.y + (object.height / 2) > terrain.y) and
 		(object.x - (object.width / 2) < terrain.x + terrain.width) and
@@ -116,30 +112,29 @@ function NewCollisionHandler:checkProjectileCollision(projectile, object)
 
 	if projectile.sourceID == object.id then return end
 
-	if 	(object.y - (object.height / 2) < projectile.y + projectile.height) and
-		(object.y + (object.height / 2) > projectile.y) and
-		(object.x - (object.width / 2) < projectile.x + projectile.width) and
-		(object.x + (object.width / 2) > projectile.x) then
+	if 	(object.y - (object.height / 2) < projectile.y + projectile.height/2) and
+		(object.y + (object.height / 2) > projectile.y - projectile.height/2) and
+		(object.x - (object.width / 2) < projectile.x + projectile.width/2) and
+		(object.x + (object.width / 2) > projectile.x - projectile.width/2) then
 		self:resolveProjectileCollision(projectile, object)
 		collision = collision + 1
 	end
 end
 
-function NewCollisionHandler:checkCollision(object1, object2)
+function NewCollisionHandler:checkObjectCollision(object1, object2)
 	if not object1 or not object2 then return end
 
-	if 	(object1.y - (object1.height / 2) < object2.y + object2.height) and
-		(object1.y + (object1.height / 2) > object2.y) and
-		(object1.x - (object1.width / 2) < object2.x + object2.width) and
-		(object1.x + (object1.width / 2) > object2.x) then
+	o1ScaleX = object1.scaleX or 1
+	o1ScaleY = object1.scaleY or 1
+	o2ScaleX = object2.scaleX or 1
+	o2ScaleY = object2.scaleY or 1
 
-		if object2.type == TERRAIN then
-			self:resolveTerrainCollision(object1, object2)
-		elseif object1.type == PROJECTILE and (object2.type == PLAYER or object2.type == ENEMY) and object1.sourceID ~= object2.id then
-			self:resolveProjectileCollision(object1, object2)
-		elseif (object1.type == PLAYER or object1.type == ENEMY) and (object2.type == PLAYER or object2.type == ENEMY) then
-
-		end
+	if 	object1.y - object1.height/2 < object2.y + object2.height/2 and
+		object1.y + object1.height/2 > object2.y - object2.height/2 and
+		object1.x - object1.width/2 < object2.x + object2.width/2 and
+		object1.x + object1.width/2 > object2.x - object2.width/2 then
+		self:resolveObjectCollision(object1, object2)
+		collision = collision + 1
 	end
 end
 
@@ -148,7 +143,7 @@ end
 -- 	   Section: Resolution Functions	 --
 -------------------------------------------
 
---- Resolves a collision between an object and terrain
+--- Resolves a collision between a projectile and terrain
 function NewCollisionHandler:resolveTerrainCollision(object, terrain)
 	if object.type == PROJECTILE then
 		destroyProjectile(object.id)
@@ -157,7 +152,7 @@ function NewCollisionHandler:resolveTerrainCollision(object, terrain)
 	end
 end
 
---- Resolves a collision between a moving object and a player
+--- Resolves a collision between an object and terrain
 function NewCollisionHandler:resolveObjectTerrainCollision(object, terrain)
 	local terrainCenterX = terrain.x + (terrain.width/2)
 	local terrainCenterY = terrain.y + (terrain.height/2)
@@ -247,10 +242,55 @@ function NewCollisionHandler:resolveObjectTerrainCollision(object, terrain)
 		else
 			object.y = terrain.y - object.height/2
 		end
+
+
+
+		-- ONE LAST EDGE CASE: If player x,y is inside the terrain
+	elseif object.x > terrain.x and object.x < terrain.x + terrain.width and object.y > terrain.y and object.y < terrain.y + terrain.height  then
+
+
+
 	end
 end
 
+--- Resolves a collision between a projectile and an object
 function NewCollisionHandler:resolveProjectileCollision(projectile, object)
 	object:takeDamage(projectile.damage)
 	destroyProjectile(projectile.id)
+end
+
+--- Resolves a collision between an object and another object
+function NewCollisionHandler:resolveObjectCollision(object1, object2)
+	-- Let's assume there is only one player object, thus we don't have to handle player-player collision
+
+	-- Secondly, let's assume enemies don't collide with another
+
+	if object1.type == ENEMY and object2.type == ENEMY then return end
+	if object1.type == PLAYER and object2.type == PLAYER then return end -- Ideally, shouldn't ever happen
+
+	local o1, o2
+
+	-- This lets us figure out which object is the enemy (Enemy has a bump factor)
+	if not object1.bumpFactor then
+		o1 = object2
+		o2 = object1
+	elseif not object2.bumpFactor then
+		o1 = object1
+		o2 = object2
+	else
+		return
+	end
+
+	if not o1 or not o2 then return end -- Shouldn't happen, but is a failsafe
+
+	local bf = o1.bumpFactor
+
+	-- Figure out relative positions of the two objects and BUMP!
+	local angle1 = math.atan2(o1.y - o2.y, o1.x - o2.x)
+	local angle2 = math.atan2(o2.y - o1.y, o2.x - o1.x)
+
+	o1.x = o1.x + math.cos(angle1) * bf * 10
+	o1.y = o1.y + math.sin(angle1) * bf * 10
+	o2.x = o2.x + math.cos(angle2) * bf * 10
+	o2.y = o2.y + math.sin(angle2) * bf * 10
 end
