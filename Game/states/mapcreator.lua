@@ -5,11 +5,10 @@ require "handlers.MapCreationHandler"
 
 local checkMouseMovement = false
 
-camera = {x = 400, y = 400, x_vel = 0, y_vel = 0, speed = 2} -- Camera object (will be the focus of the camera translation)
+camera = {x = 400, y = 200, x_vel = 0, y_vel = 0, speed = 2} -- Camera object (will be the focus of the camera translation)
 
 function MapCreator:enter()
 	MCH = MapCreationHandler(64)
-	MCH:loadTilesets()
 	gridlines = true
 	minZoom = .2
 	zoom = 1
@@ -19,11 +18,13 @@ end
 
 function MapCreator:draw()
 	x_translate_val = (love.graphics.getWidth() / 2) - camera.x
-	y_translate_val = (love.graphics.getHeight() / 2) - camera.y
+	y_translate_val = ((love.graphics.getHeight() - MCH.paletteSize) / 2) - camera.y
 
 	love.graphics.push()
 	love.graphics.translate(x_translate_val, y_translate_val)
 	love.graphics.scale(zoom)
+
+	MCH:drawMap()
 
 	MCH:drawMouse()
 
@@ -40,16 +41,24 @@ function MapCreator:draw()
 	love.graphics.print("Camera-X: " .. camera.x, 10, 30)
 	love.graphics.print("Camera-Y: " .. camera.y, 10, 50)
 
+	if MCH.mode == MCHModes[3] then
+		MCH:drawObjectMenu()
+	end
+
 end
 
 function MapCreator:update(dt)
 
 	MCH:updateMouseOnPalette()
-	if MCH.mode == "Moving" then
-		canZoom = true
+	if MCH.mode == MCHModes[3] then MCH:updateMouseOnObjectMenu() end
+
+	if MCH.mouseOnObjectMenuButton or checkMouseMovement then 
+		love.mouse.setCursor(handCursor)
 	else
-		canZoom = false
+		love.mouse.setCursor(arrowCursor)
 	end
+	
+	canZoom = MCH.mode == "Moving"
 
 	
 	if not love.keyboard.isDown('up', 'down') then camera.y_vel = 0 end
@@ -60,6 +69,7 @@ function MapCreator:update(dt)
 		curMouseX, curMouseY = love.mouse.getPosition()
 		camera.x = oldCameraX - (curMouseX - oldMouseX)
 		camera.y = oldCameraY - (curMouseY - oldMouseY)
+
 	else
 		-- Move
 		camera.x = math.floor(camera.x + camera.x_vel)
@@ -83,7 +93,7 @@ function MapCreator:keypressed(key)
 	if zoom < 1 then
 		zoomSpeed = 1
 	end
-	if not checkMouseMovement then
+	if not checkMouseMovement and MCH.mode ~= MCHModes[3] then
 		if key == 'up' then 
 			camera.y_vel = -camera.speed * 3 * zoomSpeed
 		end
@@ -104,6 +114,9 @@ function MapCreator:keypressed(key)
 		if key == 'm' then MCH:changeMode() end
 	end
 
+	if key == ',' then MCH:changePage(true) end
+	if key == '.' then MCH:changePage(false) end
+
 	if key == 'g' then gridlines = not gridlines end
 end
 
@@ -122,6 +135,37 @@ function MapCreator:mousepressed(x,y,button,_)
 			oldCameraY = camera.y
 			checkMouseMovement = true
 		end
+	elseif MCH.mode == MCHModes[3] then
+		if button == 1 and not MCH.mouseOnObjectMenu then
+			MCH.mode = MCHModes[1]
+			MCH:resetObjectMenu()
+		end
+	end
+
+	if MCH.mouseOnPalette then
+		-- Check if clicked on some tile in palette
+		local startX = 10
+		local startY = (love.graphics.getHeight() - 138)
+		if x >= startX and x <= startX + 512 and y >= startY and y <= startY + 128 then
+			local ctile = 1
+			local done = false
+			for i = 1, 2 do
+				for j = 1, 8 do
+					if ctile > MCH:getTilesetSize() then break end
+						if y < startY + (64*i) and x < startX + (j*64) then
+						done = true
+						MCH.currentTile = ctile + ((MCH.currentTilePage-1) * 16)
+						break
+					end
+						ctile = ctile + 1
+				end
+				if done then
+					break
+				end
+			end
+		end
+
+		if MCH.mouseOnObjectMenuButton then MCH.mode = MCHModes[3] end
 	end
 end
 

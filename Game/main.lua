@@ -21,6 +21,10 @@ require "libraries.classes.objects.Terrain"
 require "libraries.classes.objects.Projectile"
 require "libraries.classes.objects.Enemy"
 
+require "libraries.classes.MCTile"
+require "libraries.classes.MapObject"
+require "libraries.classes.HUD"
+
 require "debugging"
 require "netClient"
 

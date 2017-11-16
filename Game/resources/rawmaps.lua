@@ -2,14 +2,14 @@
 RawMaps = {
 	[1] = {
 		startingLocations = {
-			{10,10},
+
 			{5,5}
 		},
 		endingLocations = {
-
+			[1] = {10,10}
 		},
 		transitions = {
-
+			[1] = {2,1}
 		},
 		img = "testset.png",
 		id_dict = {
@@ -45,10 +45,10 @@ RawMaps = {
 			{11,13}
 		},
 		endingLocations = {
-			{2,13}
+			[1] = {3,2}
 		},
 		transitions = {
-			{1,1,1}
+			[1] = {3,1}
 		},
 		img = "testset.png",
 		id_dict = {
@@ -84,6 +84,13 @@ RawMaps = {
 			{10,10},
 			{3,3}
 		},
+	endingLocations = {
+		[1] = {3,3}
+	},
+	transitions = {
+		[1] = {1,1}
+	},
+
 		img = "testset.png",
 		id_dict = {
 			[1] = {collision = true, bumpFactor = 0},

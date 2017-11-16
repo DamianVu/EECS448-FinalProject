@@ -9,7 +9,7 @@ function LevelHandler:init()
 end
 
 function LevelHandler:startGame()
-	self:loadLevel(4,1)
+	self:loadLevel(1,1)
 end
 
 function LevelHandler:loadLevel(level, startPos)
@@ -25,10 +25,11 @@ end
 function LevelHandler:update(dt)
   -- Check for ending location
   local endings = RawMaps[self.currentMapIndex].endingLocations
+	local transitions = RawMaps[self.currentMapIndex].transitions
   for i = 1, #endings do
     local spanList = player:getSpan()
     if spanList:contains(endings[i]) then
-      -- DO the transitions
+			LH:loadLevel(unpack(transitions[i]))
     end
   end
 end
