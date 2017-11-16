@@ -43,6 +43,7 @@ CharacterSelection = require "states.characterselection"
 PlayMenu = require "states.playgame"
 MapCreator = require "states.mapcreator"
 CollisionTesting = require "states.collisiontesting"
+GameOver = require "states.gameover"
 
 mouse = {}
 movingObjects = {}

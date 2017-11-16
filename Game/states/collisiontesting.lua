@@ -75,6 +75,8 @@ end
 
 function CollisionTesting:update(dt)
 
+	if player:isDead() then Gamestate.switch(GameOver) end
+
 	if player.immune then
 		player:updateImmunity(dt)
 	end

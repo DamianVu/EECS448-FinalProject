@@ -27,7 +27,7 @@ function Player:init(id, sprite, color, speed, health, x, y, width, height)
 	self.bumpDuration = .15
 
 	self.maxHP = health
-	self.health = maxHP
+	self.health = self.maxHP
 end
 
 function Player:draw()
@@ -62,7 +62,6 @@ function Player:move(dt, direction)
 end
 
 function Player:updateImmunity(dt)
-	print("Update Immunity Function")
 	self.immuneTime = self.immuneTime + dt
 	if self.immuneTime > self.immuneTimer then
 		-- No longer immune. Change color back to normal
@@ -84,7 +83,6 @@ function Player:bump(angle, bumpFactor)
 	self.bumpTime = 0 -- Resets counter to 0
 	self.movementEnabled = false
 
-	print("trying to trigger immunity")
 	self.immmuneTime = 0
 	self.immune = true
 
