@@ -9,7 +9,7 @@ class = require 'libraries.ext.30log'
 cObject = class("cObject", {x_vel = 0, y_vel = 0, x_vel_counter = 10, y_vel_counter = 10})
 
 --- Initialization (default constructor)
-function cObject:init(id, sprite, color, speed, x, y, width, height, x_offset, y_offset, rotation)
+function cObject:init(id, sprite, color, speed, x, y, width, height, maxHP, health, x_offset, y_offset, rotation)
 	self.id = id or "player"
 	self.sprite = sprite
 	math.randomseed(os.time())
@@ -25,6 +25,8 @@ function cObject:init(id, sprite, color, speed, x, y, width, height, x_offset, y
 	self.scaleX = self.width / imgW
 	self.scaleY = self.height / imgH
 	self.rotation = rotation or 0
+	self.maxHP = maxHP or 10
+	self.health = health or self.maxhp
 	-- self.health = 
 end
 
@@ -62,6 +64,11 @@ end
 function cObject:move()
 	self.x = self.x + self.x_vel
 	self.y = self.y + self.y_vel
+end
+
+function cObject:setVel(xvel, yvel)
+	self.x_vel = xvel
+	self.y_vel = yvel
 end
 
 --- This function should be used for enemies to chase global player
