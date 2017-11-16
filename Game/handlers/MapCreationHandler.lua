@@ -1,16 +1,22 @@
 
 class = require 'libraries.ext.30log'
 
+MCHModes = {
+	[1] = "Moving",
+	[2] = "Editing",
+	[3] = "Object Manager"
+}
+
 MapCreationHandler = class("MapCreationHandler", {
 	gridColor = {180,180,180}, 
 	paletteSize = 250,
 	paletteColor = {80,80,80},
 	textColor = {20,211,255},
-	mode = "Moving",
+	objects = {},
+	mode = MCHModes[3],
 	tilesets = {},
 	currentMap = {
 		tileCount = 0,
-		tilesets = {},
 		grid = {}
 	}
 	})
@@ -21,12 +27,23 @@ function MapCreationHandler:init(tilesize)
 	self.currentTileY = 0
 	self.mouseOnValidTile = false
 	self.mouseOnPalette = false
+	self.mouseOnObjectMenu = false
+	self.mouseOnObjectMenuButton = false
 
+
+	self.objectMenu = {}
+	self.objectMenu.borderSize = 40
+	self.objectMenu.currentTile = 1
+	self.objectMenu.currentTilePage = 1
+	self.objectMenu.currentTileset = 1
 	self.currentTileset = 1
 	self.currentTile = 1
 	self.currentTilePage = 1
 
 	canZoom = (self.mode == "Moving")
+
+	self:loadTilesets()
+	self:initializeObjectMenuSettings()
 end
 
 function MapCreationHandler:loadTilesets()
@@ -38,8 +55,8 @@ function MapCreationHandler:loadTilesets()
 		-- We are limiting tilesize to 64 always for this project
 		ts.Quads = {}
 		local imgw, imgh = ts.image:getDimensions()
-		for j = 1, ts.tileWidth do
-			for k = 1, ts.tileHeight do
+		for j = 1, ts.Width do
+			for k = 1, ts.Height do
 				-- Quads will go left to right, top to bottom
 				ts.Quads[#ts.Quads + 1] = love.graphics.newQuad((j-1) * 64, (k-1) * 64, self.tilesize, self.tilesize, imgw, imgh)
 			end
@@ -117,7 +134,14 @@ function MapCreationHandler:drawGUI()
 	love.graphics.print("Palette -", paletteX + 10, paletteY + 10)
 	love.graphics.setNewFont(16)
 	love.graphics.print("(can only place tiles in the positve quadrant for now)", paletteX + 125, paletteY + 15)
-	love.graphics.print("Mode: " .. self.mode .. " (Press 'M' to change)", paletteX + 10, paletteY + 40)
+
+	local extraText
+	if self.mode == MCHModes[3] then
+		extraText = " (Click off the menu to close)"
+	else
+		extraText = " (Press 'M' to change)"
+	end
+	love.graphics.print("Mode: " .. self.mode .. extraText, paletteX + 10, paletteY + 40)
 	if self.mouseOnPalette then
 		love.graphics.print("Mouse On Palette", paletteX + 10, paletteY + 60)
 	else
@@ -125,7 +149,12 @@ function MapCreationHandler:drawGUI()
 	end
 
 	love.graphics.setColor(255,255,0)
-	love.graphics.print("TS: " .. self.tilesets[self.currentTileset].name .. ", Page: " .. self.currentTilePage .. " / " .. (math.floor((#self.tilesets[self.currentTileset].Quads - 1) / 16) + 1), paletteX + 10, paletteY + 90)
+	love.graphics.print("TS: " .. self.tilesets[self.currentTileset].name .. ", Page: " .. self.currentTilePage .. " / " .. (math.floor((#self.tilesets[self.currentTileset].Quads - 1) / 16) + 1) .. "   (Use '<' and '>' to navigate pages)", paletteX + 10, paletteY + 90)
+
+	love.graphics.setColor(150,150,150)
+	love.graphics.rectangle("fill", width - 170, height - 60, 150, 38)
+	love.graphics.setColor(0,0,225)
+	love.graphics.print("Manage Objects", width - 160, height - 50)
 
 	self:drawTilePalette()
 end
@@ -198,7 +227,6 @@ function MapCreationHandler:drawMouse()
 
 
 	if self.mode == "Editing" then
-		love.mouse.setCursor(arrowCursor)
 		if not self.mouseOnPalette then
 			-- Draw above tile if it is a valid position and what pos it is, or draw that it is not valid
 			if drawX < 0 or drawY < 0 then
@@ -215,8 +243,6 @@ function MapCreationHandler:drawMouse()
 				self.mouseOnValidTile = true
 			end
 		end
-	elseif self.mode == "Moving" then
-		love.mouse.setCursor(handCursor)
 	end
 end
 
@@ -239,14 +265,13 @@ end
 function MapCreationHandler:saveMap()
 
 end
-
+-- love.graphics.rectangle("fill", width - 170, height - 60, 150, 38)
 function MapCreationHandler:updateMouseOnPalette()
-	local _,y = love.mouse.getPosition()
-	if y < love.graphics.getHeight() - self.paletteSize then
-		self.mouseOnPalette = false
-	else
-		self.mouseOnPalette = true
-	end
+	local x,y = love.mouse.getPosition()
+	local w,h = love.graphics.getDimensions()
+
+	self.mouseOnPalette = y > h - self.paletteSize
+	self.mouseOnObjectMenuButton = x > w - 170 and x < w - 20 and y > h - 60 and y < h - 22 
 end
 
 function MapCreationHandler:changeTile(updown)
@@ -257,7 +282,7 @@ function MapCreationHandler:changeTile(updown)
 			if tilePages > 1 then
 				if self.currentTilePage == 1 then
 					self.currentTilePage = tilePages
-					self.currentTile = ((tilePages - 1) * 16) + (#currentTS.Quads % 16)
+					self.currentTile = (tilePages * 16) + (#currentTS.Quads % 16)
 				else
 					self.currentTilePage = self.currentTilePage - 1
 					self.currentTile = self.currentTilePage * 16
@@ -296,17 +321,194 @@ function MapCreationHandler:changeTile(updown)
 	end
 end
 
+function MapCreationHandler:changePage(prev)
+	if self:getTilesetSize() <= 16 then return end
+	local tilePages = (math.floor((#self.tilesets[self.currentTileset].Quads - 1) / 16) + 1)
+	if prev then
+		if self.currentTilePage == 1 then
+			self.currentTilePage = tilePages
+			self.currentTile = (tilePages * 16) + (#self.tilesets[self.currentTileset].Quads % 16)
+		else
+			self.currentTilePage = self.currentTilePage - 1
+			self.currentTile = 16
+		end
+	else
+		self.currentTile = 1
+		if self.currentTilePage == tilePages then
+			self.currentTilePage = 1
+		else
+			self.currentTilePage = self.currentTilePage + 1
+		end
+	end
+end
+
 function MapCreationHandler:placeTile()
 	-- This should trigger only if the mouse is already in a valid spot
 
 
 	-- First check to see if there is already space on grid
+	if #self.currentMap.grid < self.currentTileY then
+		-- Fill in missing tables if there are any
+		for i = #self.currentMap.grid + 1, self.currentTileY do
+			if self.currentMap.grid[i] == nil then
+				self.currentMap.grid[i] = {}
+			end
+		end
+	end
 
+	if #self.currentMap.grid[self.currentTileY] < self.currentTileX then
+		-- Fill in missing slots in array with constructor
+		for i = #self.currentMap.grid[self.currentTileY] + 1, self.currentTileX - 1 do
+			if self.currentMap.grid[self.currentTileY][i] == nil then
+				self.currentMap.grid[self.currentTileY][i] = -1
+			end
+		end
+	end
 
-	-- Afterwards, place the tile.
-	
+	-- Afterwards, place the tile
+	self.currentMap.grid[self.currentTileY][self.currentTileX] = self.currentTile
 end
 
 function MapCreationHandler:removeTile()
+	-- Make sure the tile exists
+	if #self.currentMap.grid >= self.currentTileY then
+		if #self.currentMap.grid[self.currentTileY] >= self.currentTileX then
+			self.currentMap.grid[self.currentTileY][self.currentTileX] = -1
+		end
+	end
+end
+
+function MapCreationHandler:drawMap()
+	love.graphics.setColor(255,255,255,255)
+	local ts = self.tilesets[self.currentTileset]
+	for i = 1, #self.currentMap.grid do
+		for j = 1, #self.currentMap.grid[i] do
+			if self.currentMap.grid[i][j] ~= -1 then
+				love.graphics.draw(ts.image, ts.Quads[self.currentMap.grid[i][j]], (j-1)*64, (i-1)*64)
+			end
+		end
+	end
+end
+
+function MapCreationHandler:getTilesetSize() 
+	-- TO CLARIFY, THIS FUNCTION PULLS THE NUMBER OF TILES IN THE SET. NOT THE AMOUNT OF TILES ON SCREEN
+	return #self.tilesets[self.currentTileset].Quads
+end
+
+function MapCreationHandler:getTileCount()
+	local ts = self.tilesets[self.currentTileset]
+	local count = 0
+	for i = 1, #self.currentMap.grid do
+		for j = 1, #self.currentMap.grid[i] do
+			if self.currentMap.grid[i][j] ~= -1 then
+				count = count + 1
+			end
+		end
+	end
+	return count
+end
+
+function MapCreationHandler:resetObjectMenu()
+	self.currentTileset = 1
+	self.currentTile = 1
+	self.currentTilePage = 1
+end
+
+function MapCreationHandler:initializeObjectMenuSettings()
+	-- This will draw the frame of the menu
+	local w,h = love.graphics.getDimensions()
+	h = h - self.paletteSize
+
+	-- Now w,h is essentially the size of the window without the palette
+	-- Let's say we want our menu to be a rectangle with the width 2 times its height
+	-- The restraining factor is probably going to be the height based on common screen sizes - self.paletteSize
+
+	self.objectMenu.menuHeight = h * .75
+	self.objectMenu.menuWidth = self.objectMenu.menuHeight * 2
+
+	local centerx = w/2
+	local centery = h/2
+
+	self.objectMenu.drawx = centerx - (self.objectMenu.menuWidth / 2)
+	self.objectMenu.drawy = centery - (self.objectMenu.menuHeight / 2)
+
+	-- Col size should be the menu height - (2 * borderSize) all over 64 rounded down
+
+
+	self.objectMenu.maxRowSize = math.floor(((self.objectMenu.menuWidth - (2 * self.objectMenu.borderSize)) / 2) / 64) -- Max num of tiles per row
+	self.objectMenu.maxColSize = math.floor((self.objectMenu.menuHeight - (2 * self.objectMenu.borderSize)) / 64)-- Max num of tiles per col
+
+	self.objectMenu.tilesPerPage = self.objectMenu.maxRowSize * self.objectMenu.maxColSize
+
+	-- We want to center the tilemap vertically as well.
+	local offsetTileY = (self.objectMenu.menuHeight - (64 * self.objectMenu.maxColSize)) / 2
+
+	self.objectMenu.tileDrawX = self.objectMenu.drawx + self.objectMenu.borderSize
+	self.objectMenu.tileDrawY = self.objectMenu.drawy + offsetTileY
+
+	self.objectMenu.rowLineLength = self.objectMenu.maxRowSize * 64
+	self.objectMenu.colLineLength = self.objectMenu.maxColSize * 64
+end
+
+function MapCreationHandler:drawObjectMenu()
+	
+	love.graphics.setColor(200,200,200,255)
+	love.graphics.rectangle("fill", self.objectMenu.drawx, self.objectMenu.drawy, self.objectMenu.menuWidth, self.objectMenu.menuHeight)
+	
+
+	-- Tiles
+	local currentTile = ((self.objectMenu.currentTilePage - 1) * self.objectMenu.tilesPerPage) + 1
+	local breaking = false
+	local currentTS = self.tilesets[self.currentTileset]
+
+	love.graphics.setColor(255,255,255,255)
+	for i = 1, self.objectMenu.maxColSize do
+		for j = 1, self.objectMenu.maxRowSize do
+			if currentTile > #currentTS.Quads then
+				breaking = true
+				break
+			end
+			-- Draw the damn tile
+
+			local x = self.objectMenu.tileDrawX + ((j - 1) * 64)
+			local y = self.objectMenu.tileDrawY + ((i - 1) * 64)
+			love.graphics.draw(currentTS.image, currentTS.Quads[currentTile], x, y)
+			currentTile = currentTile + 1
+		end
+		if breaking then
+			break
+		end
+	end
+
+
+
+
+
+
+
+	love.graphics.setColor(125,45,0)
+	for i = 0, self.objectMenu.maxRowSize do
+		local x = self.objectMenu.tileDrawX + (64 * i)
+		love.graphics.line(x, self.objectMenu.tileDrawY, x, self.objectMenu.tileDrawY + self.objectMenu.colLineLength)
+	end
+	for i = 0, self.objectMenu.maxColSize do
+		local y = self.objectMenu.tileDrawY + (64 * i)
+		love.graphics.line(self.objectMenu.tileDrawX, y, self.objectMenu.tileDrawX + self.objectMenu.rowLineLength, y)
+	end
+
+
+
+	-- Draw menu buttons
+
+end
+
+function MapCreationHandler:updateMouseOnObjectMenu()
+	local x,y = love.mouse.getPosition()
+
+	if x >= self.objectMenu.drawx and x <= self.objectMenu.drawx + self.objectMenu.menuWidth and y >= self.objectMenu.drawy and y <= self.objectMenu.drawy + self.objectMenu.menuHeight then
+		self.mouseOnObjectMenu = true
+	else
+		self.mouseOnObjectMenu = false
+	end
 
 end

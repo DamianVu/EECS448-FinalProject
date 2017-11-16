@@ -11,8 +11,8 @@ require "libraries.classes.CoordinateList"
 require "libraries.classes.Map"
 require "libraries.classes.Tile"
 require "libraries.classes.TileMapping"
-
-
+require "libraries.classes.MCTile"
+require "libraries.classes.MapObject"
 
 require "debugging"
 require "netClient"
@@ -61,7 +61,7 @@ function love.load()
     --love.window.setMode(windowWidth, windowHeight, {resizable=false, vsync=false, minwidth=800, minheight=600, borderless=true, msaa=2})
 
     Gamestate.registerEvents()
-    Gamestate.switch(Singleplayer)
+    Gamestate.switch(MapCreator)
 
 
     -- Physics variables
