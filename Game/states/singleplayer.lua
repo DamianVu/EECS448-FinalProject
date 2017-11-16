@@ -5,6 +5,7 @@ SoloGame = {}
 switched = false
 
 local movingObj = {}
+local projectiles = {}
 
 --- This is called only when the the module has been initialized (in main.lua)
 function SoloGame:init() -- init is only called once
@@ -22,11 +23,12 @@ function SoloGame:enter() -- enter is called everytime this state occurs
 
     spriteImg = love.graphics.newImage('images/sprites/player.png')
     badImg = love.graphics.newImage('images/sprites/badguy.png')
-    healthImg = love.graphics.newImage('images/sprites/HealthBar.png')
+    -- healthImg = love.graphics.newImage('images/sprites/HealthBar.png')
 
-	player = cObject(USERNAME, spriteImg, nil, 1, 96, 96, 32, 32)
-    p_health = cObject ("health", healthImg, {255,255,255}, 1, 96, 96, 28, 10)
-    badGuy = cObject("badguy", badImg, {255,50,0}, .005, 192, 192, 32, 32)
+	player = cObject(USERNAME, spriteImg, nil, 1, 96, 96, 32, 32, 10, 5)
+    -- p_health = cObject ("health", healthImg, {255,255,255}, 1, 96, 96, 28, 10)
+    badGuy = cObject("badguy", badImg, {255,50,0}, .002, 192, 192, 32, 32)
+
 
     LH = LevelHandler()
     LH:startGame()
@@ -37,7 +39,14 @@ function SoloGame:enter() -- enter is called everytime this state occurs
     CH:addObj(p_health)
     movingObj[#movingObj + 1] = player
     movingObj[#movingObj + 1] = badGuy
-    movingObj[#movingObj + 1] = p_health
+
+
+
+
+
+    -- movingObj[#movingObj + 1] = p_health
+
+    HUD = HUD()
 
 
 end
@@ -58,9 +67,13 @@ function SoloGame:draw()
     end
 
     -- Draw all players
-    player:draw()
-    badGuy:draw()
-    p_health:draw()
+    --player:draw()
+    --badGuy:draw()
+
+    for i = 1, #movingObj do movingObj[i]:draw() end
+    for i = 1, #projectiles do projectiles[i]:draw() end
+  
+    -- p_health:draw()
 
     if debugMode then
       --player:drawHitbox() no need until we update hitboxes
@@ -76,6 +89,8 @@ function SoloGame:draw()
     drawMonitors()
 
     if debugMode then drawDebug() end
+
+    HUD:draw()
 
     -- End Text in the top left
     --love.graphics.circle("fill", windowWidth/2, windowHeight/2, 2)            This code draws a dot in the center of the screen
@@ -128,8 +143,8 @@ function SoloGame:update(dt)
 
     -- Move the moving objects after collisions have been handled
     for i = 1, #movingObj do movingObj[i]:move() end
-    p_health.x = player.x
-    p_health.y = player.y
+    for i = 1, #projectiles do projectiles[i]:move() end
+    
 
 end
 
@@ -149,6 +164,28 @@ function SoloGame:keypressed(key)
         switched = not switched
     end
 end
+
+---controls shooting direction
+function SoloGame:mousepressed(x, y, button)
+    if button == 1 then
+        local startX = player.x
+        local startY = player.y
+        local mouseX = x - x_translate_val
+        local mouseY = y - y_translate_val
+ 
+        local angle = math.atan2((mouseY - startY), (mouseX - startX))
+ 
+        
+        local pos = #projectiles + 1
+        projectiles[pos] = cObject("badguy", badImg, {255, 255, 255}, 1, startX, startY, 16, 16)
+
+        local ProjectileDx = projectiles[pos].speed * math.cos(angle)
+        local ProjectileDy = projectiles[pos].speed * math.sin(angle)
+
+        projectiles[pos]:setVel(ProjectileDx,ProjectileDy)
+    end
+end
+
 
 
 return SoloGame
