@@ -1,7 +1,7 @@
 
 Enemy = class("Enemy", {})
 
-function Enemy:init(id, sprite, color, speed, bumpFactor, x, y, width, height, health, chaseObj)
+function Enemy:init(id, sprite, color, speed, bumpFactor, x, y, width, height, health, damage, chaseObj)
 	self.id = id
 	self.type = ENEMY
 	self.bumpFactor = bumpFactor or 1
@@ -20,6 +20,7 @@ function Enemy:init(id, sprite, color, speed, bumpFactor, x, y, width, height, h
 	self.rotation = rotation or 0
 	self.chaseObj = chaseObj or player
 	self.health = health or 10
+	self.damage = damage or 2
 
 	self.paused = false
 	self.defaultPauseDuration = .3 -- Amount of time to pause before attempting to move again

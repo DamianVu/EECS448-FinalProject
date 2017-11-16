@@ -287,6 +287,7 @@ function NewCollisionHandler:resolveObjectCollision(object1, object2)
 		if pObj.immune then return end
 
 		pObj:bump(angle, eObj.bumpFactor)
+		pObj:takeDamage(eObj.damage)
 
 		-- Calculate difference in position between player and enemy
 		local diffX = eObj.x - pObj.x

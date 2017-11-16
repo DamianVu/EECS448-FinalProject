@@ -21,7 +21,7 @@ function CollisionTesting:enter()
 
 	
 
-	player = Player(getNewUID(), spriteImg, {255,255,255}, 1, 96, 96, 32, 32)
+	player = Player(getNewUID(), spriteImg, {255,255,255}, 1, 10, 96, 96, 32, 32)
 
 	terrain[1] = Terrain(0, 0, 64 * 11, 64)
 	terrain[2] = Terrain(0, 64*9, 64*11, 64)
@@ -30,7 +30,7 @@ function CollisionTesting:enter()
 	terrain[5] = Terrain(128, 128, 64, 64)
 	terrain[6] = Terrain(6 * 64, 5 * 64, 128, 128)
 
-	enemies[#enemies + 1] = Enemy(getNewUID(), nil, {255,0,0}, .5, 5, 96, 96, 32, 32, 100, player)
+	enemies[#enemies + 1] = Enemy(getNewUID(), nil, {255,0,0}, .5, 5, 96, 96, 32, 32, 100, 2, player)
 
 	LH = LevelHandler()
 	LH:startGame()

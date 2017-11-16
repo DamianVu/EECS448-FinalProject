@@ -1,7 +1,7 @@
 
 Player = class("Player", {x_vel = 0, y_vel = 0})
 
-function Player:init(id, sprite, color, speed, x, y, width, height)
+function Player:init(id, sprite, color, speed, health, x, y, width, height)
 	self.id = id
 	self.type = PLAYER
 	self.sprite = sprite or spriteImg
@@ -25,6 +25,9 @@ function Player:init(id, sprite, color, speed, x, y, width, height)
 	self.immuneTime = 0
 
 	self.bumpDuration = .15
+
+	self.maxHP = health
+	self.health = maxHP
 end
 
 function Player:draw()
@@ -101,4 +104,12 @@ function Player:getSpan()
 	spanList:add({math.floor((self.x - (self.x_offset * self.scaleX) + startx) / tileWidth) + 1, math.floor((self.y + (self.y_offset * self.scaleY) + starty) / tileHeight) + 1})
 	spanList:add({math.floor((self.x + (self.x_offset * self.scaleX) + startx) / tileWidth) + 1, math.floor((self.y + (self.y_offset * self.scaleY) + starty) / tileHeight) + 1})
 	return spanList
+end
+
+function Player:takeDamage(damage)
+	self.health = self.health - damage
+end
+
+function Player:isDead()
+	return self.health <= 0
 end
