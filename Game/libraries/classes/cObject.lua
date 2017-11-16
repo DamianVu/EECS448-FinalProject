@@ -5,7 +5,6 @@
 
 defaultSize = 64
 
-class = require 'libraries.ext.30log'
 cObject = class("cObject", {x_vel = 0, y_vel = 0, x_vel_counter = 10, y_vel_counter = 10})
 
 --- Initialization (default constructor)
