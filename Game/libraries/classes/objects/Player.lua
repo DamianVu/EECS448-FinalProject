@@ -86,3 +86,19 @@ function Player:bump(angle, bumpFactor)
 	self.immune = true
 
 end
+
+--- Span function.
+-- Will return 4 coordinates that the object currently spans. In top-left, top-right, bottom-left, bottom-right order
+function Player:getSpan()
+	local spanList = CoordinateList()
+
+	local origin, tileWidth, tileHeight = MH:getCurrentMapDimensions()
+
+	local startx,starty = unpack(origin)
+
+	spanList:add({math.floor((self.x - (self.x_offset * self.scaleX) + startx) / tileWidth) + 1, math.floor((self.y - (self.y_offset * self.scaleY) + starty) / tileHeight) + 1})
+	spanList:add({math.floor((self.x + (self.x_offset * self.scaleX) + startx) / tileWidth) + 1, math.floor((self.y - (self.y_offset * self.scaleY) + starty) / tileHeight) + 1})
+	spanList:add({math.floor((self.x - (self.x_offset * self.scaleX) + startx) / tileWidth) + 1, math.floor((self.y + (self.y_offset * self.scaleY) + starty) / tileHeight) + 1})
+	spanList:add({math.floor((self.x + (self.x_offset * self.scaleX) + startx) / tileWidth) + 1, math.floor((self.y + (self.y_offset * self.scaleY) + starty) / tileHeight) + 1})
+	return spanList
+end
