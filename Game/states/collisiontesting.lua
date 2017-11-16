@@ -30,7 +30,7 @@ function CollisionTesting:enter()
 	terrain[5] = Terrain(128, 128, 64, 64)
 	terrain[6] = Terrain(6 * 64, 5 * 64, 128, 128)
 
-	enemies[#enemies + 1] = Enemy(getNewUID(), nil, {255,0,0}, .5, 1, 96, 96, 32, 32, 100, player)
+	enemies[#enemies + 1] = Enemy(getNewUID(), nil, {255,0,0}, .5, 5, 96, 96, 32, 32, 100, player)
 
 	LH = LevelHandler()
 	LH:startGame()
@@ -52,15 +52,12 @@ function CollisionTesting:draw()
 
 	MH:drawMap()
 
-	player:draw()
-	player:drawHitbox()
 
 	for i=#enemies, 1, -1 do enemies[i]:draw() end
 	
 	for i=#projectiles, 1, -1 do projectiles[i]:draw() end
 
-
-
+	player:draw()
 
 	love.graphics.pop()
 
@@ -77,6 +74,10 @@ function CollisionTesting:draw()
 end
 
 function CollisionTesting:update(dt)
+
+	if player.immune then
+		player:updateImmunity(dt)
+	end
 	
 	LH:update(dt)
 	-- Change velocity according to keypresses
@@ -85,6 +86,7 @@ function CollisionTesting:update(dt)
 	if love.keyboard.isDown('s') then player:move(dt, 3) end
 	if love.keyboard.isDown('d') then player:move(dt, 2) end
 
+	if not player.movementEnabled then player:move(dt) end
 
 	for i = #enemies, 1, -1 do
 		enemies[i]:chase()

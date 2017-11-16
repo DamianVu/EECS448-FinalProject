@@ -116,7 +116,7 @@ RawMaps = {
 			{4.5,5}
 		},
 		endingLocations = {},
-		img="debug.png",
+		img="testset.png",
 		id_dict = {
 			[1] = {collision = true, bumpFactor = 0},
 			[2] = {collision = false},

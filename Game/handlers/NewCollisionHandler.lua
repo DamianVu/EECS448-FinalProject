@@ -76,7 +76,7 @@ function NewCollisionHandler:update()
 
 	-- Check for object to object collisions
 	for i = #self.objects, 1, -1 do
-		for j = 1, i - 1, -1 do
+		for j = #self.objects - 1, 1, -1 do
 			self:checkObjectCollision(self.objects[j], self.objects[i])
 		end
 	end
@@ -123,6 +123,7 @@ end
 
 function NewCollisionHandler:checkObjectCollision(object1, object2)
 	if not object1 or not object2 then return end
+	if object1.type == PLAYER and object2.type == PLAYER then return end
 
 	o1ScaleX = object1.scaleX or 1
 	o1ScaleY = object1.scaleY or 1
@@ -263,34 +264,50 @@ end
 function NewCollisionHandler:resolveObjectCollision(object1, object2)
 	-- Let's assume there is only one player object, thus we don't have to handle player-player collision
 
-	-- Secondly, let's assume enemies don't collide with another
+	-- Secondly, let's assume enemies don't collide with another FOR NOW
 
-	if object1.type == ENEMY and object2.type == ENEMY then return end
-	if object1.type == PLAYER and object2.type == PLAYER then return end -- Ideally, shouldn't ever happen
-
-	local o1, o2
-
-	-- This lets us figure out which object is the enemy (Enemy has a bump factor)
-	if not object1.bumpFactor then
-		o1 = object2
-		o2 = object1
-	elseif not object2.bumpFactor then
-		o1 = object1
-		o2 = object2
+	if object1.type == ENEMY and object2.type == ENEMY then
+		-- If enemy to enemy collision
 	else
-		return
+		-- This should be player to enemy
+
+		local eObj
+		local pObj
+
+		if object1.type == ENEMY then
+			eObj = object1
+			pObj = object2
+		else
+			eObj = object2
+			pObj = object1
+		end
+
+		local angle = math.atan2(pObj.y - eObj.y, pObj.x - eObj.x)
+
+		if pObj.immune then return end
+
+		pObj:bump(angle, eObj.bumpFactor)
+
+		-- Calculate difference in position between player and enemy
+		local diffX = eObj.x - pObj.x
+		local diffY = eObj.y - pObj.y
+
+		local offsetVal = 1 -- Testing different values
+
+		if math.abs(diffX) > math.abs(diffY) then
+			if diffX > 0 then
+				eObj.x = pObj.x + (pObj.width/2) + (eObj.width/2) + offsetVal
+			else
+				eObj.x = pObj.x - (pObj.width/2) - (eObj.width/2) - offsetVal
+			end
+		else
+			if diffY > 0 then
+				eObj.y = pObj.y + (pObj.height/2) + (eObj.height/2) + offsetVal
+			else
+				eObj.y = pObj.y - (pObj.height/2) - (eObj.height/2) - offsetVal
+			end
+		end
+
+		eObj:pause()
 	end
-
-	if not o1 or not o2 then return end -- Shouldn't happen, but is a failsafe
-
-	local bf = o1.bumpFactor
-
-	-- Figure out relative positions of the two objects and BUMP!
-	local angle1 = math.atan2(o1.y - o2.y, o1.x - o2.x)
-	local angle2 = math.atan2(o2.y - o1.y, o2.x - o1.x)
-
-	o1.x = o1.x + math.cos(angle1) * bf * 10
-	o1.y = o1.y + math.sin(angle1) * bf * 10
-	o2.x = o2.x + math.cos(angle2) * bf * 10
-	o2.y = o2.y + math.sin(angle2) * bf * 10
 end

@@ -20,6 +20,9 @@ function Enemy:init(id, sprite, color, speed, bumpFactor, x, y, width, height, h
 	self.rotation = rotation or 0
 	self.chaseObj = chaseObj or player
 	self.health = health or 10
+
+	self.paused = false
+	self.defaultPauseDuration = .3 -- Amount of time to pause before attempting to move again
 end
 
 function Enemy:draw()
@@ -33,8 +36,19 @@ function Enemy:drawHitbox()
 end
 
 function Enemy:move(dt)
-	self.x = self.x + (self.x_vel * base_speed * dt)
-	self.y = self.y + (self.y_vel * base_speed * dt)
+	if self.paused then
+		self.pauseTime = self.pauseTime + dt
+		if self.pauseTime > self.pauseDuration then self.paused = false end
+	else
+		self.x = self.x + (self.x_vel * base_speed * dt)
+		self.y = self.y + (self.y_vel * base_speed * dt)
+	end
+end
+
+function Enemy:pause(newDuration)
+	self.pauseDuration = newDuration or self.defaultPauseDuration
+	self.pauseTime = 0
+	self.paused = true
 end
 
 function Enemy:chase()
