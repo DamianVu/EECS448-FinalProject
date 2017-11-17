@@ -19,6 +19,8 @@ function CollisionTesting:enter()
 
 	love.graphics.setNewFont(16)
 
+	HUD = HUD()
+
 	
 
 	player = Player(getNewUID(), spriteImg, {255,255,255}, 1, 10, 96, 96, 32, 32)
@@ -62,10 +64,11 @@ function CollisionTesting:draw()
 	love.graphics.pop()
 
 	love.graphics.setColor(0,255,0)
-	love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 10, 10)
-	love.graphics.print("Collision: " .. tostring(collision), 10, 30)
-	love.graphics.print("Number of projectiles: " .. #projectiles, 10, 50)
+	love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 10, 60)
+	love.graphics.print("Collision: " .. tostring(collision), 10, 80)
+	love.graphics.print("Number of projectiles: " .. #projectiles, 10, 100)
 
+	HUD:draw()
 
     love.graphics.setColor(255, 255, 255)
     local mx,my = love.mouse.getPosition()
