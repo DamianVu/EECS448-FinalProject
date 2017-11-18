@@ -23,7 +23,7 @@ function Singleplayer:enter()
 
 	
 
-	player = Player(getNewUID(), spriteImg, {255,255,255}, 1, 10, 96, 96, 32, 32)
+	player = Player(getNewUID(), spriteImg, CHARACTERCOLOR, 1, 10, 96, 96, 32, 32)
 
 	terrain[1] = Terrain(0, 0, 64 * 11, 64)
 	terrain[2] = Terrain(0, 64*9, 64*11, 64)

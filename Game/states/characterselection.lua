@@ -125,6 +125,7 @@ function CS:keypressed(key)
 					return
 				end
 				USERNAME = characters[currentCharacter].name .. tostring(characters[currentCharacter].salt)
+				CHARACTERCOLOR = characters[currentCharacter].color
 				Gamestate.switch(PlayMenu)
 			elseif currentItem == 3 then
 				-- Create a player
