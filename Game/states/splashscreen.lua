@@ -20,11 +20,11 @@ end
 function Splash:draw()
 	love.graphics.setColor(255,255,255, 255/(self.duration*self.duration))
 	love.graphics.setNewFont(60)
-	love.graphics.print("Wubba lubba dub dub", centerX, centerY)
+	love.graphics.print("Wubba lubba dub dub", centerX - 300, centerY - 100)
 	love.graphics.setNewFont(25)
-	love.graphics.print("slang/colloquialism",centerX, centerY + 80)
+	love.graphics.print("slang/colloquialism",centerX - 300, centerY - 20)
 	love.graphics.setNewFont(18)
-	love.graphics.print("1. I am in great pain, please help me.", centerX + 10, centerY + 105)
+	love.graphics.print("1. I am in great pain, please help me.", centerX - 290, centerY + 5)
 end
 
 --- Listens for key presses

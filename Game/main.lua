@@ -42,7 +42,6 @@ Debugging = require "states.debugstate"
 CharacterSelection = require "states.characterselection"
 PlayMenu = require "states.playgame"
 MapCreator = require "states.mapcreator"
-CollisionTesting = require "states.collisiontesting"
 GameOver = require "states.gameover"
 
 mouse = {}
@@ -71,7 +70,7 @@ function love.load()
     --love.window.setMode(windowWidth, windowHeight, {resizable=false, vsync=false, minwidth=800, minheight=600, borderless=true, msaa=2})
 
     Gamestate.registerEvents()
-    Gamestate.switch(CollisionTesting)
+    Gamestate.switch(SplashScreen)
 
 
     -- Physics variables

@@ -1,191 +1,160 @@
---- State Single player (module).
--- This module runs the single player game
-SoloGame = {}
 
-switched = false
+Singleplayer = {}
 
-local movingObj = {}
-local projectiles = {}
+local terrain = {}
+projectiles = {}
+enemies = {}
 
---- This is called only when the the module has been initialized (in main.lua)
-function SoloGame:init() -- init is only called once
+uid_counter = 0
 
+function Singleplayer:init()
 end
 
+function Singleplayer:enter()
+	collision = 0
 
---- Called whenever this state is entered
-function SoloGame:enter() -- enter is called everytime this state occurs
-    noclip = false -- if true then no collision should happen.
-    debugMode = false
-	CH = CollisionHandler()
+
+	projectiles = {}
+	enemies = {}
 
 	love.graphics.setNewFont(16)
 
-    spriteImg = love.graphics.newImage('images/sprites/player.png')
-    badImg = love.graphics.newImage('images/sprites/badguy.png')
-    -- healthImg = love.graphics.newImage('images/sprites/HealthBar.png')
+	HUD = HUD()
 
-	player = cObject(USERNAME, spriteImg, nil, 1, 96, 96, 32, 32, 10, 5)
-    -- p_health = cObject ("health", healthImg, {255,255,255}, 1, 96, 96, 28, 10)
-    badGuy = cObject("badguy", badImg, {255,50,0}, .002, 192, 192, 32, 32)
+	
 
+	player = Player(getNewUID(), spriteImg, {255,255,255}, 1, 10, 96, 96, 32, 32)
 
-    LH = LevelHandler()
-    LH:startGame()
+	terrain[1] = Terrain(0, 0, 64 * 11, 64)
+	terrain[2] = Terrain(0, 64*9, 64*11, 64)
+	terrain[3] = Terrain(0, 64, 64, 64 * 8)
+	terrain[4] = Terrain(64 * 10, 64, 64, 64 * 8)
+	terrain[5] = Terrain(128, 128, 64, 64)
+	terrain[6] = Terrain(6 * 64, 5 * 64, 128, 128)
 
+	enemies[#enemies + 1] = Enemy(getNewUID(), nil, {255,0,0}, .5, 5, 96, 96, 32, 32, 100, 2, player)
 
-	CH:addObj(player)
-    CH:addObj(badGuy)
-    CH:addObj(p_health)
-    movingObj[#movingObj + 1] = player
-    movingObj[#movingObj + 1] = badGuy
+	LH = LevelHandler()
+	LH:startGame()
 
+	CH = NewCollisionHandler()
 
-
-
-
-    -- movingObj[#movingObj + 1] = p_health
-
-    HUD = HUD()
-
-
+	CH:addObject(player)
+	for i=1, #enemies do CH:addObject(enemies[i]) end
+	for i=1, #terrain do CH:addTerrain(terrain[i]) end
+	for i=1, #projectiles do CH:addProjectile(projectiles[i]) end
 end
 
---- Called on game ticks for drawing operations
-function SoloGame:draw()
-	if CH.playerMovement then
-        x_translate_val = (love.graphics.getWidth() / 2) - player.x
-        y_translate_val = (love.graphics.getHeight() / 2) - player.y
-    end
+function Singleplayer:draw()
+	x_translate_val = (love.graphics.getWidth() / 2) - player.x
+	y_translate_val = (love.graphics.getHeight() / 2) - player.y
 
-    love.graphics.push()
-    love.graphics.translate(x_translate_val, y_translate_val)
+	love.graphics.push()
+	love.graphics.translate(x_translate_val, y_translate_val)
 
-    MH:drawMap()
-    if debugMode then
-        highlightTiles(player)
-    end
+	MH:drawMap()
 
-    -- Draw all players
-    --player:draw()
-    --badGuy:draw()
 
-    for i = 1, #movingObj do movingObj[i]:draw() end
-    for i = 1, #projectiles do projectiles[i]:draw() end
-  
-    -- p_health:draw()
+	for i=#enemies, 1, -1 do enemies[i]:draw() end
+	
+	for i=#projectiles, 1, -1 do projectiles[i]:draw() end
 
-    if debugMode then
-      --player:drawHitbox() no need until we update hitboxes
-    end
+	player:draw()
 
-    love.graphics.pop()
+	love.graphics.pop()
 
+	love.graphics.setColor(0,255,0)
+	love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 10, 60)
+	love.graphics.print("Collision: " .. tostring(collision), 10, 80)
+	love.graphics.print("Number of projectiles: " .. #projectiles, 10, 100)
+
+	HUD:draw()
 
     love.graphics.setColor(255, 255, 255)
-    love.graphics.circle("line", mouse.x, mouse.y, 5) -- "line" is outline, 5 is radius
+    local mx,my = love.mouse.getPosition()
+    love.graphics.circle("line", mx, my, 8)
 
-    -- Debugging information (from debugging.lua)
-    drawMonitors()
-
-    if debugMode then drawDebug() end
-
-    HUD:draw()
-
-    -- End Text in the top left
-    --love.graphics.circle("fill", windowWidth/2, windowHeight/2, 2)            This code draws a dot in the center of the screen
-
-    -- Code that will cap FPS at 144 --
-    local cur_time = love.timer.getTime()
-    if next_time <= cur_time then
-        next_time = cur_time
-        return
-    end
-
-    love.timer.sleep(next_time - cur_time)
-    -- End Code that will cap FPS at 144 --
 end
 
---- Called every game tick to update game data
-function SoloGame:update(dt)
-	if CH.playerMovement then
+function Singleplayer:update(dt)
 
-        -- Change velocity according to keypresses
-        if love.keyboard.isDown('d') then player.x_vel = player.speed * base_speed * dt end
-        if love.keyboard.isDown('a') then player.x_vel = -player.speed * base_speed * dt end
-        if love.keyboard.isDown('w') then player.y_vel = -player.speed * base_speed * dt end
-        if love.keyboard.isDown('s') then player.y_vel = player.speed * base_speed * dt end
+	if player:isDead() then Gamestate.switch(GameOver) end
 
-        -- Friction
-        if not love.keyboard.isDown('d','a') then
-            if (player.x_vel_counter < 1) then player.x_vel = 0
-            else player.x_vel_counter = player.x_vel_counter - 1 end
-        else player.x_vel_counter = base_slowdown_counter
-        end
-        if not love.keyboard.isDown('w','s') then
-            if (player.y_vel_counter < 1) then player.y_vel = 0
-            else player.y_vel_counter = player.y_vel_counter - 1 end
-        else player.y_vel_counter = base_slowdown_counter
-        end
+	if player.immune then
+		player:updateImmunity(dt)
+	end
+	
+	LH:update(dt)
+	-- Change velocity according to keypresses
+	if love.keyboard.isDown('w') then player:move(dt, 1) end
+    if love.keyboard.isDown('a') then player:move(dt, 4) end
+	if love.keyboard.isDown('s') then player:move(dt, 3) end
+	if love.keyboard.isDown('d') then player:move(dt, 2) end
 
-    else
-        if CH.playerMovementDisableCount < 1 then
-            CH.playerMovementDisableCount = 10
-            CH.playerMovement = true
-        else CH.playerMovementDisableCount = CH.playerMovementDisableCount - 1
-        end
-    end
-    LH:update(dt)
-    -- Handle collisions
-    if not noclip then CH:checkCollisions() end
+	if not player.movementEnabled then player:move(dt) end
 
-    badGuy:chase(dt)
+	for i = #enemies, 1, -1 do
+		enemies[i]:chase()
+		enemies[i]:move(dt)
+	end
+	
+	for i=#projectiles, 1, -1 do projectiles[i]:move(dt) end
 
-    -- Move the moving objects after collisions have been handled
-    for i = 1, #movingObj do movingObj[i]:move() end
-    for i = 1, #projectiles do projectiles[i]:move() end
-    
+	CH:update()
 
+	for i = #enemies, 1, -1 do
+		if enemies[i]:isDead() then
+			destroyEnemy(enemies[i].id)
+		end
+	end
 end
 
 --- Event binding to listen for key presses
-function SoloGame:keypressed(key)
--- Handle keypresses
-    if debugMode and key == 'r' then player.x, player.y = 0, 0 end -- Reset position
-    if key == 'n' then noclip = not noclip end
-    if key == 'tab' then debugMode = not debugMode end -- Toggle debug mode
-    if key == 'escape' then Gamestate.switch(PlayMenu) end
-    if key == 'l' then
-        if switched then
-            LH:loadLevel(2,2)
-        else
-            LH:loadLevel(1,1)
-        end
-        switched = not switched
-    end
+function Singleplayer:keypressed(key)
+	if key == 'r' then
+    	Gamestate.switch(Singleplayer)
+	end
+	if key == "escape" then
+		Gamestate.switch(PlayMenu)
+	end
 end
 
----controls shooting direction
-function SoloGame:mousepressed(x, y, button)
-    if button == 1 then
-        local startX = player.x
-        local startY = player.y
-        local mouseX = x - x_translate_val
-        local mouseY = y - y_translate_val
- 
-        local angle = math.atan2((mouseY - startY), (mouseX - startX))
- 
-        
-        local pos = #projectiles + 1
-        projectiles[pos] = cObject("badguy", badImg, {255, 255, 255}, 1, startX, startY, 16, 16)
+function Singleplayer:mousepressed(x, y, button)
+	if button == 1 then
+		local relX = x - x_translate_val
+		local relY = y - y_translate_val
 
-        local ProjectileDx = projectiles[pos].speed * math.cos(angle)
-        local ProjectileDy = projectiles[pos].speed * math.sin(angle)
+		local angle = math.atan2(relY - player.y, relX - player.x)
 
-        projectiles[pos]:setVel(ProjectileDx,ProjectileDy)
-    end
+		local index = #projectiles + 1
+
+		projectiles[index] = Projectile(getNewUID(), nil, player.x, player.y, 16, 16, 3 * math.cos(angle), 3 * math.sin(angle), 5, 1, player.id)
+		CH.projectiles[#CH.projectiles + 1] = projectiles[index]
+	end
 end
 
+function destroyProjectile(id)
+	table.remove(CH.projectiles, getObjectPosition(id, CH.projectiles))
+	table.remove(projectiles, getObjectPosition(id, projectiles))
+end
 
+function destroyEnemy(id)
+	table.remove(CH.objects, getObjectPosition(id, CH.objects))
+	table.remove(enemies, getObjectPosition(id, enemies))
+end
 
-return SoloGame
+function getObjectPosition(id, table)
+	for i=1, #table do
+		if table[i].id == id then
+			return i
+		end
+	end
+	return -1
+end
+
+function getNewUID()
+	uid_counter = uid_counter + 1
+	return uid_counter
+end
+
+return Singleplayer
