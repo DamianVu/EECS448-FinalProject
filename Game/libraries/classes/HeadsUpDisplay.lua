@@ -1,16 +1,16 @@
 
-HUD = class("HUD", {})
+HeadsUpDisplay = class("HeadsUpDisplay", {})
 
-function HUD:init()
-	-- "Default constructor" occurs when we initialize the HUD
+function HeadsUpDisplay:init()
+	-- "Default constructor" occurs when we initialize the HeadsUpDisplay
 end
 
-function HUD:draw()
+function HeadsUpDisplay:draw()
 
 	self:drawPlayerHP()
 end
 
-function HUD:drawPlayerHP()
+function HeadsUpDisplay:drawPlayerHP()
 	local w,h = love.graphics.getDimensions()
 	local barSize = w * .3
 

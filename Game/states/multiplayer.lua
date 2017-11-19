@@ -2,9 +2,7 @@
 -- This state allows us to make network connections and play online
 OnlineGame = {}
 
--- Collision Handler initialization --
-
-local movingObj = {}
+updateRate = .05 -- How often we should send updates to the server
 
 --- Called only when this module is initialized (in main.lua)
 function OnlineGame:init() -- init is only called once
@@ -13,117 +11,106 @@ end
 
 --- Called whenever this state has been entered
 function OnlineGame:enter() -- enter is called everytime this state occurs
-  debugMode = false
-  noclip = false -- if true then no collision should happen.
+	peers = {}
+	terrain = {}
+	projectiles = {}
+	enemies = {}
 
-  -- Collision Handler initialization
-  CH = CollisionHandler()
+	HUD = HeadsUpDisplay()
 
-  -- Map Handler initialization
-  love.graphics.setNewFont(16)
-  MH = MapHandler()
-  MH:loadMap(3,2)
+	CH = NewCollisionHandler()
 
-  -- Initialize player and register to table of moving objects
-  player = cObject(USERNAME, love.graphics.newImage('images/sprites/player.png'), nil, 1, 96, 96, 32, 32)
-  CH:addObj(player)
-  movingObj[#movingObjects + 1] = player
+	-- Map Handler initialization
+	love.graphics.setNewFont(16)
+	LH = LevelHandler()
+	LH:loadLevel(4,1)
 
-  -- Initialize peers table and connect to server
-  peers = {}
-  messageCount = 0
-  connectToServer(SERVER_ADDRESS, SERVER_PORT)
+	-- MANUAL TERRAIN OBJECTS!!! THIS WILL CHANGE AFTER MAP FORMAT IS DONE
+	terrain[1] = Terrain(0, 0, 64 * 11, 64)
+	terrain[2] = Terrain(0, 64*9, 64*11, 64)
+	terrain[3] = Terrain(0, 64, 64, 64 * 8)
+	terrain[4] = Terrain(64 * 10, 64, 64, 64 * 8)
+	terrain[5] = Terrain(128, 128, 64, 64)
+	terrain[6] = Terrain(6 * 64, 5 * 64, 128, 128)
+
+	-- Initialize player and register to table of moving objects
+	player = Player(USERNAME, spriteImg, CHARACTERCOLOR, 1, 10, 96, 96, 32, 32)
+
+	CH:addObject(player)
+	for i=1, #enemies do CH:addObject(enemies[i]) end
+	for i=1, #terrain do CH:addTerrain(terrain[i]) end
+
+	messageCount = 0
+	connectToServer(SERVER_ADDRESS, SERVER_PORT)
+
+
+	updateTimer = 0
 end
 
 --- Called on game ticks for drawing operations
 function OnlineGame:draw()
-	if CH.playerMovement then
-        x_translate_val = (love.graphics.getWidth() / 2) - player.x
-        y_translate_val = (love.graphics.getHeight() / 2) - player.y
-    end
+	x_translate_val = (love.graphics.getWidth() / 2) - player.x
+	y_translate_val = (love.graphics.getHeight() / 2) - player.y
 
-    love.graphics.push()
-    love.graphics.translate(x_translate_val, y_translate_val)
+	love.graphics.push()
+	love.graphics.translate(x_translate_val, y_translate_val)
 
-    MH:drawMap()
-    if debugMode then
-        highlightTiles(player)
-    end
+	MH:drawMap()
 
-    -- Draw all players
-    player:draw()
+	for i = 1, #peers do peers[i]:draw() end
 
-    for i = 1, #peers do peers[i]:draw() end
+	for i=#enemies, 1, -1 do enemies[i]:draw() end
+	
+	for i=#projectiles, 1, -1 do projectiles[i]:draw() end
 
-    if debugMode then
-      --player:drawHitbox() no need until we update hitboxes
-    end
+	player:draw()
 
-    love.graphics.pop()
+	love.graphics.pop()
 
+	love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 10, 60)
+	love.graphics.print("Collision: " .. tostring(collision), 10, 80)
+	love.graphics.print("Number of projectiles: " .. #projectiles, 10, 100)
 
-    -- Debugging information (from debugging.lua)
-    drawMonitors()
-    drawNetworkMonitors()
+	HUD:draw()
 
-    if debugMode then drawDebug() end
-
-    -- End Text in the top left
-    --love.graphics.circle("fill", windowWidth/2, windowHeight/2, 2)            This code draws a dot in the center of the screen
-
-    -- Code that will cap FPS at 144 --
-    local cur_time = love.timer.getTime()
-    if next_time <= cur_time then
-        next_time = cur_time
-        return
-    end
-
-    love.timer.sleep(next_time - cur_time)
-    -- End Code that will cap FPS at 144 --
+	love.graphics.setColor(255, 255, 255)
+    local mx,my = love.mouse.getPosition()
+    love.graphics.circle("line", mx, my, 8)
 end
 
 --- Called every game tick
 function OnlineGame:update(dt)
-    receiver()
+	receiver()
 
-    if CH.playerMovement then
+	LH:update(dt)
+	-- Change velocity according to keypresses
+	if love.keyboard.isDown('w') then player:move(dt, 1) end
+    if love.keyboard.isDown('a') then player:move(dt, 4) end
+	if love.keyboard.isDown('s') then player:move(dt, 3) end
+	if love.keyboard.isDown('d') then player:move(dt, 2) end
 
-        -- Change velocity according to keypresses
-        if love.keyboard.isDown('d') then player.x_vel = player.speed * base_speed * dt end
-        if love.keyboard.isDown('a') then player.x_vel = -player.speed * base_speed * dt end
-        if love.keyboard.isDown('w') then player.y_vel = -player.speed * base_speed * dt end
-        if love.keyboard.isDown('s') then player.y_vel = player.speed * base_speed * dt end
+	if not player.movementEnabled then player:move(dt) end
 
-        -- Friction
-        if not love.keyboard.isDown('d','a') then
-            if (player.x_vel_counter < 1) then player.x_vel = 0
-            else player.x_vel_counter = player.x_vel_counter - 1 end
-        else player.x_vel_counter = base_slowdown_counter
-        end
-        if not love.keyboard.isDown('w','s') then
-            if (player.y_vel_counter < 1) then player.y_vel = 0
-            else player.y_vel_counter = player.y_vel_counter - 1 end
-        else player.y_vel_counter = base_slowdown_counter
-        end
+	for i = #enemies, 1, -1 do
+		enemies[i]:chase()
+		enemies[i]:move(dt)
+	end
 
-        -- Update movement on server
-        if player.y_vel ~= 0 or player.x_vel ~= 0 then
-          sendToServer(USERNAME.." moveto "..player.x.." "..player.y)
-        end
-    else
-        if CH.playerMovementDisableCount < 1 then
-            CH.playerMovementDisableCount = 10
-            CH.playerMovement = true
-        else CH.playerMovementDisableCount = CH.playerMovementDisableCount - 1
-        end
-    end
+	for i = #projectiles, 1, -1 do projectiles[i]:move(dt) end
 
-    -- Handle collisions
-    if not noclip then CH:checkCollisions() end
+	for i = #enemies, 1, -1 do
+		if enemies[i]:isDead() then
+			destroyEnemy(enemies[i].id)
+		end
+	end
 
-    -- Move the moving objects after collisions have been handled
-    for i = 1, #movingObj do movingObj[i]:move() end
+	CH:update()
 
+	updateTimer = updateTimer + dt
+	if updateTimer > updateRate then 
+		sendToServer(USERNAME.." moveto "..player.x.." "..player.y)
+		updateTimer = 0
+	end
 end
 
 --- Called when this state has been left
@@ -139,10 +126,24 @@ end
 --- Event handler binding to listen for keypresses
 function OnlineGame:keypressed(key)
 	--if key == 'l' then sendToServer(USERNAME.." listplayers") end -- List online players (testing)
-    if debugMode and key == 'r' then player.x, player.y = 0, 0 end -- Reset position
-    if key == 'n' then noclip = not noclip end
-    if key == 'tab' then debugMode = not debugMode end -- Toggle debug mode
-    if key == 'escape' then Gamestate.switch(PlayMenu) end
+	if debugMode and key == 'r' then player.x, player.y = 0, 0 end -- Reset position
+	if key == 'n' then noclip = not noclip end
+	if key == 'tab' then debugMode = not debugMode end -- Toggle debug mode
+	if key == 'escape' then Gamestate.switch(PlayMenu) end
+end
+
+function OnlineGame:mousepressed(x, y, button)
+	if button == 1 then
+		local relX = x - x_translate_val
+		local relY = y - y_translate_val
+
+		local angle = math.atan2(relY - player.y, relX - player.x)
+
+		local index = #projectiles + 1
+
+		projectiles[index] = Projectile(getNewUID(), nil, player.x, player.y, 16, 16, 3 * math.cos(angle), 3 * math.sin(angle), 5, 1, player.id)
+		CH.projectiles[#CH.projectiles + 1] = projectiles[index]
+	end
 end
 
 

@@ -23,7 +23,7 @@ require "libraries.classes.objects.Enemy"
 
 require "libraries.classes.MCTile"
 require "libraries.classes.MapObject"
-require "libraries.classes.HUD"
+require "libraries.classes.HeadsUpDisplay"
 
 require "debugging"
 require "netClient"

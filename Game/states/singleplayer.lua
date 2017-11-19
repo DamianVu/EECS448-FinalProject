@@ -1,9 +1,7 @@
 
 Singleplayer = {}
 
-local terrain = {}
-projectiles = {}
-enemies = {}
+
 
 uid_counter = 0
 
@@ -13,17 +11,19 @@ end
 function Singleplayer:enter()
 	collision = 0
 
-
+	terrain = {}
 	projectiles = {}
 	enemies = {}
 
 	love.graphics.setNewFont(16)
 
-	HUD = HUD()
+	HUD = HeadsUpDisplay()
 
 	
 
 	player = Player(getNewUID(), spriteImg, CHARACTERCOLOR, 1, 10, 96, 96, 32, 32)
+
+
 
 	terrain[1] = Terrain(0, 0, 64 * 11, 64)
 	terrain[2] = Terrain(0, 64*9, 64*11, 64)
@@ -83,7 +83,7 @@ function Singleplayer:update(dt)
 	if player.immune then
 		player:updateImmunity(dt)
 	end
-	
+
 	LH:update(dt)
 	-- Change velocity according to keypresses
 	if love.keyboard.isDown('w') then player:move(dt, 1) end
