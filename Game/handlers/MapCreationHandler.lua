@@ -160,7 +160,7 @@ function MapCreationHandler:drawGUI()
 end
 
 function MapCreationHandler:drawTilePalette()
-		-- Draw current tileset and tiles
+	-- Draw current tileset and tiles
 	local tsGridX = 10
 	local tsGridY = love.graphics.getHeight() - 138
 
@@ -322,23 +322,27 @@ function MapCreationHandler:changeTile(updown)
 end
 
 function MapCreationHandler:changePage(prev)
-	if self:getTilesetSize() <= 16 then return end
-	local tilePages = (math.floor((#self.tilesets[self.currentTileset].Quads - 1) / 16) + 1)
-	if prev then
-		if self.currentTilePage == 1 then
-			self.currentTilePage = tilePages
-			self.currentTile = (tilePages * 16) + (#self.tilesets[self.currentTileset].Quads % 16)
+	if self.mode == MCHModes[1] or self.mode == MCHModes[2] then
+		if self:getTilesetSize() <= 16 then return end
+		local tilePages = (math.floor((#self.tilesets[self.currentTileset].Quads - 1) / 16) + 1)
+		if prev then
+			if self.currentTilePage == 1 then
+				self.currentTilePage = tilePages
+				self.currentTile = (tilePages * 16) + (#self.tilesets[self.currentTileset].Quads % 16)
+			else
+				self.currentTilePage = self.currentTilePage - 1
+				self.currentTile = 16
+			end
 		else
-			self.currentTilePage = self.currentTilePage - 1
-			self.currentTile = 16
+			self.currentTile = 1
+			if self.currentTilePage == tilePages then
+				self.currentTilePage = 1
+			else
+				self.currentTilePage = self.currentTilePage + 1
+			end
 		end
-	else
-		self.currentTile = 1
-		if self.currentTilePage == tilePages then
-			self.currentTilePage = 1
-		else
-			self.currentTilePage = self.currentTilePage + 1
-		end
+	elseif self.mode == MCHModes[3] then
+		-- Change object page
 	end
 end
 
