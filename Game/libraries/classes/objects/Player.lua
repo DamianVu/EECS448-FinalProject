@@ -29,9 +29,13 @@ function Player:init(id, sprite, color, speed, health, x, y, width, height)
 	self.maxHP = health
 	self.health = self.maxHP
 
+	self.attackDelay = false
+	self.attackTimer = 0
+	self.attackTimeout = 0
+
 
 	self.inventory = {}
-	self.equipment = {weapon = 1}
+	self.equipment = {weapon = 3}
 end
 
 function Player:load(file)
@@ -118,4 +122,17 @@ end
 
 function Player:isDead()
 	return self.health <= 0
+end
+
+function Player:updateAttackDelay(dt)
+	self.attackTimer = self.attackTimer + dt
+	if self.attackTimer > self.attackTimeout then
+		self.attackDelay = false
+	end
+end
+
+function Player:startAttackDelay(time)
+	self.attackTimeout = time
+	self.attackTimer = 0
+	self.attackDelay = true
 end
