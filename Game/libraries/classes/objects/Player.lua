@@ -28,6 +28,14 @@ function Player:init(id, sprite, color, speed, health, x, y, width, height)
 
 	self.maxHP = health
 	self.health = self.maxHP
+
+
+	self.inventory = {}
+	self.equipment = {weapon = 1}
+end
+
+function Player:load(file)
+
 end
 
 function Player:draw()
