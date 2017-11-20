@@ -9,6 +9,7 @@ require "handlers.MapHandler"
 require "handlers.CharacterHandler"
 require "handlers.LevelHandler"
 require "handlers.NewCollisionHandler"
+require "handlers.ItemHandler"
 
 require "libraries.classes.cObject"
 require "libraries.classes.CoordinateList"

@@ -19,6 +19,8 @@ function Singleplayer:enter()
 
 	HUD = HeadsUpDisplay()
 
+	IH = ItemHandler()
+
 	
 
 	player = Player(getNewUID(), spriteImg, CHARACTERCOLOR, 1, 10, 96, 96, 32, 32)
@@ -100,6 +102,32 @@ function Singleplayer:update(dt)
 	
 	for i=#projectiles, 1, -1 do projectiles[i]:move(dt) end
 
+	-- Let player attack
+	if not player.attackDelay and love.mouse.isDown(1) then
+		local currentWeapon = IH:getItem(player.equipment.weapon)
+		local x,y = love.mouse.getPosition()
+
+		if currentWeapon.weaponType == RANGED then
+			local relX = x - x_translate_val
+			local relY = y - y_translate_val
+
+			local angle = math.atan2(relY - player.y, relX - player.x)
+
+			local index = #projectiles + 1
+
+			projectiles[index] = Projectile(getNewUID(), nil, player.x, player.y, 16, 16, 3 * math.cos(angle), 3 * math.sin(angle), currentWeapon.stats.damage, 1, player.id)
+			CH.projectiles[#CH.projectiles + 1] = projectiles[index]
+
+			player:startAttackDelay(currentWeapon.stats.firerate)
+		end
+	else
+		player:updateAttackDelay(dt)
+	end
+
+
+
+
+
 	CH:update()
 
 	for i = #enemies, 1, -1 do
@@ -119,19 +147,6 @@ function Singleplayer:keypressed(key)
 	end
 end
 
-function Singleplayer:mousepressed(x, y, button)
-	if button == 1 then
-		local relX = x - x_translate_val
-		local relY = y - y_translate_val
-
-		local angle = math.atan2(relY - player.y, relX - player.x)
-
-		local index = #projectiles + 1
-
-		projectiles[index] = Projectile(getNewUID(), nil, player.x, player.y, 16, 16, 3 * math.cos(angle), 3 * math.sin(angle), 5, 1, player.id)
-		CH.projectiles[#CH.projectiles + 1] = projectiles[index]
-	end
-end
 
 function destroyProjectile(id)
 	table.remove(CH.projectiles, getObjectPosition(id, CH.projectiles))
