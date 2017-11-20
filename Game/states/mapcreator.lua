@@ -139,6 +139,8 @@ function MapCreator:mousepressed(x,y,button,_)
 		if button == 1 and not MCH.mouseOnObjectMenu then
 			MCH.mode = MCHModes[1]
 			MCH:resetObjectMenu()
+		else
+			MCH:objectMenuClickAction(x, y)
 		end
 	end
 
