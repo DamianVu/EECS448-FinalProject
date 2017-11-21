@@ -20,6 +20,8 @@ function Player:init(id, sprite, color, speed, health, x, y, width, height)
 	self.rotation = rotation or 0
 	self.movementEnabled = true
 
+	self.score = 0
+
 	self.immune = false
 	self.immuneTimer = 2 -- How long the player stays immune after collision
 	self.immuneTime = 0
@@ -35,7 +37,7 @@ function Player:init(id, sprite, color, speed, health, x, y, width, height)
 
 
 	self.inventory = {}
-	self.equipment = {weapon = 3}
+	self.equipment = {weapon = 2}
 end
 
 function Player:load(file)

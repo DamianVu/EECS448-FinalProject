@@ -69,6 +69,8 @@ function Singleplayer:draw()
 	love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 10, 60)
 	love.graphics.print("Collision: " .. tostring(collision), 10, 80)
 	love.graphics.print("Number of projectiles: " .. #projectiles, 10, 100)
+	love.graphics.print("Current Weapon: " .. IH:getItemName(player.equipment.weapon), 10, 120)
+	love.graphics.print("Score: " .. player.score, 10, 140)
 
 	HUD:draw()
 
@@ -98,6 +100,9 @@ function Singleplayer:update(dt)
 	for i = #enemies, 1, -1 do
 		enemies[i]:chase()
 		enemies[i]:move(dt)
+		if enemies[i].showHealth then
+			enemies[i]:updateShowHealth(dt)
+		end
 	end
 	
 	for i=#projectiles, 1, -1 do projectiles[i]:move(dt) end

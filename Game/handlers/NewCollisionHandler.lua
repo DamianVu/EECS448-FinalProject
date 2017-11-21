@@ -257,6 +257,8 @@ end
 --- Resolves a collision between a projectile and an object
 function NewCollisionHandler:resolveProjectileCollision(projectile, object)
 	object:takeDamage(projectile.damage)
+	local pos = getObjectPosition(projectile.sourceID, self.objects)
+	self.objects[pos].score = self.objects[pos].score + projectile.damage
 	destroyProjectile(projectile.id)
 end
 
