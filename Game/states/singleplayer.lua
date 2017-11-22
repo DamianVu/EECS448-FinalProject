@@ -174,12 +174,7 @@ function fireWeapon(weapon, mx, my)
 
 		local angle = math.atan2(relY - player.y, relX - player.x)
 
-		print("Angle: " .. angle)
-
-
 		local spreadAngle = .261799 *(weapon.stats.spread or 1) -- 15 degrees
-
-
 
 		local halfProj = weapon.stats.projectiles / 2
 
