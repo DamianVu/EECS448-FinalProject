@@ -15,7 +15,7 @@ function HeadsUpDisplay:drawPlayerHP()
 	local w,h = love.graphics.getDimensions()
 	local barSize = w * .3
 
-	local hpFraction = player.health / player.maxHP
+	local hpFraction = GH.player.health / GH.player.maxHP
 
 	love.graphics.setColor(0,255,0)
 	love.graphics.rectangle("fill", 10, 10, barSize * hpFraction, 40)
@@ -29,15 +29,15 @@ function HeadsUpDisplay:drawPlayerWeaponInfo()
 	local w,h = love.graphics.getDimensions()
 
 	love.graphics.setColor(255,255,0)
-	love.graphics.print("Current Weapon: " .. IH:getItemName(player.equipment.weapon), 10, h - 64)
+	love.graphics.print("Current Weapon: " .. GH.IH:getItemName(GH.player.equipment.weapon), 10, h - 64)
 
 	local barWidth = 300
 	local barHeight = 30
 
 	love.graphics.setColor(0,0,255)
 	local drawWidth = barWidth
-	if player.attackDelay then
-		drawWidth = (player.attackTimer / player.attackTimeout) * barWidth
+	if GH.player.attackDelay then
+		drawWidth = (GH.player.attackTimer / GH.player.attackTimeout) * barWidth
 	end
 	love.graphics.rectangle("fill", 11, h - barHeight - 11, drawWidth, barHeight)
 

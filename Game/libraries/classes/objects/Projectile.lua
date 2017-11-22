@@ -32,8 +32,8 @@ function Projectile:draw()
 end
 
 function Projectile:move(dt)
-	self.x = self.x + (self.x_vel * self.speed * base_speed * dt)
-	self.y = self.y + (self.y_vel * self.speed * base_speed * dt)
+	self.x = self.x + (3 * self.x_vel * self.speed * base_speed * dt)
+	self.y = self.y + (3 * self.y_vel * self.speed * base_speed * dt)
 end
 
 function Projectile:isOffScreen()

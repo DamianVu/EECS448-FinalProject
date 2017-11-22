@@ -147,7 +147,7 @@ end
 --- Resolves a collision between a projectile and terrain
 function NewCollisionHandler:resolveTerrainCollision(object, terrain)
 	if object.type == PROJECTILE then
-		destroyProjectile(object.id)
+		GH:destroyProjectile(object.id)
 	else
 		self:resolveObjectTerrainCollision(object, terrain)
 	end
@@ -257,9 +257,9 @@ end
 --- Resolves a collision between a projectile and an object
 function NewCollisionHandler:resolveProjectileCollision(projectile, object)
 	object:takeDamage(projectile.damage)
-	local pos = getObjectPosition(projectile.sourceID, self.objects)
+	local pos = GH.getObjectPosition(projectile.sourceID, self.objects)
 	self.objects[pos].score = self.objects[pos].score + projectile.damage
-	destroyProjectile(projectile.id)
+	GH:destroyProjectile(projectile.id)
 end
 
 --- Resolves a collision between an object and another object
