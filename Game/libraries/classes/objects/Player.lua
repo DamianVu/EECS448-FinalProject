@@ -33,7 +33,7 @@ function Player:init(id, sprite, color, speed, health, x, y, width, height)
 
 	self.attackDelay = false
 	self.attackTimer = 0
-	self.attackTimeout = 0
+	self.attackTimeout = 1
 
 
 	self.inventory = {}

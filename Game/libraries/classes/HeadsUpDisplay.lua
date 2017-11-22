@@ -8,6 +8,7 @@ end
 function HeadsUpDisplay:draw()
 
 	self:drawPlayerHP()
+	self:drawPlayerWeaponInfo()
 end
 
 function HeadsUpDisplay:drawPlayerHP()
@@ -22,4 +23,25 @@ function HeadsUpDisplay:drawPlayerHP()
 	love.graphics.setColor(200,200,200)
 	love.graphics.rectangle("line", 9, 9, barSize + 2, 42)
 	love.graphics.rectangle("line", 10, 10, barSize, 40)
+end
+
+function HeadsUpDisplay:drawPlayerWeaponInfo()
+	local w,h = love.graphics.getDimensions()
+
+	love.graphics.setColor(255,255,0)
+	love.graphics.print("Current Weapon: " .. IH:getItemName(player.equipment.weapon), 10, h - 64)
+
+	local barWidth = 300
+	local barHeight = 30
+
+	love.graphics.setColor(0,0,255)
+	local drawWidth = barWidth
+	if player.attackDelay then
+		drawWidth = (player.attackTimer / player.attackTimeout) * barWidth
+	end
+	love.graphics.rectangle("fill", 11, h - barHeight - 11, drawWidth, barHeight)
+
+	love.graphics.setColor(200,200,200)
+	love.graphics.rectangle("line", 11, h - barHeight - 11, barWidth, barHeight)
+	love.graphics.rectangle("line", 10, h - barHeight - 12, barWidth + 2, barHeight + 2)
 end

@@ -12,6 +12,7 @@ ENEMY = "Enemy"
 PROJECTILE = "Projectile"
 TERRAIN = "Terrain"
 RANGED = "Ranged"
+WEAPON = "Weapon"
 
 
 
