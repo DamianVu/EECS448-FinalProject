@@ -10,6 +10,7 @@ require "handlers.CharacterHandler"
 require "handlers.LevelHandler"
 require "handlers.NewCollisionHandler"
 require "handlers.ItemHandler"
+require "handlers.GameHandler"
 
 require "libraries.classes.cObject"
 require "libraries.classes.CoordinateList"

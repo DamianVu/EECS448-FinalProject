@@ -38,8 +38,8 @@ function MapHandler:loadMap(map, startIndex)
 		love.graphics.newQuad(64, 64, tw, th, imgw, imgh)
 	}
 
-	player.x = ((startx - 1) * tw) + (tw/2)
-	player.y = ((starty - 1) * tw) + (th/2)
+	GH.player.x = ((startx - 1) * tw) + (tw/2)
+	GH.player.y = ((starty - 1) * tw) + (th/2)
 end
 
 --- Each map needs it's own tileset, definitions for those tiles, color for debug mode, and layout.
