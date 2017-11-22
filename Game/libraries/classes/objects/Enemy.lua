@@ -36,11 +36,13 @@ function Enemy:draw()
 	love.graphics.draw(self.sprite, self.x, self.y, self.rotation, self.scaleX, self.scaleY, self.x_offset, self.y_offset)
 
 	if self.showHealth then
-		local barWidth = self.width - 2
+		local maxBarWidth = self.width - 2
 		local barHeight = 5
 
 		love.graphics.setColor(255,0,0) -- red
-		love.graphics.rectangle("fill", self.x - barWidth/2, self.y - (self.height/2 + barHeight + 4), barWidth * (self.health / self.maxHealth), barHeight)
+		local healthBarWidth = maxBarWidth * (self.health / self.maxHealth)
+		if healthBarWidth < 1 then healthBarWidth = 1 end
+		love.graphics.rectangle("fill", self.x - maxBarWidth/2, self.y - (self.height/2 + barHeight + 4), healthBarWidth, barHeight)
 	end
 end
 

@@ -69,8 +69,9 @@ function Singleplayer:draw()
 	love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 10, 60)
 	love.graphics.print("Collision: " .. tostring(collision), 10, 80)
 	love.graphics.print("Number of projectiles: " .. #projectiles, 10, 100)
-	love.graphics.print("Current Weapon: " .. IH:getItemName(player.equipment.weapon), 10, 120)
-	love.graphics.print("Score: " .. player.score, 10, 140)
+	love.graphics.print("Score: " .. player.score, 10, 120)
+
+
 
 	HUD:draw()
 
@@ -112,19 +113,7 @@ function Singleplayer:update(dt)
 		local currentWeapon = IH:getItem(player.equipment.weapon)
 		local x,y = love.mouse.getPosition()
 
-		if currentWeapon.weaponType == RANGED then
-			local relX = x - x_translate_val
-			local relY = y - y_translate_val
-
-			local angle = math.atan2(relY - player.y, relX - player.x)
-
-			local index = #projectiles + 1
-
-			projectiles[index] = Projectile(getNewUID(), nil, player.x, player.y, 16, 16, 3 * math.cos(angle), 3 * math.sin(angle), currentWeapon.stats.damage, 1, player.id)
-			CH.projectiles[#CH.projectiles + 1] = projectiles[index]
-
-			player:startAttackDelay(currentWeapon.stats.firerate)
-		end
+		fireWeapon(currentWeapon, x, y)
 	else
 		player:updateAttackDelay(dt)
 	end
@@ -175,6 +164,51 @@ end
 function getNewUID()
 	uid_counter = uid_counter + 1
 	return uid_counter
+end
+
+function fireWeapon(weapon, mx, my)
+	-- Move this to its own handler later?
+	if weapon.weaponType == RANGED then
+		local relX = mx - x_translate_val
+		local relY = my - y_translate_val
+
+		local angle = math.atan2(relY - player.y, relX - player.x)
+
+		print("Angle: " .. angle)
+
+
+		local spreadAngle = .261799 -- 15 degrees
+
+
+
+		if math.fmod(weapon.stats.projectiles, 2) == 0 then
+			-- Even num of projectiles
+
+		else
+			-- Odd num of projectiles
+			local halfProj = math.floor(weapon.stats.projectiles / 2)
+
+			for i = 1, halfProj do
+				-- Fire to the left
+				local newInd = #projectiles + 1
+				projectiles[newInd] = Projectile(getNewUID(), nil, player.x, player.y, 16, 16, 3 * math.cos(angle - (i * spreadAngle)), 3 * math.sin(angle - (i * spreadAngle)), weapon.stats.damage, weapon.stats.speed, player.id)
+				CH.projectiles[#CH.projectiles + 1] = projectiles[newInd]
+
+				-- Fire to the right
+				newInd = #projectiles + 1
+				projectiles[#projectiles + 1] = Projectile(getNewUID(), nil, player.x, player.y, 16, 16, 3 * math.cos(angle + (i * spreadAngle)), 3 * math.sin(angle + (i * spreadAngle)), weapon.stats.damage, weapon.stats.speed, player.id)
+				CH.projectiles[#CH.projectiles + 1] = projectiles[newInd]
+			end
+			-- Fire at mouse
+			local ind = #projectiles + 1
+			projectiles[ind] = Projectile(getNewUID(), nil, player.x, player.y, 16, 16, 3 * math.cos(angle), 3 * math.sin(angle), weapon.stats.damage, weapon.stats.speed, player.id)
+			CH.projectiles[#CH.projectiles + 1] = projectiles[ind]
+		end
+
+	
+
+		player:startAttackDelay(weapon.stats.firerate)
+	end
 end
 
 return Singleplayer
