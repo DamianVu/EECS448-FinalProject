@@ -177,16 +177,29 @@ function fireWeapon(weapon, mx, my)
 		print("Angle: " .. angle)
 
 
-		local spreadAngle = .261799 -- 15 degrees
+		local spreadAngle = .261799 *(weapon.stats.spread or 1) -- 15 degrees
 
 
+
+		local halfProj = weapon.stats.projectiles / 2
 
 		if math.fmod(weapon.stats.projectiles, 2) == 0 then
 			-- Even num of projectiles
 
+			for i = 1, halfProj do
+				-- Fire to the left
+				local newInd = #projectiles + 1
+				projectiles[newInd] = Projectile(getNewUID(), nil, player.x, player.y, 16, 16, 3 * math.cos(angle - (spreadAngle/2) - ((i-1) * spreadAngle)), 3 * math.sin(angle - (spreadAngle/2) - ((i-1) * spreadAngle)), weapon.stats.damage, weapon.stats.speed, player.id)
+				CH.projectiles[#CH.projectiles + 1] = projectiles[newInd]
+
+				-- Fire to the right
+				newInd = #projectiles + 1
+				projectiles[#projectiles + 1] = Projectile(getNewUID(), nil, player.x, player.y, 16, 16, 3 * math.cos(angle + (spreadAngle/2) + ((i-1) * spreadAngle)), 3 * math.sin(angle + (spreadAngle/2) + ((i-1) * spreadAngle)), weapon.stats.damage, weapon.stats.speed, player.id)
+				CH.projectiles[#CH.projectiles + 1] = projectiles[newInd]
+			end
 		else
 			-- Odd num of projectiles
-			local halfProj = math.floor(weapon.stats.projectiles / 2)
+			halfProj = math.floor(halfProj)
 
 			for i = 1, halfProj do
 				-- Fire to the left
