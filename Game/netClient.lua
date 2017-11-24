@@ -18,12 +18,12 @@ function connectToServer(address, port)
   udp:settimeout(0)
 
   -- Initialize player info relevant to server
-  local r,g,b = unpack(player.color)
+  local r,g,b = unpack(GH.player.color)
   messageCount = 0
   playerList = ""
 
   -- Send join signal
-  sendToServer(USERNAME.." join "..player.x.." "..player.y.." "..r.." "..g.." "..b)
+  sendToServer(USERNAME.." join "..GH.player.x.." "..GH.player.y.." "..r.." "..g.." "..b)
   connected = true
 
 end
@@ -62,7 +62,7 @@ function receiver()
             end
           else -- Response Type Commands
             if cmd == 'rejoin' then -- Response Type
-              player.x, player.y, player.r, player.g, player.b = parms:match("(-*%d+.*%d*) (-*%d+.*%d*) (%d+) (%d+) (%d+)")
+              GH.player.x, GH.player.y, GH.player.r, GH.player.g, GH.player.b = parms:match("(-*%d+.*%d*) (-*%d+.*%d*) (%d+) (%d+) (%d+)")
             end
           end
       elseif msg~= 'timeout' then error("Network error: " ..tostring(msg))
