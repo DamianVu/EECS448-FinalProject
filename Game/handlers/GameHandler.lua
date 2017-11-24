@@ -5,6 +5,7 @@ function GameHandler:init()
 	self.terrain = {}
 	self.projectiles = {}
 	self.enemies = {}
+	self.peers = {}
 	self.IH = ItemHandler()
 	self.CH = NewCollisionHandler()
 	self.LH = LevelHandler()
@@ -33,6 +34,8 @@ function GameHandler:draw()
 	for i=#self.enemies, 1, -1 do self.enemies[i]:draw() end
 	
 	for i=#self.projectiles, 1, -1 do self.projectiles[i]:draw() end
+
+	for i=#self.peers, 1, -1 do self.peers[i]:draw() end
 
 	self.player:draw()
 end
