@@ -34,6 +34,7 @@ function OnlineGame:enter() -- enter is called everytime this state occurs
 	GH.LH:startGame()
 
 	messageCount = 0
+	print("Connecting to server")
 	connectToServer(SERVER_ADDRESS, SERVER_PORT)
 
 
@@ -75,6 +76,12 @@ function OnlineGame:update(dt)
 	receiver()
 
 	GH:update(dt)
+
+	updateTimer = updateTimer + dt
+	if updateTimer > updateRate then 
+		sendToServer(USERNAME.." moveto "..GH.player.x.." "..GH.player.y)
+		updateTimer = 0
+	end
 end
 
 --- Called when this state has been left
