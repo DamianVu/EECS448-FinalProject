@@ -14,6 +14,8 @@ function GameHandler:init()
 	self.networkMoveTimer = 0
 
 	self.playerIsMoving = false
+	self.playerPrevX = 0
+	self.playerPrevY = 0
 end
 
 function GameHandler:addObject(obj)
@@ -62,7 +64,12 @@ function GameHandler:update(dt)
 	if self.multiplayer and self.playerIsMoving then
 		self.networkMoveTimer = self.networkMoveTimer + dt
 		if self.networkMoveTimer > UPDATERATE then
-			NH:playerMove(self.player.id, self.player.x, self.player.y)
+			if self.player.x ~= self.playerPrevX and self.player.y ~= self.playerPrevY then
+				NH:playerMove(self.player.id, self.player.x, self.player.y)
+			else
+				self.playerPrevX = self.player.x
+				self.playerPrevY = self.player.y
+			end
 			self.networkMoveTimer = 0
 		end
 	end
