@@ -35,8 +35,6 @@ function Player:init(id, sprite, color, speed, health, x, y, width, height)
 	self.attackTimer = 0
 	self.attackTimeout = 1
 
-	self.multiplayer = false -- This will only get set to true in NetworkHandler
-	self.networkMoveTimer = 0
 
 
 	self.inventory = {}
@@ -75,14 +73,6 @@ function Player:move(dt, direction)
 		self.y = self.y + (self.y_vel * self.speed * base_speed * dt * 2)
 		self.bumpTime = self.bumpTime + dt
 		if self.bumpTime > self.bumpDuration then self.movementEnabled = true end
-	end
-
-	if self.multiplayer then
-		self.networkMoveTimer = self.networkMoveTimer + dt
-		if self.networkMoveTimer > UPDATERATE then
-			NH:playerMove(self.id, self.x, self.y)
-			self.networkMoveTimer = self.networkMoveTimer - UPDATERATE
-		end
 	end
 end
 
