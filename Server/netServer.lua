@@ -34,10 +34,16 @@ end
 function broadcast(payload)
 	local e = payload:match("^(%S*)")
 	local p = {} -- For looping through players
+	local names = ""
 	for i=1, #players do
 			p = players[i]
-			if e ~= p.id and p.connected then udp:sendto(payload, p.ip, p.port) end
+			if e ~= p.id and p.connected then 
+				udp:sendto(payload, p.ip, p.port)
+				names = names .. p.id .. " "
+			end
 	end
+
+	print("Broadcasting to: " .. names)
 end
 
 -- Reply to the client sending a command (Semantically convenient helper)

@@ -11,6 +11,7 @@ function GameHandler:init()
 	self.LH = LevelHandler()
 	self.uid_counter = 0
 	self.multiplayer = false -- This will only get set to true in NetworkHandler
+	self.networkMoveTimer = 0
 end
 
 function GameHandler:addObject(obj)
@@ -55,6 +56,14 @@ function GameHandler:update(dt)
 	self:updateProjectiles(dt)
 
 	self.CH:update()
+
+	if self.multiplayer then
+		self.networkMoveTimer = self.networkMoveTimer + dt
+		if self.networkMoveTimer > UPDATERATE then
+			NH:playerMove(self.player.id, self.player.x, self.player.y)
+			self.networkMoveTimer = self.networkMoveTimer - UPDATERATE
+		end
+	end
 
 	for i = #self.enemies, 1, -1 do
 		if self.enemies[i]:isDead() then
