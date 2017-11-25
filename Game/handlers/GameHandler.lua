@@ -12,6 +12,8 @@ function GameHandler:init()
 	self.uid_counter = 0
 	self.multiplayer = false -- This will only get set to true in NetworkHandler
 	self.networkMoveTimer = 0
+
+	self.playerIsMoving = false
 end
 
 function GameHandler:addObject(obj)
@@ -57,11 +59,11 @@ function GameHandler:update(dt)
 
 	self.CH:update()
 
-	if self.multiplayer then
+	if self.multiplayer and self.playerIsMoving then
 		self.networkMoveTimer = self.networkMoveTimer + dt
 		if self.networkMoveTimer > UPDATERATE then
 			NH:playerMove(self.player.id, self.player.x, self.player.y)
-			self.networkMoveTimer = self.networkMoveTimer - UPDATERATE
+			self.networkMoveTimer = 0
 		end
 	end
 
@@ -79,15 +81,32 @@ function GameHandler:updatePlayer(dt)
 	if self.player.immune then
 		self.player:updateImmunity(dt)
 	end
+	self.playerIsMoving = false
 
 	self.LH:update(dt)
-	if love.keyboard.isDown('w') then self.player:move(dt, 1) end
-    if love.keyboard.isDown('a') then self.player:move(dt, 4) end
-	if love.keyboard.isDown('s') then self.player:move(dt, 3) end
-	if love.keyboard.isDown('d') then self.player:move(dt, 2) end
+	if love.keyboard.isDown('w') then 
+		self.player:move(dt, 1) 
+		self.playerIsMoving = true
+	end
+	if love.keyboard.isDown('a') then
+		self.player:move(dt, 4)
+		self.playerIsMoving = true
+	end
+	if love.keyboard.isDown('s') then
+		self.player:move(dt, 3)
+		self.playerIsMoving = true
+	  end
+	if love.keyboard.isDown('d') then
+		self.player:move(dt, 2)
+		self.playerIsMoving = true
+	end
 
 
-	if not self.player.movementEnabled then self.player:move(dt) end
+
+	if not self.player.movementEnabled then 
+		self.player:move(dt)
+		self.playerIsMoving = true
+	end
 
 	-- Let player attack
 	if not self.player.attackDelay and love.mouse.isDown(1) then

@@ -39,6 +39,8 @@ function Player:init(id, sprite, color, speed, health, x, y, width, height)
 
 	self.inventory = {}
 	self.equipment = {weapon = 2}
+
+	self.moving = false
 end
 
 function Player:load(file)
