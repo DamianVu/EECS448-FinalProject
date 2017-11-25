@@ -124,7 +124,8 @@ function CS:keypressed(key)
 				if #characters == 0 then
 					return
 				end
-				USERNAME = characters[currentCharacter].name .. tostring(characters[currentCharacter].salt)
+				USERNAME = characters[currentCharacter].name
+				USERID = tostring(characters[currentCharacter].salt)
 				CHARACTERCOLOR = characters[currentCharacter].color
 				Gamestate.switch(PlayMenu)
 			elseif currentItem == 3 then

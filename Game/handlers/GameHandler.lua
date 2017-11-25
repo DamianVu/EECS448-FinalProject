@@ -10,6 +10,7 @@ function GameHandler:init()
 	self.CH = NewCollisionHandler()
 	self.LH = LevelHandler()
 	self.uid_counter = 0
+	self.multiplayer = false -- This will only get set to true in NetworkHandler
 end
 
 function GameHandler:addObject(obj)
@@ -35,7 +36,9 @@ function GameHandler:draw()
 	
 	for i=#self.projectiles, 1, -1 do self.projectiles[i]:draw() end
 
-	for i=#self.peers, 1, -1 do self.peers[i]:draw() end
+	if self.multiplayer then
+		for i=#self.peers, 1, -1 do self.peers[i]:draw() end
+	end
 
 	self.player:draw()
 end

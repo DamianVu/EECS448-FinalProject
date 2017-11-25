@@ -29,13 +29,15 @@ function OnlineGame:enter() -- enter is called everytime this state occurs
 
 
 
-	GH:addObject(Player(GH:getNewUID(), spriteImg, CHARACTERCOLOR, 1, 10, 96, 96, 32, 32))
+	GH:addObject(Player(USERNAME .. USERID, spriteImg, CHARACTERCOLOR, 1, 10, 96, 96, 32, 32))
 
 	GH.LH:startGame()
 
 	messageCount = 0
 	print("Connecting to server")
-	connectToServer(SERVER_ADDRESS, SERVER_PORT)
+
+	NH = NetworkHandler(GH, "vuhoo.org", SERVER_PORT)
+	NH:connect()
 
 
 	updateTimer = 0
@@ -73,25 +75,19 @@ end
 
 --- Called every game tick
 function OnlineGame:update(dt)
-	receiver()
+	NH:receive()
 
 	GH:update(dt)
-
-	updateTimer = updateTimer + dt
-	if updateTimer > updateRate then 
-		sendToServer(USERNAME.." moveto "..GH.player.x.." "..GH.player.y)
-		updateTimer = 0
-	end
 end
 
 --- Called when this state has been left
 function OnlineGame:leave()
-	disconnectFromServer()
+	NH:disconnect()
 end
 
 --- Called if the game is exited in this state
 function OnlineGame:quit()
-	disconnectFromServer()
+	NH:disconnect()
 end
 
 --- Event handler binding to listen for keypresses
