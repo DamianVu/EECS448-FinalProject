@@ -66,6 +66,7 @@ function receiver()
 					else 
 						players[p].connected = true 
 						reply("rejoin " .. players[p].x .. " " .. players[p].y)
+						print("This is a rejoin in our player table at index " .. p)
 					end -- Set player's connected property to true
 
 					-- Bounce the current players back to the new player
