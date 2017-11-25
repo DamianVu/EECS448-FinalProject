@@ -63,7 +63,10 @@ function receiver()
 					local p = indexOf(entity)
 					if p == -1 then -- Add player if never joined before
 						players[#players+1] = {connected=true, ip=fromIP, port=fromPort, id=entity, x=lx, y=ly, r=lr, g=lg, b=lb}
-					else players[p].connected = true end -- Set player's connected property to true
+					else 
+						players[p].connected = true 
+						reply("rejoin " .. players[p].x .. " " .. players[p].y)
+					end -- Set player's connected property to true
 
 					-- Bounce the current players back to the new player
 					for i=1, #players do
