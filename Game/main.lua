@@ -26,6 +26,7 @@ require "libraries.classes.objects.Projectile"
 require "libraries.classes.objects.Enemy"
 
 require "libraries.classes.MCTile"
+                print("Broadcasting to: ")
 require "libraries.classes.MapObject"
 require "libraries.classes.HeadsUpDisplay"
 
