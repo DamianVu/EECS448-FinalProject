@@ -65,7 +65,7 @@ function receiver()
 						players[#players+1] = {connected=true, ip=fromIP, port=fromPort, id=entity, x=lx, y=ly, r=lr, g=lg, b=lb}
 					else 
 						players[p].connected = true 
-						reply("rejoin " .. players[p].x .. " " .. players[p].y)
+						reply("rejoin " .. players[p].x .. " " .. players[p].y, fromIP, fromPort)
 						print("This is a rejoin in our player table at index " .. p)
 					end -- Set player's connected property to true
 
