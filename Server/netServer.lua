@@ -93,6 +93,7 @@ function receiver()
     			players[i].x, players[i].y = x, y
       -- elseif cmd == 'listplayers' then
 			elseif cmd == 'spawnprojectile' then broadcast(data)
+			-- elseif cmd == 'died' then broadcast(data)
       elseif cmd == nil then cmd = nil -- Dummy to avoid displaying nil commands
       else print("Unkown command: '"..tostring(cmd).."' received from "..tostring(entity)) end
 	  elseif fromIP ~= 'timeout' then error("Network error: "..tostring(fromIP)) end
