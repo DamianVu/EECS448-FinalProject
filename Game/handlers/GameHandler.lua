@@ -22,6 +22,9 @@ function GameHandler:addObject(obj)
 	if obj.type == PLAYER then
 		self.CH:addObject(obj)
 		self.player = obj
+	elseif obj.type == PEER then
+		self.CH:addObject(obj)
+		self.peers[#self.peers + 1] = obj
 	elseif obj.type == ENEMY then
 		self.CH:addObject(obj)
 		self.enemies[#self.enemies + 1] = obj
@@ -35,19 +38,22 @@ function GameHandler:addObject(obj)
 end
 
 -- Draw functions
-
 function GameHandler:draw()
+	-- Draw Enemies
 	for i=#self.enemies, 1, -1 do self.enemies[i]:draw() end
 
+	-- Draw Projectiles
 	for i=#self.projectiles, 1, -1 do self.projectiles[i]:draw() end
 
+	--(Multiplayer) Draw Peers----------
 	if self.multiplayer then
 		for i=#self.peers, 1, -1 do self.peers[i]:draw() end
 	end
+	------------------------------------
 
+	-- Draw the Player
 	self.player:draw()
 end
-
 -- End of draw functions
 
 
@@ -68,9 +74,27 @@ function GameHandler:update(dt)
 	end
 end
 
+
+function GameHandler:updatePeers(dt)
+	for i=1, #self.peers, 1 do
+		if self.peers[i]:isDead() then
+			-- TODO Handle a peer death.
+		end
+	end
+end
+
 function GameHandler:updatePlayer(dt)
 
-	if self.player:isDead() then Gamestate.switch(GameOver) end
+	if self.player:isDead() then
+
+		-- --(Multiplayer) Stream Projectile Spawn-----
+		-- if self.multiplayer then
+		-- 	NH:playerDeath(self.player.id)
+		-- end
+		-- --------------------------------------------
+
+		Gamestate.switch(GameOver)
+	end
 
 	if self.player.immune then
 		self.player:updateImmunity(dt)

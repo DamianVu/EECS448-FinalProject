@@ -109,7 +109,7 @@ end
 --- Checks for a collisions between a projectile and an object
 function NewCollisionHandler:checkProjectileCollision(projectile, object)
 	if not projectile then return end
-
+	if object.type == PEER then return end
 	if projectile.sourceID == object.id then return end
 
 	if 	(object.y - (object.height / 2) < projectile.y + projectile.height/2) and
