@@ -40,6 +40,17 @@ function MapHandler:loadMap(map, startIndex)
 
 	GH.player.x = ((startx - 1) * tw) + (tw/2)
 	GH.player.y = ((starty - 1) * tw) + (th/2)
+
+	-- Load terrain
+
+	for i = 1, #rawTS.terrainObjects do
+		local x, y, w, h = unpack(rawTS.terrainObjects[i])
+		x = (x-1) * 64
+		y = (y-1) * 64
+		w = w * 64
+		h = h * 64
+		GH:addObject(Terrain(x, y, w, h))
+	end
 end
 
 --- Each map needs it's own tileset, definitions for those tiles, color for debug mode, and layout.
