@@ -1,9 +1,10 @@
 
 TS = {
-	name = "DebugTileSet",
-	Width = 3, -- In tiles
+	name = "Debugging",
+	Width = 2, -- In tiles
 	Height = 2, -- In tiles
-	image = love.graphics.newImage("images/tilesets/PipeTileset.png")
+	size = 4,
+	image = love.graphics.newImage("images/tilesets/debug.png")
 }
 
 

@@ -55,11 +55,20 @@ function MapCreationHandler:loadTilesets()
 		-- We are limiting tilesize to 64 always for this project
 		ts.Quads = {}
 		local imgw, imgh = ts.image:getDimensions()
-		for j = 1, ts.Width do
-			for k = 1, ts.Height do
+		local currentNum = 1
+		local breaking = false
+		for j = 1, ts.Height do
+			for k = 1, ts.Width do
+				if currentNum > ts.size then
+					breaking = true
+					break
+				else
+					currentNum = currentNum + 1
+				end
 				-- Quads will go left to right, top to bottom
-				ts.Quads[#ts.Quads + 1] = love.graphics.newQuad((j-1) * 64, (k-1) * 64, self.tilesize, self.tilesize, imgw, imgh)
+				ts.Quads[#ts.Quads + 1] = love.graphics.newQuad((k-1) * 64, (j-1) * 64, self.tilesize, self.tilesize, imgw, imgh)
 			end
+			if breaking then break end
 		end
 
 		self.tilesets[#self.tilesets + 1] = ts
@@ -149,12 +158,25 @@ function MapCreationHandler:drawGUI()
 	end
 
 	love.graphics.setColor(255,255,0)
-	love.graphics.print("TS: " .. self.tilesets[self.currentTileset].name .. ", Page: " .. self.currentTilePage .. " / " .. (math.floor((#self.tilesets[self.currentTileset].Quads - 1) / 16) + 1) .. "   (Use '<' and '>' to navigate pages)", paletteX + 10, paletteY + 90)
+	local objString
+
+	if #self.objects == 0 then
+		objString = "PLEASE CREATE AN OBJECT"
+	else
+		objString = "Object " .. self.currentTile .. ": Collision = " .. tostring(self.objects[self.currentTile].collision)
+	end
+
+	love.graphics.print(objString, paletteX + 10, paletteY + 90)
 
 	love.graphics.setColor(150,150,150)
 	love.graphics.rectangle("fill", width - 170, height - 60, 150, 38)
 	love.graphics.setColor(0,0,225)
 	love.graphics.print("Manage Objects", width - 160, height - 50)
+
+	love.graphics.setColor(150,150,150)
+	love.graphics.rectangle("fill", width - 170, paletteY + 20, 150, 38)
+	love.graphics.setColor(0,0,225)
+	love.graphics.print("Save Map", width - 160, paletteY + 30)
 
 	self:drawTilePalette()
 end
@@ -171,29 +193,24 @@ function MapCreationHandler:drawTilePalette()
 
 
 	-- Tiles
-	local currentTile = ((self.currentTilePage - 1) * tilesPerPage) + 1
+	local currentObj = ((self.currentTilePage - 1) * tilesPerPage) + 1
 	local breaking = false
-	local currentTS = self.tilesets[self.currentTileset]
 
 	love.graphics.setColor(255,255,255,255)
 	for i = 1, tsGridHeight do
 		for j = 1, tsGridWidth do
-			if currentTile > #currentTS.Quads then
+			if currentObj > #self.objects then
 				breaking = true
 				break
 			end
-			-- Draw the damn tile
 
 			local x = tsGridX + ((j - 1) * 64)
 			local y = tsGridY + ((i-1) * 64)
-			love.graphics.draw(currentTS.image, currentTS.Quads[currentTile], x, y)
-			currentTile = currentTile + 1
+			love.graphics.draw(self.tilesets[self.objects[currentObj].tileset].image, self.tilesets[self.objects[currentObj].tileset].Quads[self.objects[currentObj].tile], x, y)
+			currentObj = currentObj + 1
 		end
-		if breaking then
-			break
-		end
+		if breaking then break end
 	end
-
 	-- Draw grid
 	love.graphics.setColor(53, 38, 25)
 
@@ -229,15 +246,15 @@ function MapCreationHandler:drawMouse()
 	if self.mode == "Editing" then
 		if not self.mouseOnPalette then
 			-- Draw above tile if it is a valid position and what pos it is, or draw that it is not valid
-			if drawX < 0 or drawY < 0 then
+			if drawX < 0 or drawY < 0 or #self.objects == 0 then
 				love.graphics.setColor(255,0,0)
 				love.graphics.rectangle("fill", drawX, drawY, self.tilesize, self.tilesize)
 				love.graphics.print("INVALID", drawX, drawY - 20)
 				self.mouseOnValidTile = false
 			else 
 				love.graphics.setColor(255,255,255,100)
-				local ts = self.tilesets[self.currentTileset]
-				love.graphics.draw(ts.image, ts.Quads[self.currentTile], drawX, drawY)
+				local ts = self.tilesets[self.objects[self.currentTile].tileset]
+				love.graphics.draw(ts.image, ts.Quads[self.objects[self.currentTile].tile], drawX, drawY)
 				love.graphics.setColor(0,255,0)
 				love.graphics.print(self.currentTileX .. "," .. self.currentTileY, drawX + 5, drawY - 20)
 				self.mouseOnValidTile = true
@@ -263,7 +280,7 @@ function MapCreationHandler:loadMap(map)
 end
 
 function MapCreationHandler:saveMap()
-
+	print("Save button fired")
 end
 -- love.graphics.rectangle("fill", width - 170, height - 60, 150, 38)
 function MapCreationHandler:updateMouseOnPalette()
@@ -272,6 +289,7 @@ function MapCreationHandler:updateMouseOnPalette()
 
 	self.mouseOnPalette = y > h - self.paletteSize
 	self.mouseOnObjectMenuButton = x > w - 170 and x < w - 20 and y > h - 60 and y < h - 22 
+	self.mouseOnSaveButton = x > w - 170 and x < w - 20 and y > h - self.paletteSize + 20 and y < h - self.paletteSize + 58
 end
 
 function MapCreationHandler:changeTile(updown)
@@ -343,11 +361,50 @@ function MapCreationHandler:changePage(prev)
 		end
 	elseif self.mode == MCHModes[3] then
 		-- Change object page
+		local maxPages = math.floor((self.tilesets[self.objectMenu.currentTileset].size - 1) / self.objectMenu.tilesPerPage) + 1
+
+		if prev then
+			if self.objectMenu.currentTilePage == 1 then
+				self.objectMenu.currentTilePage = maxPages
+			else
+				self.objectMenu.currentTilePage = self.objectMenu.currentTilePage - 1
+			end
+		else
+			if self.objectMenu.currentTilePage == maxPages then
+				self.objectMenu.currentTilePage = 1
+			else
+				self.objectMenu.currentTilePage = self.objectMenu.currentTilePage + 1
+			end
+		end
+
+		self.objectMenu.currentTile = 1
+	end
+end
+
+function MapCreationHandler:changeTileset(prev)
+	if self.mode == MCHModes[3] then
+		if prev then
+			if self.objectMenu.currentTileset == 1 then
+				self.objectMenu.currentTileset = #self.tilesets
+			else
+				self.objectMenu.currentTileset = self.objectMenu.currentTileset - 1
+			end
+		else
+			if self.objectMenu.currentTileset == #self.tilesets then
+				self.objectMenu.currentTileset = 1
+			else
+				self.objectMenu.currentTileset = self.objectMenu.currentTileset + 1
+			end
+		end
+		self.objectMenu.currentTile = 1
+		self.objectMenu.currentTilePage = 1
 	end
 end
 
 function MapCreationHandler:placeTile()
 	-- This should trigger only if the mouse is already in a valid spot
+
+	if #self.objects == 0 then return end
 
 
 	-- First check to see if there is already space on grid
@@ -384,11 +441,12 @@ end
 
 function MapCreationHandler:drawMap()
 	love.graphics.setColor(255,255,255,255)
-	local ts = self.tilesets[self.currentTileset]
 	for i = 1, #self.currentMap.grid do
 		for j = 1, #self.currentMap.grid[i] do
-			if self.currentMap.grid[i][j] ~= -1 then
-				love.graphics.draw(ts.image, ts.Quads[self.currentMap.grid[i][j]], (j-1)*64, (i-1)*64)
+			local objNum = self.currentMap.grid[i][j]
+			if objNum ~= -1 then
+				local ts = self.tilesets[self.objects[objNum].tileset]
+				love.graphics.draw(ts.image, ts.Quads[self.objects[objNum].tile], (j-1)*64, (i-1)*64)
 			end
 		end
 	end
@@ -453,7 +511,21 @@ function MapCreationHandler:initializeObjectMenuSettings()
 	self.objectMenu.rowLineLength = self.objectMenu.maxRowSize * 64
 	self.objectMenu.colLineLength = self.objectMenu.maxColSize * 64
 
-	self.objectMenu.currentTilesetSize = #self.tilesets[self.currentTileset].Quads
+	self.objectMenu.collision = false
+
+	self.objectMenu.createButtonWidth = 100
+	self.objectMenu.createButtonHeight = 50
+	self.objectMenu.createButtonMargin = 20
+
+	self.objectMenu.cbDrawX = self.objectMenu.drawx + self.objectMenu.menuWidth - self.objectMenu.createButtonWidth - self.objectMenu.createButtonMargin
+	self.objectMenu.cbDrawY = self.objectMenu.drawy + self.objectMenu.menuHeight - self.objectMenu.createButtonHeight - self.objectMenu.createButtonMargin
+	
+	self.objectMenu.colButtonWidth = 120
+	self.objectMenu.colButtonHeight = 50
+	self.objectMenu.colButtonMargin = 30
+
+	self.objectMenu.colDrawX = self.objectMenu.tileDrawX + 64 * self.objectMenu.maxRowSize + self.objectMenu.colButtonMargin
+	self.objectMenu.colDrawY = self.objectMenu.tileDrawY
 end
 
 function MapCreationHandler:objectMenuClickAction(x,y)
@@ -461,22 +533,63 @@ function MapCreationHandler:objectMenuClickAction(x,y)
 	if x > self.objectMenu.tileDrawX and x < self.objectMenu.tileDrawX + self.objectMenu.maxRowSize * 64 and y > self.objectMenu.tileDrawY and y < self.objectMenu.tileDrawY + self.objectMenu.maxColSize * 64 then
 
 		-- So we are in the tileset. Find out how many tiles are in the current page?
-		
-	else
+		local numTilesOnPage = self.objectMenu.tilesPerPage
+		local totalTiles = self.tilesets[self.objectMenu.currentTileset].size
 
+		if self.objectMenu.currentTilePage * self.objectMenu.tilesPerPage > self.tilesets[self.objectMenu.currentTileset].size then
+			local a = totalTiles
+			local b = self.objectMenu.tilesPerPage
+
+			numTilesOnPage = a - math.floor(a/b) * b
+		end
+
+		-- Figure out which tile we have clicked
+		local currentTile = 1
+		local breaking = false
+		for i = 1, self.objectMenu.maxColSize do
+			for j = 1, self.objectMenu.maxRowSize do
+				if currentTile > numTilesOnPage then
+					breaking = true
+					break
+				end
+				if x < self.objectMenu.tileDrawX + j * 64 and y < self.objectMenu.tileDrawY + i * 64 then
+					-- We have our tile
+					self.objectMenu.currentTile = currentTile
+					breaking = true
+					break
+				end
+				currentTile = currentTile + 1
+			end
+			if breaking then break end
+		end
+	elseif x > self.objectMenu.colDrawX and x < self.objectMenu.colDrawX + self.objectMenu.colButtonWidth and y > self.objectMenu.colDrawY and y < self.objectMenu.colDrawY + self.objectMenu.colButtonHeight then
+
+		self.objectMenu.collision = not self.objectMenu.collision
+
+	elseif x > self.objectMenu.cbDrawX and x < self.objectMenu.cbDrawX + self.objectMenu.createButtonWidth and y > self.objectMenu.cbDrawY and y < self.objectMenu.cbDrawY + self.objectMenu.createButtonHeight then
+		self:createObject()
 	end
 end
 
 function MapCreationHandler:drawObjectMenu()
+	local currentTS = self.tilesets[self.objectMenu.currentTileset]
 	
 	love.graphics.setColor(200,200,200,255)
 	love.graphics.rectangle("fill", self.objectMenu.drawx, self.objectMenu.drawy, self.objectMenu.menuWidth, self.objectMenu.menuHeight)
+
+	love.graphics.setNewFont(20)
+	love.graphics.setColor(0,0,255)
+	local maxPages = math.floor((currentTS.size + 1) / self.objectMenu.tilesPerPage) + 1
+	love.graphics.print("Tileset " .. self.objectMenu.currentTileset .. ": " .. currentTS.name .. " (" .. self.objectMenu.currentTilePage .. "/" .. maxPages .. ")", self.objectMenu.tileDrawX, self.objectMenu.tileDrawY - 22)
+
+	love.graphics.setNewFont(16)
+	love.graphics.print("Use '<' and '>' to change pages", self.objectMenu.tileDrawX, self.objectMenu.tileDrawY + (64 * self.objectMenu.maxColSize) + 3)
+	love.graphics.print("Use 'n' and 'm' to change tilesets", self.objectMenu.tileDrawX, self.objectMenu.tileDrawY + (64 * self.objectMenu.maxColSize) + 20)
 	
 
 	-- Tiles
 	local currentTile = ((self.objectMenu.currentTilePage - 1) * self.objectMenu.tilesPerPage) + 1
 	local breaking = false
-	local currentTS = self.tilesets[self.currentTileset]
 
 	love.graphics.setColor(255,255,255,255)
 	for i = 1, self.objectMenu.maxColSize do
@@ -518,9 +631,9 @@ function MapCreationHandler:drawObjectMenu()
 	local x,y
 	local counter = 1
 	breaking = false
-	for i = 0, self.objectMenu.maxColSize do
-		for j = 0, self.objectMenu.maxRowSize do
-			if counter > self.objectMenu.currentTilesetSize then
+	for i = 1, self.objectMenu.maxColSize do
+		for j = 1, self.objectMenu.maxRowSize do
+			if counter > currentTS.size then
 				breaking = true
 				break
 			end
@@ -534,9 +647,30 @@ function MapCreationHandler:drawObjectMenu()
 	end
 
 	love.graphics.setColor(255,255,0)
-	love.graphics.rectangle("line", self.objectMenu.tileDrawX + x * 64, self.objectMenu.tileDrawY + y*64, 64, 64)
+	love.graphics.rectangle("line", self.objectMenu.tileDrawX + (x-1) * 64, self.objectMenu.tileDrawY + (y-1)*64, 64, 64)
 
 	-- Draw menu buttons
+
+	love.graphics.setColor(160,160,160,255)
+	love.graphics.rectangle("fill", self.objectMenu.cbDrawX, self.objectMenu.cbDrawY, self.objectMenu.createButtonWidth, self.objectMenu.createButtonHeight)
+
+	love.graphics.setColor(self.textColor)
+	love.graphics.setNewFont(24)
+	love.graphics.print("Create", self.objectMenu.cbDrawX + 10, self.objectMenu.cbDrawY + 10)
+
+	-- Draw Settings
+
+	-- Collision Button
+
+	love.graphics.setColor(160,160,160)
+	love.graphics.rectangle("fill", self.objectMenu.colDrawX, self.objectMenu.colDrawY, self.objectMenu.colButtonWidth, self.objectMenu.colButtonHeight)
+
+	if self.objectMenu.collision then
+		love.graphics.setColor(0,255,0)
+	else
+		love.graphics.setColor(255,0,0)
+	end
+	love.graphics.print("Collision", self.objectMenu.colDrawX + 10, self.objectMenu.colDrawY + 10)
 
 end
 
@@ -549,4 +683,12 @@ function MapCreationHandler:updateMouseOnObjectMenu()
 		self.mouseOnObjectMenu = false
 	end
 
+end
+
+function MapCreationHandler:createObject()
+	self.objects[#self.objects + 1] = {
+		tileset = self.objectMenu.currentTileset,
+		tile = self.objectMenu.currentTile,
+		collision = self.objectMenu.collision
+	}
 end
