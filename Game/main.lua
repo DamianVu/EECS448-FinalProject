@@ -12,6 +12,7 @@ require "handlers.NewCollisionHandler"
 require "handlers.ItemHandler"
 require "handlers.GameHandler"
 require "handlers.NetworkHandler"
+require "handlers.MapCreationHandler"
 
 require "libraries.classes.cObject"
 require "libraries.classes.CoordinateList"
