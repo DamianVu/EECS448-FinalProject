@@ -101,7 +101,6 @@ function GameHandler:updatePlayer(dt)
 	end
 	self.playerIsMoving = false
 
-	self.LH:update(dt)
 	if love.keyboard.isDown('w') then
 		self.player:move(dt, 1)
 		self.playerIsMoving = true
