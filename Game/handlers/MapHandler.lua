@@ -7,44 +7,76 @@ MapHandler = class("MapHandler", {})
 function MapHandler:init()
 	-- Eventually load maps from xml files.
 	-- For project 3 we will load everything manually in the beginning portion of loadMap()
+	self.maps = {}
+	self.tilesets = {}
+end
+
+function MapHandler:loadAllMaps()
+	local files = love.filesystem.getDirectoryItems("resources/maps/")
+	for i = 1, #files do
+		local filename,_ = files[i]:match("(%a+).(.*)")
+		self.maps[i] = require ("resources.maps." .. filename)
+	end
+end
+
+function MapHandler:loadAllTilesets()
+	local files = love.filesystem.getDirectoryItems("resources/tilesets/")
+	for i = 1, #files do
+		local filename,_ = files[i]:match("(%a+).(.*)")
+		ts = require ("resources.tilesets." .. filename)
+
+		-- We are limiting tilesize to 64 always for this project
+		ts.Quads = {}
+		local imgw, imgh = ts.image:getDimensions()
+		local currentNum = 1
+		local breaking = false
+		for j = 1, ts.Height do
+			for k = 1, ts.Width do
+				if currentNum > ts.size then
+					breaking = true
+					break
+				else
+					currentNum = currentNum + 1
+				end
+				-- Quads will go left to right, top to bottom
+				ts.Quads[#ts.Quads + 1] = love.graphics.newQuad((k-1) * 64, (j-1) * 64, 64, 64, imgw, imgh)
+			end
+			if breaking then break end
+		end
+
+		self.tilesets[#self.tilesets + 1] = ts
+	end
 end
 
 --- Loads map
 function MapHandler:loadMap(map, startIndex)
-	-- Revamp for project 4
 
-
-	local rawTS = RawMaps[map]
-	-- Revamp for project 4 ^^
+	self.currentMap = self.maps[self:getMapIndex(map)]
 
 	if startIndex == nil then startIndex = 1 end
 
-	local starty, startx = unpack(rawTS.startingLocations[startIndex])
+	local starty, startx = unpack(self.currentMap.startingLocations[startIndex])
 
-	-- Generate TileSet class
-	local map = Map(rawTS.grid, rawTS.id_dict)
-	local img = love.graphics.newImage('images/tilesets/' .. rawTS.img)
 
-	self.currentMap = Tileset(map, img, img:getWidth(), img:getHeight(), 64, 64, rawTS.color_dict)
-
-	local tw = self.currentMap.tileWidth
-	local th = self.currentMap.tileHeight
-	local imgw, imgh = self.currentMap.img:getDimensions()
-
-	Quads = {
-		love.graphics.newQuad(0, 0, tw, th, imgw, imgh),
-		love.graphics.newQuad(64, 0, tw, th, imgw, imgh),
-		love.graphics.newQuad(0, 64, tw, th, imgw, imgh),
-		love.graphics.newQuad(64, 64, tw, th, imgw, imgh)
-	}
-
-	GH.player.x = ((startx - 1) * tw) + (tw/2)
-	GH.player.y = ((starty - 1) * tw) + (th/2)
+	GH.player.x = ((startx - 1) * 64) + 32
+	GH.player.y = ((starty - 1) * 64) + 32
 
 	-- Load terrain
 
-	for i = 1, #rawTS.terrainObjects do
-		local x, y, w, h = unpack(rawTS.terrainObjects[i])
+	self.currentMapTiles = {}
+
+	for i = 1, #self.currentMap.objects do
+		local obj = self.currentMap.objects[i]
+		local currentTileset = self:getTilesetIndex(self.currentMap.tilesets[obj[1]])
+
+		self.currentMapTiles[i] = {
+			self.tilesets[currentTileset].image,
+			self.tilesets[currentTileset].Quads[obj[2]],
+		}
+	end
+
+	for i = 1, #self.currentMap.terrain do
+		local x, y, w, h = unpack(self.currentMap.terrain[i])
 		x = (x-1) * 64
 		y = (y-1) * 64
 		w = w * 64
@@ -53,22 +85,38 @@ function MapHandler:loadMap(map, startIndex)
 	end
 end
 
+function MapHandler:getMapIndex(mapname)
+	for i = 1, #self.maps do
+		if self.maps[i].name == mapname then return i end
+	end
+	return -1
+end
+
+function MapHandler:getTilesetIndex(tilesetname)
+	for i = 1, #self.tilesets do
+		if self.tilesets[i].name == tilesetname then return i end
+	end
+	return -1
+end
+
 --- Each map needs it's own tileset, definitions for those tiles, color for debug mode, and layout.
 function MapHandler:drawMap()
-	local start_x, start_y = unpack(self.currentMap.origin)
 
 	-- Sets color to white with full opacity.
 	-- This lets the image be drawn with its original colors
 	love.graphics.setColor(255,255,255,255)
 
 
-	for rowIndex = 1, #self.currentMap.map.tiles do
-		local row = self.currentMap.map.tiles[rowIndex]
+	for rowIndex = 1, #self.currentMap.grid do
+		local row = self.currentMap.grid[rowIndex]
 		for columnIndex = 1, #row do
-			local number = row[columnIndex].id
-			local x, y = start_x + ((columnIndex - 1) * self.currentMap.tileWidth), start_y + ((rowIndex - 1) * self.currentMap.tileHeight)
-			--HC.rectangle(x, y, self.currentMap.tileWidth, self.currentMap.tileHeight)
-			love.graphics.draw(self.currentMap.img, Quads[number], x, y) -- Draw Tile
+			local tilenum = row[columnIndex]
+			if tilenum ~= -1 then
+				local img, quad = unpack(self.currentMapTiles[tilenum])
+				local x, y = ((columnIndex - 1) * 64), ((rowIndex - 1) * 64)
+				--HC.rectangle(x, y, self.currentMap.tileWidth, self.currentMap.tileHeight)
+				love.graphics.draw(img, quad, x, y) -- Draw Tile
+			end
 		end
 	end
 end

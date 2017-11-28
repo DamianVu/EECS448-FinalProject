@@ -75,7 +75,7 @@ function love.load()
     --love.window.setMode(windowWidth, windowHeight, {resizable=false, vsync=false, minwidth=800, minheight=600, borderless=true, msaa=2})
 
     Gamestate.registerEvents()
-    Gamestate.switch(MapCreator)
+    Gamestate.switch(Singleplayer)
 
 
     -- Physics variables

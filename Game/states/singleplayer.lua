@@ -21,7 +21,7 @@ function Singleplayer:enter()
 
 	GH:addObject(Enemy(GH:getNewUID(), nil, {255,0,0}, .5, 5, 96, 96, 32, 32, 100, 2, GH.player))
 
-	GH.LH:startGame()
+	GH.LH:loadLevel("Default Map", 1)
 	
 end
 
