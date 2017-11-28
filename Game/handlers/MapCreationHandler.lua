@@ -276,11 +276,13 @@ function MapCreationHandler:changeMode(mode)
 end
 
 function MapCreationHandler:loadMap(map)
-
 end
 
 function MapCreationHandler:saveMap()
 	print("Save button fired")
+	local mapTable = love.filesystem.getDirectoryItems("maps")
+	print("Files in map folder: " .. #mapTable)
+
 end
 -- love.graphics.rectangle("fill", width - 170, height - 60, 150, 38)
 function MapCreationHandler:updateMouseOnPalette()
@@ -686,9 +688,20 @@ function MapCreationHandler:updateMouseOnObjectMenu()
 end
 
 function MapCreationHandler:createObject()
-	self.objects[#self.objects + 1] = {
-		tileset = self.objectMenu.currentTileset,
-		tile = self.objectMenu.currentTile,
-		collision = self.objectMenu.collision
-	}
+	if self:isUnique(self.objectMenu.currentTileset, self.objectMenu.currentTile, self.objectMenu.collision) then 
+		self.objects[#self.objects + 1] = {
+			tileset = self.objectMenu.currentTileset,
+			tile = self.objectMenu.currentTile,
+			collision = self.objectMenu.collision
+		}
+	end
+end
+
+function MapCreationHandler:isUnique(ts, tile, col)
+	for i = 1, #self.objects do
+		if ts == self.objects[i].tileset and tile == self.objects[i].tile and col == self.objects[i].collision then
+			return false
+		end
+	end
+	return true
 end
