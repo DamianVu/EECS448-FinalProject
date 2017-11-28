@@ -109,7 +109,8 @@ end
 --- Checks for a collisions between a projectile and an object
 function NewCollisionHandler:checkProjectileCollision(projectile, object)
 	if not projectile then return end
-	if self:findObject(projectile.sourceID).type == PEER then return end
+	if self:findObject(projectile.sourceID).type == PEER and object.type == PLAYER then return end
+	if object.type == PEER then return end
 	if projectile.sourceID == object.id then return end
 
 	if 	(object.y - (object.height / 2) < projectile.y + projectile.height/2) and
@@ -124,6 +125,9 @@ end
 function NewCollisionHandler:checkObjectCollision(object1, object2)
 	if not object1 or not object2 then return end
 	if object1.type == PLAYER and object2.type == PLAYER then return end
+	if object1.type == PEER and object2.type == PLAYER then return end
+	if object1.type == PLAYER and object2.type == PEER then return end
+
 
 	o1ScaleX = object1.scaleX or 1
 	o1ScaleY = object1.scaleY or 1
@@ -146,6 +150,7 @@ end
 
 --- Resolves a collision between a projectile and terrain
 function NewCollisionHandler:resolveTerrainCollision(object, terrain)
+	if object.type == PEER then return end
 	if object.type == PROJECTILE then
 		GH:destroyProjectile(object.id)
 	else
