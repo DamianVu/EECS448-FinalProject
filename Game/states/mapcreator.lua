@@ -169,6 +169,7 @@ function MapCreator:mousepressed(x,y,button,_)
 
 		if MCH.mouseOnObjectMenuButton then MCH.mode = MCHModes[3] end
 
+		print("Clicked and mouseonsavebutton = " .. tostring(MCH.mouseOnSaveButton))
 		if MCH.mouseOnSaveButton then MCH:saveMap() end
 	end
 end
