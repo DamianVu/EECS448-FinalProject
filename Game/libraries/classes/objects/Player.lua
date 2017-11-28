@@ -75,7 +75,7 @@ function Player:move(dt, direction)
 		self.y = self.y + (self.y_vel * self.speed * base_speed * dt * 2)
 		self.bumpTime = self.bumpTime + dt
 		if self.bumpTime > self.bumpDuration then self.movementEnabled = true end
-	end
+	end 
 end
 
 function Player:updateImmunity(dt)

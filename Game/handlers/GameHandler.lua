@@ -22,6 +22,9 @@ function GameHandler:addObject(obj)
 	if obj.type == PLAYER then
 		self.CH:addObject(obj)
 		self.player = obj
+	elseif obj.type == PEER then
+		self.CH:addObject(obj)
+		self.peers[#self.peers + 1] = obj
 	elseif obj.type == ENEMY then
 		self.CH:addObject(obj)
 		self.enemies[#self.enemies + 1] = obj
@@ -35,44 +38,34 @@ function GameHandler:addObject(obj)
 end
 
 -- Draw functions
-
 function GameHandler:draw()
+	-- Draw Enemies
 	for i=#self.enemies, 1, -1 do self.enemies[i]:draw() end
-	
+
+	-- Draw Projectiles
 	for i=#self.projectiles, 1, -1 do self.projectiles[i]:draw() end
 
+	--(Multiplayer) Draw Peers----------
 	if self.multiplayer then
 		for i=#self.peers, 1, -1 do self.peers[i]:draw() end
 	end
+	------------------------------------
 
+	-- Draw the Player
 	self.player:draw()
 end
-
 -- End of draw functions
 
 
 
--- Update functions
+-- Update functions (primary game dt function)
+function GameHandler:update(dt)
+	self:updatePlayer(dt)				-- player state * dt
+	self:updateEnemies(dt)			-- enemies states * dt
+	self:updateProjectiles(dt)  -- projectile states * dt
 
-function GameHandler:update(dt)	
-	self:updatePlayer(dt)
-	self:updateEnemies(dt)
-	self:updateProjectiles(dt)
+	self.CH:update() -- collision handler state * dt
 
-	self.CH:update()
-
-	if self.multiplayer and self.playerIsMoving then
-		self.networkMoveTimer = self.networkMoveTimer + dt
-		if self.networkMoveTimer > UPDATERATE then
-			if self.player.x ~= self.playerPrevX and self.player.y ~= self.playerPrevY then
-				NH:playerMove(self.player.id, self.player.x, self.player.y)
-			else
-				self.playerPrevX = self.player.x
-				self.playerPrevY = self.player.y
-			end
-			self.networkMoveTimer = 0
-		end
-	end
 
 	for i = #self.enemies, 1, -1 do
 		if self.enemies[i]:isDead() then
@@ -81,9 +74,27 @@ function GameHandler:update(dt)
 	end
 end
 
+
+function GameHandler:updatePeers(dt)
+	for i=1, #self.peers, 1 do
+		if self.peers[i]:isDead() then
+			-- TODO Handle a peer death.
+		end
+	end
+end
+
 function GameHandler:updatePlayer(dt)
 
-	if self.player:isDead() then Gamestate.switch(GameOver) end
+	if self.player:isDead() then
+
+		-- --(Multiplayer) Stream Projectile Spawn-----
+		-- if self.multiplayer then
+		-- 	NH:playerDeath(self.player.id)
+		-- end
+		-- --------------------------------------------
+
+		Gamestate.switch(GameOver)
+	end
 
 	if self.player.immune then
 		self.player:updateImmunity(dt)
@@ -91,8 +102,8 @@ function GameHandler:updatePlayer(dt)
 	self.playerIsMoving = false
 
 	self.LH:update(dt)
-	if love.keyboard.isDown('w') then 
-		self.player:move(dt, 1) 
+	if love.keyboard.isDown('w') then
+		self.player:move(dt, 1)
 		self.playerIsMoving = true
 	end
 	if love.keyboard.isDown('a') then
@@ -108,12 +119,27 @@ function GameHandler:updatePlayer(dt)
 		self.playerIsMoving = true
 	end
 
-
-
-	if not self.player.movementEnabled then 
+	if not self.player.movementEnabled then
 		self.player:move(dt)
 		self.playerIsMoving = true
 	end
+
+	--(Multiplayer)  Stream Player Movement--------
+	if self.multiplayer then
+		if self.playerIsMoving then
+			self.networkMoveTimer = self.networkMoveTimer + dt
+			if self.networkMoveTimer > UPDATERATE then
+				if self.player.x ~= self.playerPrevX and self.player.y ~= self.playerPrevY then
+					NH:playerMove(self.player.id, self.player.x, self.player.y)
+				else
+					self.playerPrevX = self.player.x
+					self.playerPrevY = self.player.y
+				end
+				self.networkMoveTimer = 0
+			end
+		end
+	end
+	-----------------------------------------------
 
 	-- Let player attack
 	if not self.player.attackDelay and love.mouse.isDown(1) then
@@ -146,6 +172,12 @@ end
 
 function GameHandler:createProjectile(x, y, size, angle, damage, speed, creatorID)
 	self:addObject(Projectile(self:getNewUID(), nil, x, y, size, size, math.cos(angle), math.sin(angle), damage, speed, creatorID))
+
+	--(Multiplayer) Stream Projectile Spawn-----
+	if self.multiplayer and self.player.id == creatorID then
+		NH:spawnProjectile(x, y, size, angle, damage, speed, creatorID)
+	end
+	--------------------------------------------
 end
 
 -- End of creation functions

@@ -35,15 +35,15 @@ function broadcast(payload)
 	local e = payload:match("^(%S*)")
 	local p = {} -- For looping through players
 	local names = ""
+
 	for i=1, #players do
 			p = players[i]
-			if e ~= p.id and p.connected then 
+			if e ~= p.id and p.connected then
 				udp:sendto(payload, p.ip, p.port)
 				names = names .. p.id .. " "
 			end
 	end
-
-	print("Broadcasting to: " .. names)
+	-- print("Broadcasting to: " .. names) -- Debugging
 end
 
 -- Reply to the client sending a command (Semantically convenient helper)
@@ -69,8 +69,8 @@ function receiver()
 					local p = indexOf(entity)
 					if p == -1 then -- Add player if never joined before
 						players[#players+1] = {connected=true, ip=fromIP, port=fromPort, id=entity, x=lx, y=ly, r=lr, g=lg, b=lb}
-					else 
-						players[p].connected = true 
+					else
+						players[p].connected = true
 						players[p].ip = fromIP
 						players[p].port = fromPort
 						reply("rejoin " .. players[p].x .. " " .. players[p].y, fromIP, fromPort)
@@ -92,6 +92,8 @@ function receiver()
           local i = indexOf(entity)
     			players[i].x, players[i].y = x, y
       -- elseif cmd == 'listplayers' then
+			elseif cmd == 'spawnprojectile' then broadcast(data)
+			-- elseif cmd == 'died' then broadcast(data)
       elseif cmd == nil then cmd = nil -- Dummy to avoid displaying nil commands
       else print("Unkown command: '"..tostring(cmd).."' received from "..tostring(entity)) end
 	  elseif fromIP ~= 'timeout' then error("Network error: "..tostring(fromIP)) end
