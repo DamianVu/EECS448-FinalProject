@@ -15,15 +15,7 @@ function Singleplayer:enter()
 
 	HUD = HeadsUpDisplay()
 
-	-- Should be generated later.
-	GH:addObject(Terrain(0, 0, 64 * 11, 64))
-	GH:addObject(Terrain(0, 64*9, 64*11, 64))
-	GH:addObject(Terrain(0, 64, 64, 64 * 8))
-	GH:addObject(Terrain(64 * 10, 64, 64, 64 * 8))
-	GH:addObject(Terrain(128, 128, 64, 64))
-	GH:addObject(Terrain(6 * 64, 5 * 64, 128, 128))
-
-
+	
 
 	GH:addObject(Player(GH:getNewUID(), spriteImg, CHARACTERCOLOR, 1, 10, 96, 96, 32, 32))
 
