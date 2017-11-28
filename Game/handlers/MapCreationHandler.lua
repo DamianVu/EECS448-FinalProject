@@ -160,7 +160,7 @@ function MapCreationHandler:drawGUI()
 end
 
 function MapCreationHandler:drawTilePalette()
-		-- Draw current tileset and tiles
+	-- Draw current tileset and tiles
 	local tsGridX = 10
 	local tsGridY = love.graphics.getHeight() - 138
 
@@ -322,23 +322,27 @@ function MapCreationHandler:changeTile(updown)
 end
 
 function MapCreationHandler:changePage(prev)
-	if self:getTilesetSize() <= 16 then return end
-	local tilePages = (math.floor((#self.tilesets[self.currentTileset].Quads - 1) / 16) + 1)
-	if prev then
-		if self.currentTilePage == 1 then
-			self.currentTilePage = tilePages
-			self.currentTile = (tilePages * 16) + (#self.tilesets[self.currentTileset].Quads % 16)
+	if self.mode == MCHModes[1] or self.mode == MCHModes[2] then
+		if self:getTilesetSize() <= 16 then return end
+		local tilePages = (math.floor((#self.tilesets[self.currentTileset].Quads - 1) / 16) + 1)
+		if prev then
+			if self.currentTilePage == 1 then
+				self.currentTilePage = tilePages
+				self.currentTile = (tilePages * 16) + (#self.tilesets[self.currentTileset].Quads % 16)
+			else
+				self.currentTilePage = self.currentTilePage - 1
+				self.currentTile = 16
+			end
 		else
-			self.currentTilePage = self.currentTilePage - 1
-			self.currentTile = 16
+			self.currentTile = 1
+			if self.currentTilePage == tilePages then
+				self.currentTilePage = 1
+			else
+				self.currentTilePage = self.currentTilePage + 1
+			end
 		end
-	else
-		self.currentTile = 1
-		if self.currentTilePage == tilePages then
-			self.currentTilePage = 1
-		else
-			self.currentTilePage = self.currentTilePage + 1
-		end
+	elseif self.mode == MCHModes[3] then
+		-- Change object page
 	end
 end
 
@@ -448,6 +452,19 @@ function MapCreationHandler:initializeObjectMenuSettings()
 
 	self.objectMenu.rowLineLength = self.objectMenu.maxRowSize * 64
 	self.objectMenu.colLineLength = self.objectMenu.maxColSize * 64
+
+	self.objectMenu.currentTilesetSize = #self.tilesets[self.currentTileset].Quads
+end
+
+function MapCreationHandler:objectMenuClickAction(x,y)
+	-- Check if mouse is in the tileset
+	if x > self.objectMenu.tileDrawX and x < self.objectMenu.tileDrawX + self.objectMenu.maxRowSize * 64 and y > self.objectMenu.tileDrawY and y < self.objectMenu.tileDrawY + self.objectMenu.maxColSize * 64 then
+
+		-- So we are in the tileset. Find out how many tiles are in the current page?
+		
+	else
+
+	end
 end
 
 function MapCreationHandler:drawObjectMenu()
@@ -497,6 +514,27 @@ function MapCreationHandler:drawObjectMenu()
 	end
 
 
+	-- Draw selected tile
+	local x,y
+	local counter = 1
+	breaking = false
+	for i = 0, self.objectMenu.maxColSize do
+		for j = 0, self.objectMenu.maxRowSize do
+			if counter > self.objectMenu.currentTilesetSize then
+				breaking = true
+				break
+			end
+			if counter == self.objectMenu.currentTile then
+				x = j
+				y = i
+			end
+			counter = counter + 1
+		end
+		if breaking then break end
+	end
+
+	love.graphics.setColor(255,255,0)
+	love.graphics.rectangle("line", self.objectMenu.tileDrawX + x * 64, self.objectMenu.tileDrawY + y*64, 64, 64)
 
 	-- Draw menu buttons
 
