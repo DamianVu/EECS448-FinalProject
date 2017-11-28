@@ -279,11 +279,12 @@ function MapCreationHandler:loadMap(map)
 end
 
 function MapCreationHandler:saveMap()
-	print("Save button fired")
 	local mapTable = love.filesystem.getDirectoryItems("maps")
-	print("Files in map folder: " .. #mapTable)
-
+	data = ""
+	
+	love.filesystem.write("maps/map" .. #mapTable + 1 .. ".txt", data)
 end
+
 -- love.graphics.rectangle("fill", width - 170, height - 60, 150, 38)
 function MapCreationHandler:updateMouseOnPalette()
 	local x,y = love.mouse.getPosition()
