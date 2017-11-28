@@ -1,8 +1,6 @@
 
 MapCreator = {}
 
-require "handlers.MapCreationHandler"
-
 local checkMouseMovement = false
 
 camera = {x = 400, y = 200, x_vel = 0, y_vel = 0, speed = 2} -- Camera object (will be the focus of the camera translation)
@@ -103,6 +101,7 @@ function MapCreator:keypressed(key)
 		end
 		if key == 'right' then 
 			camera.x_vel = camera.speed * 3 * zoomSpeed
+			print("right")
 		end
 		if key == 'r' then 
 			camera.x = 0
