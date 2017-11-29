@@ -41,7 +41,7 @@ function Play:keypressed(key)
 			if self.selection == 1 then
 				Gamestate.switch(Singleplayer)
 			elseif self.selection == 2 then
-				Gamestate.switch(Multiplayer)
+				Gamestate.switch(Multiplayer) -- TODO SWITCH TO LOBBY STATE
 			elseif self.selection == 3 then
 				Gamestate.switch(CharacterSelection)
 			end
