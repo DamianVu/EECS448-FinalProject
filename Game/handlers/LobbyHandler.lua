@@ -1,4 +1,6 @@
 
+class = require 'libraries.ext.30log'
+
 LobbyHandler = class("LobbyHandler", {})
 
 -- Constructor for the LobbyHandler
@@ -11,12 +13,13 @@ function LobbyHandler:init(GH, ip, port)
 	self.lobbies = {}
 	self.menu = {}
 	self.udp = nil
+	self.messageCount = 0
 	self:connect()
 end
 
 -- Connect to the Lobby server
 function LobbyHandler:connect()
-	self.udp = self:socket.udp()
+	self.udp = socket.udp()
 	self.udp:setpeername(self.lobbyIP, self.lobbyPort)
 	self.udp:settimeout(0)
 
@@ -44,8 +47,8 @@ function LobbyHandler:fetchMenu()
 end
 
 function LobbyHandler:fetchLobbyInfo()
-	self:send(USERNAME.." countlobbies") -- Set number of lobbies to wait for
-	self:send(USERNAME.." fetchlobbies") -- Request the lobbies and wait for the list to populate
+	self:send( USERNAME..USERID.." countlobbies") -- Set number of lobbies to wait for
+	self:send( USERNAME..USERID.." fetchlobbies") -- Request the lobbies and wait for the list to populate
 end
 
 -- Send a packet to the server
@@ -65,7 +68,7 @@ function LobbyHandler:receive()
 
 			-- Grammar definition
 			local entity, cmd, parms = tostring(receivedData):match("^(%S*) (%S*) *(.*)")
-			if entity ~= self.GH.player.id then -- Broadcast Type Commands
+			if entity ~= USERNAME..USERID then -- Broadcast Type Commands
 				-- NO BROADCAST TYPE COMMANDS
 			else -- Response Type Commands
 				if cmd == 'lobby' then -- Response Type
@@ -74,7 +77,6 @@ function LobbyHandler:receive()
 					self.count = parms:match("^(%d+)")
 				end
 			end
-		end
 		elseif msg~= 'timeout' then
 			error("Network error: " ..tostring(msg))
 		end

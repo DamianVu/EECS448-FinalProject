@@ -20,13 +20,14 @@ players = {}
 -- Table of active game servers
 games = {}
 
--- Get the index of a player in the connected players list
-function indexOf(ent)
-	for i = 1, #players do
-		if players[i].id == ent then return i end
-	end
-	return -1
-end
+--
+-- -- Get the index of a player in the connected players list
+-- function indexOf(ent)
+-- 	for i = 1, #players do
+-- 		if players[i].id == ent then return i end
+-- 	end
+-- 	return -1
+-- end
 
 -- Reply to the client sending a command (Semantically convenient helper)
 function reply(payload, ip, pn) udp:sendto(payload, ip, pn) end
