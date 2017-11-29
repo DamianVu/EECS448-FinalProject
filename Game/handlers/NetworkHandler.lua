@@ -8,7 +8,9 @@ function NetworkHandler:init(GH, ip, port)
 	self.GH = GH
 	self.GH.multiplayer = true
 	self.GH.player.multiplayer = true
-	self.peers = GH.peers -- This should be a reference
+	--self.peers = GH.peers -- This should be a reference
+	-- That wasn't actually a reference lmao
+	self.peers = {}
 
 	self.serverIP = ip
 	self.serverPort = port
@@ -54,9 +56,9 @@ function NetworkHandler:addPeer(ent, x, y, r, g, b)
 end
 
 -- Used for table lookups in peer table, given a peer entity
-function NetworkHandler:locatePeer(ent)
-	for i = 1, #self.peers do
-		if self.peers[i].id == ent then return i end
+function NetworkHandler:locatePeer(ent, table)
+	for i = 1, #table do
+		if table[i].id == ent then return i end
 	end
 end
 
@@ -76,11 +78,12 @@ function NetworkHandler:receive()
 							self:addPeer(entity, px, py, pr, pg, pb)
 				end
 				if cmd == 'leave' then -- Broadcast Type
-					table.remove(self.peers, self:locatePeer(entity))
+					table.remove(self.peers, self:locatePeer(entity, self.peers))
+					table.remove(self.GH.peers, self:locatePeer(entity, self.GH.peers))
 				end
 				if cmd == 'moveto' then -- Broadcast Type
 					local x, y = parms:match("^(%-?[%d.e]*) (%-?[%d.e]*)$")
-					local ind = self:locatePeer(entity)
+					local ind = self:locatePeer(entity, self.peers)
 					self.peers[ind].x = x
 					self.peers[ind].y = y
 				end
