@@ -26,7 +26,7 @@ function OnlineGame:enter() -- enter is called everytime this state occurs
 	messageCount = 0
 	print("Connecting to server")
 
-	NH = NetworkHandler(GH, "104.131.9.165", SERVER_PORT) -- IP is that of vuhoo.org
+	NH = NetworkHandler(GH, SERVER_ADDRESS, SERVER_PORT) -- IP is that of vuhoo.org
 	NH:connect()
 
 
