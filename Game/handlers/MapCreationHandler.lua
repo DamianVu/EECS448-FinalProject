@@ -806,15 +806,59 @@ function MapCreationHandler:generateTerrain()
 	end
 
 	-- Combine top down obstacles
-	for i = 1, #tempTable do
-		for j = i + 1, #tempTable do
-			if i ~= j then
-				if tempTable[i][1] == tempTable[j][1] and tempTable[i][3] == tempTable[j][3] then
+	local found = true
 
+	while found do
+		found = false
+
+		local tempTopDownTable = {}
+
+		local startItem
+		local prevItem
+		local breaking = false
+
+		for i = 1, #tempTable do
+			-- Check if there is matches below it then move on...
+			startItem = tempTable[i]
+			workingHeight = startItem[4]
+
+			local unmatched = {}
+
+			for j = i + 1, #tempTable do
+				if startItem[1] == tempTable[j][1] and startItem[3] == tempTable[j][3] and startItem[2] + workingHeight == tempTable[j][2] then
+					found = true
+					workingHeight = workingHeight + tempTable[j][4]
+				else
+					unmatched[#unmatched + 1] = tempTable[j]
 				end
+			end
+
+			if found then 
+				-- Add current working vertical piece and break
+				local x, y, w, h = unpack(startItem)
+				h = h + workingHeight - 1
+
+				tempTopDownTable[#tempTopDownTable + 1] = {x,y,w,h}
+
+				for k = 1, #unmatched do
+					tempTopDownTable[#tempTopDownTable + 1] = unmatched[k]
+				end
+
+				breaking = true
+
+			else
+				-- Couldnt find any pieces below this one
+				tempTopDownTable[#tempTopDownTable + 1] = startItem
+			end
+
+			if breaking then
+				tempTable = tempTopDownTable
+				break
 			end
 		end
 	end
+
+	terrain = tempTable
 
 
 	return terrain
