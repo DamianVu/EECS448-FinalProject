@@ -12,6 +12,7 @@ require "handlers.NewCollisionHandler"
 require "handlers.ItemHandler"
 require "handlers.GameHandler"
 require "handlers.NetworkHandler"
+require "handlers.LobbyHandler"
 
 require "libraries.classes.cObject"
 require "libraries.classes.CoordinateList"
@@ -34,7 +35,7 @@ require "debugging"
 require "netClient"
 
 require 'resources.rawmaps' -- Revamp for project 4
- 
+
 
 
 Gamestate = require "libraries.ext.gamestate"
@@ -43,6 +44,7 @@ SplashScreen = require "states.splashscreen"
 Mainmenu = require "states.mainmenu"
 Singleplayer = require "states.singleplayer"
 Multiplayer = require "states.multiplayer"
+LobbyMenu = require "states.lobby"
 Debugging = require "states.debugstate"
 CharacterSelection = require "states.characterselection"
 PlayMenu = require "states.playgame"
@@ -101,7 +103,7 @@ end
 function love.wheelmoved(x, y)
     if Gamestate.current() == MapCreator then
         if canZoom then
-            if y < 0 and zoom <= minZoom then 
+            if y < 0 and zoom <= minZoom then
                 zoom = minZoom
                 return
             end

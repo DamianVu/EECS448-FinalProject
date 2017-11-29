@@ -19,13 +19,6 @@ function Lobby:enter()
   self.currentMenu = 1
   self.selection = 1
 
-	}
-end
-
---- Called whenever this state is entered
-function Lobby:enter()
-	self.currentMenu = 1
-	self.selection = 1
 end
 
 --- Called on game ticks to draw
@@ -39,7 +32,7 @@ function Lobby:draw()
     -- Print menu items (lobbies + create new)
     local drawY = 0
     for i = 1, #self.options do
-      love.graphics.print(self.options[i][1]..(self.options[i][2] or ""), centerX, centerY + drawY)
+      love.graphics.print(self.options[i], centerX, centerY + drawY)
       drawY = drawY + 50
     end
 
