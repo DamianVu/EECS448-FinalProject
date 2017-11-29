@@ -58,21 +58,14 @@ function Lobby:quit()
 
 end
 
-
-function Lobby:setServer(opt, serverIndex)
+function Lobby:setGame(opt, serverIndex)
 	if opt == 'new' then
-		-- TODO Implement game creation state
-
+		self.LOBBY:newGame(USERNAME.."'s game")
 	elseif opt == 'join' then
-
-		-- Set the selected lobby
-		local selectedServer = self.LOBBY.lobbies[serverIndex]
-
-
-
+		local selectedServer = self.LOBBY.lobbies[serverIndex] 		-- Set the selected lobby
+		self.LOBBY:joinGame(selectedServer)
 	end
 end
-
 
 --- Event binding to listen for key presses
 function Lobby:keypressed(key)
@@ -80,19 +73,19 @@ function Lobby:keypressed(key)
   -- Selected an option
 	if key == "return" then
 		if self.selection == #self.options then
-				self:setServer('new')
+				self:setGame('new')
 		else
-			self:setServer('join', self.selection)
+			self:setGame('join', self.selection)
 		end
 	end
 
-  -- backec out with ESC
+  -- back out with ESC
 	if key == "escape" then
 		Gamestate.switch(PlayMenu)
 	end
 
 	if key == "s" or key == "down" then
-		if self.selection == #self.options[self.currentMenu] then
+		if self.selection == #self.options then
 			self.selection = 1
 		else
 			self.selection = self.selection + 1
@@ -101,7 +94,7 @@ function Lobby:keypressed(key)
 
 	if key == "w" or key == "up" then
 		if self.selection == 1 then
-			self.selection = #self.options[self.currentMenu]
+			self.selection = #self.options
 		else
 			self.selection = self.selection - 1
 		end

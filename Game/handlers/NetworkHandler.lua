@@ -17,6 +17,8 @@ function NetworkHandler:init(GH, ip, port)
 	self.verbose_debug = true
 end
 
+-- function NetworkHandler:setPort(p) self.serverPort = p end
+
 -- Connect to the server
 function NetworkHandler:connect()
 	self.udp = socket.udp()
