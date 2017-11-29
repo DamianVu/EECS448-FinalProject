@@ -68,19 +68,31 @@ function LobbyHandler:receive()
 
 			-- Grammar definition
 			local entity, cmd, parms = tostring(receivedData):match("^(%S*) (%S*) *(.*)")
-			if entity ~= USERNAME..USERID then -- Broadcast Type Commands
-				-- NO BROADCAST TYPE COMMANDS
-			else -- Response Type Commands
+			if entity ~= USERNAME..USERID then -- Broadcast Type Commands (NONE)
+			else 															-- Response Type Commands
 				if cmd == 'lobby' then -- Response Type
 					self.lobbies[#self.lobbies + 1] = parms:match("^(%S*)")
 				elseif cmd == 'countlobbies' then
 					self.count = parms:match("^(%d+)")
+				elseif cmd == 'newconnect' then
+					-- Sets global connection port to (newly created) lobby and switches the state to multiplayer
+					SERVER_PORT = parms
+					self:disconnect()
+					Gamestate.switch(Multiplayer)
 				end
 			end
 		elseif msg~= 'timeout' then
 			error("Network error: " ..tostring(msg))
 		end
 	until not receivedData
+end
+
+function LobbyHandler:newGame(gameName)
+	self:send(USERNAME..USERID.." newgame "..gameName)
+end
+
+function LobbyHandler:joinGame(gameName)
+	self:send(USERNAME..USERID.." join "..gameName)
 end
 
 -- LOBBY PROTOCOL --
