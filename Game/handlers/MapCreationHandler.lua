@@ -280,9 +280,50 @@ end
 
 function MapCreationHandler:saveMap()
 	local mapTable = love.filesystem.getDirectoryItems("maps")
-	data = ""
-	
-	love.filesystem.write("maps/map" .. #mapTable + 1 .. ".txt", data)
+	data = "Map = {\n\tname = \"test\",\n\tstartingLocations = {"
+
+	data = data .. "\n\t},\n\tgrid = {"
+
+	for i = 1, #self.currentMap.grid do
+		data = data .. "\n\t\t{"
+		for j = 1, #self.currentMap.grid[i] do
+			data = data .. self.currentMap.grid[i][j]
+			if j ~= #self.currentMap.grid[i] then data = data .. "," end
+		end
+		data = data .. "}"
+		if i ~= #self.currentMap.grid then data = data .. "," end
+	end
+
+	data = data .. "\n\t},\n\ttilesets = {"
+
+	local listNames = self:getCurrentTilesetNames()
+
+	for i = 1, #listNames do
+		data = data .. "\n\t\t\"" .. listNames[i] .. "\""
+		if i ~= #listNames then data = data .. "," end
+	end
+
+	data = data .. "\n\t},\n\tobjects = {"
+
+	for i = 1, #self.objects do
+		data = data .. "\n\t\t{" .. self:findCurrentIndex(i) .. ", " .. self.objects[i].tile .. "}"
+
+		if i ~= #self.objects then data = data .. "," end
+	end
+
+	data = data .. "\n\t},\n\tterrain = {"
+
+	local terrain = self:generateTerrain()
+
+	for i = 1, #terrain do
+		data = data .. "\n\t\t{" .. terrain[i][1] .. ", " ..  terrain[i][2] .. ", " ..  terrain[i][3] .. ", " ..  terrain[i][4] .. "}"
+		if i ~= #terrain then data = data .. "," end
+	end
+
+	data = data .. "\n\t}\n}"
+
+	data = data .. "\n\nreturn Map"
+	love.filesystem.write("maps/map" .. #mapTable + 1 .. ".lua", data)
 end
 
 -- love.graphics.rectangle("fill", width - 170, height - 60, 150, 38)
@@ -705,4 +746,84 @@ function MapCreationHandler:isUnique(ts, tile, col)
 		end
 	end
 	return true
+end
+
+function MapCreationHandler:getCurrentTilesetNames()
+	local names = {}
+	for i = 1, #self.objects do
+		local currentTSName = self.tilesets[self.objects[i].tileset].name
+		if not contains(names, currentTSName) then
+			names[#names + 1] = currentTSName
+		end
+	end
+	return names
+end
+
+function MapCreationHandler:findCurrentIndex(objectIndex)
+	local tsNames = self:getCurrentTilesetNames()
+	local actualName = self.tilesets[self.objects[objectIndex].tileset].name
+	for i = 1, #tsNames do
+		if actualName == tsNames[i] then return i end
+	end
+end
+
+function MapCreationHandler:generateTerrain()
+	-- Function will return table of terrain objects
+	local terrain = {}
+
+	local tempTable = {}
+
+	local grid = self.currentMap.grid
+
+	local prevCol = false
+
+	local startPoint
+
+	-- Create left to right obstacles
+
+	for i = 1, #grid do
+		for j = 1, #grid[i] do
+			if grid[i][j] ~= -1 and self.objects[grid[i][j]].collision then
+				if not prevCol then
+					startPoint = j
+				end
+				prevCol = true
+			else
+				if prevCol then
+					-- Finalize the terrain object
+					tempTable[#tempTable + 1] = {startPoint, i, j - startPoint, 1}
+				end
+
+				prevCol = false
+			end
+
+			if j == #grid[i] and prevCol then
+				-- Finalize terrain object
+				tempTable[#tempTable + 1] = {startPoint, i, j - (startPoint - 1), 1}
+				prevCol = false
+			end
+		end
+	end
+
+	-- Combine top down obstacles
+	for i = 1, #tempTable do
+		for j = i + 1, #tempTable do
+			if i ~= j then
+				if tempTable[i][1] == tempTable[j][1] and tempTable[i][3] == tempTable[j][3] then
+
+				end
+			end
+		end
+	end
+
+
+	return terrain
+
+end
+
+function contains(table, string)
+	for i = 1, #table do
+		if table[i] == string then return true end
+	end
+	return false
 end
