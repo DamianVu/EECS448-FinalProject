@@ -109,7 +109,7 @@ end
 --- Checks for a collisions between a projectile and an object
 function NewCollisionHandler:checkProjectileCollision(projectile, object)
 	if not projectile then return end
-	if object.type == PEER then return end
+	if self:findObject(projectile.sourceID).type == PEER then return end
 	if projectile.sourceID == object.id then return end
 
 	if 	(object.y - (object.height / 2) < projectile.y + projectile.height/2) and
@@ -312,5 +312,12 @@ function NewCollisionHandler:resolveObjectCollision(object1, object2)
 		end
 
 		eObj:pause()
+	end
+end
+
+--
+function NewCollisionHandler:findObject(id)
+	for i = 1, #self.objects do
+		if self.objects[i].id == id then return self.objects[i] end
 	end
 end

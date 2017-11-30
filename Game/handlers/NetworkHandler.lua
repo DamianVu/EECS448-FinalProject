@@ -50,8 +50,9 @@ end
 
 -- Creates a peer in the peer table
 function NetworkHandler:addPeer(ent, x, y, r, g, b)
-	self.peers[#self.peers + 1] = Peer(ent, {r, g, b}, x, y, 32)
-	self.GH:addObject(self.peers) -- Add the peer to the GameHandler's objects table
+	local a = Peer(ent, {r, g, b}, x, y, 32)
+	self.peers[#self.peers + 1] = a
+	self.GH:addObject(a) -- Add the peer to the GameHandler's objects table
 end
 
 -- Used for table lookups in peer table, given a peer entity
