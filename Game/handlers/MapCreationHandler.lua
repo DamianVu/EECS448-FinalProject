@@ -337,20 +337,20 @@ function MapCreationHandler:updateMouseOnPalette()
 end
 
 function MapCreationHandler:changeTile(updown)
-	local currentTS = self.tilesets[self.currentTileset]
-	local tilePages = math.floor((#currentTS.Quads - 1) / 16) + 1
+	if #self.objects == 0 then return end
+	local tilePages = math.floor((#self.objects - 1) / 16) + 1
 	if updown > 0 then
 		if ((self.currentTile - 1) % 16) == 0 then
 			if tilePages > 1 then
 				if self.currentTilePage == 1 then
 					self.currentTilePage = tilePages
-					self.currentTile = (tilePages * 16) + (#currentTS.Quads % 16)
+					self.currentTile = (tilePages * 16) + (#self.objects % 16)
 				else
 					self.currentTilePage = self.currentTilePage - 1
 					self.currentTile = self.currentTilePage * 16
 				end
 			else
-				self.currentTile = #currentTS.Quads
+				self.currentTile = #self.objects
 			end
 		else
 			self.currentTile = self.currentTile - 1
@@ -366,7 +366,7 @@ function MapCreationHandler:changeTile(updown)
 					self.currentTile = ((self.currentTilePage - 1) * 16) + 1
 				end
 			else
-				if self.currentTile == #currentTS.Quads then
+				if self.currentTile == #self.objects then
 					self.currentTile = 1
 				else
 					self.currentTile = self.currentTile + 1
@@ -374,7 +374,7 @@ function MapCreationHandler:changeTile(updown)
 			end
 		else
 			-- Only one page of tiles
-			if self.currentTile == #currentTS.Quads then
+			if self.currentTile == #self.objects then
 				self.currentTile = 1
 			else
 				self.currentTile = self.currentTile + 1

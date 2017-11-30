@@ -271,10 +271,11 @@ end
 function NewCollisionHandler:resolveObjectCollision(object1, object2)
 	-- Let's assume there is only one player object, thus we don't have to handle player-player collision
 	if object1.type == PEER and object2.type == PEER then return end
-	-- Secondly, let's assume enemies don't collide with another FOR NOW
-
+	
 	if object1.type == ENEMY and object2.type == ENEMY then
 		-- If enemy to enemy collision
+		
+
 	else
 		-- This should be player to enemy
 

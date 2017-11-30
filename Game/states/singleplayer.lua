@@ -19,9 +19,20 @@ function Singleplayer:enter()
 
 	GH:addObject(Player(GH:getNewUID(), spriteImg, CHARACTERCOLOR, 1, 10, 96, 96, 32, 32))
 
-	GH:addObject(Enemy(GH:getNewUID(), nil, {255,0,0}, .5, 5, 96, 96, 32, 32, 100, 2, GH.player))
 
-	GH.LH:loadLevel("Default Map", 1)
+
+	GH:addObject(Enemy(GH:getNewUID(), nil, {255,0,0}, .5, 5, math.random(96, 300), math.random(96, 300), 32, 32, 15, 2, GH.player))
+	GH:addObject(Enemy(GH:getNewUID(), nil, {255,0,0}, .5, 5, math.random(96, 300), math.random(96, 300), 32, 32, 15, 2, GH.player))
+	GH:addObject(Enemy(GH:getNewUID(), nil, {255,0,0}, .5, 5, math.random(96, 300), math.random(96, 300), 32, 32, 15, 2, GH.player))
+	GH:addObject(Enemy(GH:getNewUID(), nil, {255,0,0}, .5, 5, math.random(96, 300), math.random(96, 300), 32, 32, 15, 2, GH.player))
+	GH:addObject(Enemy(GH:getNewUID(), nil, {255,0,0}, .5, 5, math.random(96, 300), math.random(96, 300), 32, 32, 15, 2, GH.player))
+	GH:addObject(Enemy(GH:getNewUID(), nil, {255,0,0}, .5, 5, math.random(96, 300), math.random(96, 300), 32, 32, 15, 2, GH.player))
+	GH:addObject(Enemy(GH:getNewUID(), nil, {255,0,0}, .5, 5, math.random(96, 300), math.random(96, 300), 32, 32, 15, 2, GH.player))
+	GH:addObject(Enemy(GH:getNewUID(), nil, {255,0,0}, .5, 5, math.random(96, 300), math.random(96, 300), 32, 32, 15, 2, GH.player))
+	GH:addObject(Enemy(GH:getNewUID(), nil, {255,0,0}, .5, 5, math.random(96, 300), math.random(96, 300), 32, 32, 15, 2, GH.player))
+	GH:addObject(Enemy(GH:getNewUID(), nil, {255,0,0}, .5, 5, math.random(96, 300), math.random(96, 300), 32, 32, 15, 2, GH.player))
+
+	GH.LH:loadLevel("test", 1)
 	
 end
 
