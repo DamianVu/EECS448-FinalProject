@@ -23,7 +23,7 @@ function Peer:init(id, color, x, y, size)
 
 	self.score = 0
 
-	self.maxHP = health
+	self.maxHP = 5
 	self.health = self.maxHP
 
 end
