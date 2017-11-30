@@ -24,3 +24,6 @@ WEAPON = "Weapon"
 spriteImg = love.graphics.newImage('images/sprites/player.png')
 circleImg = love.graphics.newImage('images/sprites/Circle.png')
 enemyImg = love.graphics.newImage('images/sprites/badguy.png')
+
+
+CURRENTSPRITE = spriteImg

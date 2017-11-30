@@ -8,6 +8,7 @@ function GameHandler:init()
 	self.peers = {}
 	self.IH = ItemHandler()
 	self.CH = NewCollisionHandler()
+	self.DH = DialogueHandler()
 	self.LH = LevelHandler()
 	self.uid_counter = 0
 	self.multiplayer = false -- This will only get set to true in NetworkHandler
@@ -67,23 +68,27 @@ function GameHandler:update(dt)
 
 	self.gameTimer = self.gameTimer + dt
 
-	self:updatePlayer(dt)				-- player state * dt
-	self:updateEnemies(dt)			-- enemies states * dt
-	self:updateProjectiles(dt)  -- projectile states * dt
+	if self.DH.playing then
+		self.DH:update(dt)
+	else
+		self:updatePlayer(dt)				-- player state * dt
+		self:updateEnemies(dt)			-- enemies states * dt
+		self:updateProjectiles(dt)  -- projectile states * dt
 
-	self.CH:update() -- collision handler state * dt
+		self.CH:update() -- collision handler state * dt
 
 
-	for i = #self.enemies, 1, -1 do
-		if self.enemies[i]:isDead() then
-			self:destroyEnemy(self.enemies[i].id)
+		for i = #self.enemies, 1, -1 do
+			if self.enemies[i]:isDead() then
+				self:destroyEnemy(self.enemies[i].id)
+			end
 		end
-	end
 
-	self.spawnTimer = self.spawnTimer + dt
-	if self.spawnTimer > 5 then
-		self:spawnEnemy(self.player)
-		self.spawnTimer = self.spawnTimer - 5
+		self.spawnTimer = self.spawnTimer + dt
+		if not self.multiplayer and self.spawnTimer > 5 then
+			self:spawnEnemy(self.player)
+			self.spawnTimer = self.spawnTimer - 5
+		end
 	end
 end
 
