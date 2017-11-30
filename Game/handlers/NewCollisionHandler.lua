@@ -294,7 +294,9 @@ function NewCollisionHandler:resolveObjectCollision(object1, object2)
 
 		if pObj.immune then return end
 
-		pObj:bump(angle, eObj.bumpFactor)
+		if pObj.type ~= PEER then
+			pObj:bump(angle, eObj.bumpFactor)
+		end
 		pObj:takeDamage(eObj.damage)
 
 		-- Calculate difference in position between player and enemy
