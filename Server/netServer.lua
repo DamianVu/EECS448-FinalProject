@@ -5,9 +5,12 @@ local socket = require "socket"
 -- NOTE Server starts at the bottom of this file
 
 -- Connection information
-local address, port = "*", "5050"
+local address, port = "*", arg[1]
 local entity, cmd, parms
 local running = true -- Whether server is running. Here, we auto-start
+
+local gameTimer = -.05 -- Assume that it will take around 50ms to tell players to start their game
+local serverName = arg[2]
 
 -- Initialize the server socket
 udp = socket.udp()
@@ -34,10 +37,16 @@ end
 function broadcast(payload)
 	local e = payload:match("^(%S*)")
 	local p = {} -- For looping through players
+	local names = ""
+
 	for i=1, #players do
 			p = players[i]
-			if e ~= p.id and p.connected then udp:sendto(payload, p.ip, p.port) end
+			if e ~= p.id and p.connected then
+				udp:sendto(payload, p.ip, p.port)
+				names = names .. p.id .. " "
+			end
 	end
+	-- print("Broadcasting to: " .. names) -- Debugging
 end
 
 -- Reply to the client sending a command (Semantically convenient helper)
@@ -46,12 +55,16 @@ function reply(payload, ip, pn) udp:sendto(payload, ip, pn) end
 -- Receives incoming packets
 function receiver()
 	print("Entering receiver loop...")
+	prevTime = 0
 	while running do
+		currentTime = os.clock()
+		dt = currentTime - prevTime
+		prevTime = currentTime
 	  data, fromIP, fromPort = udp:receivefrom() -- Receive contents of packet
 	  if data then
 
 	    -- Data has been received from the server
-	    print("Received Packet from " .. tostring(fromIP) .. ":" .. tostring(fromPort) .. " ->\n    "  .. tostring(data)) -- (Print Debug)
+			print("["..serverName.."] Received from " .. tostring(fromIP) .. ":" .. tostring(fromPort) .. " ->\n    "  .. tostring(data)) -- (Print Debug)
 
 			-- Read packet (Packet grammar: <Entity> <Command> <p1> <p...> <pN> where p1...pN represent N parameters
       entity, cmd, parms = data:match("^(%S*) (%S*) *(.*)")
@@ -63,7 +76,13 @@ function receiver()
 					local p = indexOf(entity)
 					if p == -1 then -- Add player if never joined before
 						players[#players+1] = {connected=true, ip=fromIP, port=fromPort, id=entity, x=lx, y=ly, r=lr, g=lg, b=lb}
-					else players[p].connected = true end -- Set player's connected property to true
+					else
+						players[p].connected = true
+						players[p].ip = fromIP
+						players[p].port = fromPort
+						reply("rejoin " .. players[p].x .. " " .. players[p].y, fromIP, fromPort)
+						print("This is a rejoin in our player table at index " .. p)
+					end -- Set player's connected property to true
 
 					-- Bounce the current players back to the new player
 					for i=1, #players do
@@ -74,13 +93,19 @@ function receiver()
 					broadcast(data)
 					print("Player left, attempting to set index " .. indexOf(entity) .. "'s property 'connected' to 'false'")
 					players[indexOf(entity)].connected = false
-			elseif cmd == 'moveto' then
+		elseif cmd == 'moveto' then
 					broadcast(data)
     			local x, y = parms:match("^(%-?[%d.e]*) (%-?[%d.e]*)$")
           local i = indexOf(entity)
     			players[i].x, players[i].y = x, y
       -- elseif cmd == 'listplayers' then
+			elseif cmd == 'spawnprojectile' then broadcast(data)
       elseif cmd == nil then cmd = nil -- Dummy to avoid displaying nil commands
+
+      	elseif cmd == "start" then
+      		print("Start command received. Telling each player to begin their game timer")
+      		broadcast("server start")
+
       else print("Unkown command: '"..tostring(cmd).."' received from "..tostring(entity)) end
 	  elseif fromIP ~= 'timeout' then error("Network error: "..tostring(fromIP)) end
 

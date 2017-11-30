@@ -20,7 +20,12 @@ function Enemy:init(id, sprite, color, speed, bumpFactor, x, y, width, height, h
 	self.rotation = rotation or 0
 	self.chaseObj = chaseObj or player
 	self.health = health or 10
+	self.maxHealth = self.health
 	self.damage = damage or 2
+
+	self.showHealth = false
+	self.hpBarTimer = 0
+	self.hpBarTimeout = 0
 
 	self.paused = false
 	self.defaultPauseDuration = .3 -- Amount of time to pause before attempting to move again
@@ -29,6 +34,16 @@ end
 function Enemy:draw()
 	love.graphics.setColor(self.color)
 	love.graphics.draw(self.sprite, self.x, self.y, self.rotation, self.scaleX, self.scaleY, self.x_offset, self.y_offset)
+
+	if self.showHealth then
+		local maxBarWidth = self.width - 2
+		local barHeight = 5
+
+		love.graphics.setColor(255,0,0) -- red
+		local healthBarWidth = maxBarWidth * (self.health / self.maxHealth)
+		if healthBarWidth < 1 then healthBarWidth = 1 end
+		love.graphics.rectangle("fill", self.x - maxBarWidth/2, self.y - (self.height/2 + barHeight + 4), healthBarWidth, barHeight)
+	end
 end
 
 function Enemy:drawHitbox()
@@ -61,6 +76,16 @@ end
 
 function Enemy:takeDamage(damage)
 	self.health = self.health - damage
+	self.hpBarTimeout = 2
+	self.hpBarTimer = 0
+	self.showHealth = true
+end
+
+function Enemy:updateShowHealth(dt)
+	self.hpBarTimer = self.hpBarTimer + dt
+	if self.hpBarTimer > self.hpBarTimeout then
+		self.showHealth = false
+	end
 end
 
 function Enemy:isDead()

@@ -109,7 +109,8 @@ end
 --- Checks for a collisions between a projectile and an object
 function NewCollisionHandler:checkProjectileCollision(projectile, object)
 	if not projectile then return end
-
+	if self:findObject(projectile.sourceID).type == PEER and object.type == PLAYER then return end
+	if object.type == PEER then return end
 	if projectile.sourceID == object.id then return end
 
 	if 	(object.y - (object.height / 2) < projectile.y + projectile.height/2) and
@@ -124,6 +125,9 @@ end
 function NewCollisionHandler:checkObjectCollision(object1, object2)
 	if not object1 or not object2 then return end
 	if object1.type == PLAYER and object2.type == PLAYER then return end
+	if object1.type == PEER and object2.type == PLAYER then return end
+	if object1.type == PLAYER and object2.type == PEER then return end
+
 
 	o1ScaleX = object1.scaleX or 1
 	o1ScaleY = object1.scaleY or 1
@@ -146,8 +150,9 @@ end
 
 --- Resolves a collision between a projectile and terrain
 function NewCollisionHandler:resolveTerrainCollision(object, terrain)
+	if object.type == PEER then return end
 	if object.type == PROJECTILE then
-		destroyProjectile(object.id)
+		GH:destroyProjectile(object.id)
 	else
 		self:resolveObjectTerrainCollision(object, terrain)
 	end
@@ -257,17 +262,20 @@ end
 --- Resolves a collision between a projectile and an object
 function NewCollisionHandler:resolveProjectileCollision(projectile, object)
 	object:takeDamage(projectile.damage)
-	destroyProjectile(projectile.id)
+	local pos = GH.getObjectPosition(projectile.sourceID, self.objects)
+	self.objects[pos].score = self.objects[pos].score + projectile.damage
+	GH:destroyProjectile(projectile.id)
 end
 
 --- Resolves a collision between an object and another object
 function NewCollisionHandler:resolveObjectCollision(object1, object2)
 	-- Let's assume there is only one player object, thus we don't have to handle player-player collision
-
-	-- Secondly, let's assume enemies don't collide with another FOR NOW
-
+	if object1.type == PEER and object2.type == PEER then return end
+	
 	if object1.type == ENEMY and object2.type == ENEMY then
 		-- If enemy to enemy collision
+		
+
 	else
 		-- This should be player to enemy
 
@@ -286,7 +294,9 @@ function NewCollisionHandler:resolveObjectCollision(object1, object2)
 
 		if pObj.immune then return end
 
-		pObj:bump(angle, eObj.bumpFactor)
+		if pObj.type ~= PEER then
+			pObj:bump(angle, eObj.bumpFactor)
+		end
 		pObj:takeDamage(eObj.damage)
 
 		-- Calculate difference in position between player and enemy
@@ -310,5 +320,12 @@ function NewCollisionHandler:resolveObjectCollision(object1, object2)
 		end
 
 		eObj:pause()
+	end
+end
+
+--
+function NewCollisionHandler:findObject(id)
+	for i = 1, #self.objects do
+		if self.objects[i].id == id then return self.objects[i] end
 	end
 end

@@ -5,6 +5,8 @@ LevelHandler = class("LevelHandler", {})
 
 function LevelHandler:init()
 	MH = MapHandler()
+  MH:loadAllMaps()
+  MH:loadAllTilesets()
   self.currentMapIndex = -1
 end
 
@@ -12,12 +14,12 @@ function LevelHandler:startGame()
 	self:loadLevel(4,1)
 end
 
-function LevelHandler:loadLevel(level, startPos)
-  self.currentMapIndex = level
+function LevelHandler:loadLevel(map, startPos)
+  self.currentMap = map
 	if not startPos then
 		startPos = 1
 	end
-	MH:loadMap(level, startPos)
+	MH:loadMap(map, startPos)
 end
 
 

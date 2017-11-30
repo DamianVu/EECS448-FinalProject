@@ -1,8 +1,6 @@
 
 MapCreator = {}
 
-require "handlers.MapCreationHandler"
-
 local checkMouseMovement = false
 
 camera = {x = 400, y = 200, x_vel = 0, y_vel = 0, speed = 2} -- Camera object (will be the focus of the camera translation)
@@ -72,8 +70,8 @@ function MapCreator:update(dt)
 
 	else
 		-- Move
-		camera.x = math.floor(camera.x + camera.x_vel)
-		camera.y = math.floor(camera.y + camera.y_vel)
+		camera.x = math.floor(camera.x + (camera.x_vel * dt))
+		camera.y = math.floor(camera.y + (camera.y_vel * dt))
 	end
 
 	if MCH.mode == "Editing" then
@@ -84,8 +82,6 @@ function MapCreator:update(dt)
 			MCH:removeTile()
 		end
 	end
-
-
 end
 
 function MapCreator:keypressed(key)
@@ -105,6 +101,7 @@ function MapCreator:keypressed(key)
 		end
 		if key == 'right' then 
 			camera.x_vel = camera.speed * 3 * zoomSpeed
+			print("right")
 		end
 		if key == 'r' then 
 			camera.x = 0
@@ -116,6 +113,9 @@ function MapCreator:keypressed(key)
 
 	if key == ',' then MCH:changePage(true) end
 	if key == '.' then MCH:changePage(false) end
+
+	if key == 'n' then MCH:changeTileset(true) end
+	if key == 'm' then MCH:changeTileset(false) end
 
 	if key == 'g' then gridlines = not gridlines end
 end
@@ -153,7 +153,7 @@ function MapCreator:mousepressed(x,y,button,_)
 			local done = false
 			for i = 1, 2 do
 				for j = 1, 8 do
-					if ctile > MCH:getTilesetSize() then break end
+					if ctile > #MCH.objects then break end
 						if y < startY + (64*i) and x < startX + (j*64) then
 						done = true
 						MCH.currentTile = ctile + ((MCH.currentTilePage-1) * 16)
@@ -168,6 +168,9 @@ function MapCreator:mousepressed(x,y,button,_)
 		end
 
 		if MCH.mouseOnObjectMenuButton then MCH.mode = MCHModes[3] end
+
+		print("Clicked and mouseonsavebutton = " .. tostring(MCH.mouseOnSaveButton))
+		if MCH.mouseOnSaveButton then MCH:saveMap() end
 	end
 end
 

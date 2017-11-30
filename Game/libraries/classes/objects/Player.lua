@@ -5,7 +5,7 @@ function Player:init(id, sprite, color, speed, health, x, y, width, height)
 	self.id = id
 	self.type = PLAYER
 	self.sprite = sprite or spriteImg
-	self.color = color or {math.random(0,255), math.random(0,255), math.random(0,255), 255}
+	self.color = color or {255,255,255,255}
 	self.currentColor = self.color
 	self.speed = speed or 1
 	self.x = x
@@ -20,6 +20,8 @@ function Player:init(id, sprite, color, speed, health, x, y, width, height)
 	self.rotation = rotation or 0
 	self.movementEnabled = true
 
+	self.score = 0
+
 	self.immune = false
 	self.immuneTimer = 2 -- How long the player stays immune after collision
 	self.immuneTime = 0
@@ -28,6 +30,21 @@ function Player:init(id, sprite, color, speed, health, x, y, width, height)
 
 	self.maxHP = health
 	self.health = self.maxHP
+
+	self.attackDelay = false
+	self.attackTimer = 0
+	self.attackTimeout = 1
+
+
+
+	self.inventory = {}
+	self.equipment = {weapon = 2}
+
+	self.moving = false
+end
+
+function Player:load(file)
+
 end
 
 function Player:draw()
@@ -58,7 +75,7 @@ function Player:move(dt, direction)
 		self.y = self.y + (self.y_vel * self.speed * base_speed * dt * 2)
 		self.bumpTime = self.bumpTime + dt
 		if self.bumpTime > self.bumpDuration then self.movementEnabled = true end
-	end
+	end 
 end
 
 function Player:updateImmunity(dt)
@@ -110,4 +127,17 @@ end
 
 function Player:isDead()
 	return self.health <= 0
+end
+
+function Player:updateAttackDelay(dt)
+	self.attackTimer = self.attackTimer + dt
+	if self.attackTimer > self.attackTimeout then
+		self.attackDelay = false
+	end
+end
+
+function Player:startAttackDelay(time)
+	self.attackTimeout = time
+	self.attackTimer = 0
+	self.attackDelay = true
 end

@@ -9,6 +9,12 @@ require "handlers.MapHandler"
 require "handlers.CharacterHandler"
 require "handlers.LevelHandler"
 require "handlers.NewCollisionHandler"
+require "handlers.ItemHandler"
+require "handlers.GameHandler"
+require "handlers.NetworkHandler"
+require "handlers.MapCreationHandler"
+require "handlers.DialogueHandler"
+require "handlers.LobbyHandler"
 
 require "libraries.classes.cObject"
 require "libraries.classes.CoordinateList"
@@ -17,6 +23,7 @@ require "libraries.classes.Tile"
 require "libraries.classes.TileMapping"
 
 require "libraries.classes.objects.Player"
+require "libraries.classes.objects.Peer"
 require "libraries.classes.objects.Terrain"
 require "libraries.classes.objects.Projectile"
 require "libraries.classes.objects.Enemy"
@@ -29,7 +36,7 @@ require "debugging"
 require "netClient"
 
 require 'resources.rawmaps' -- Revamp for project 4
- 
+
 
 
 Gamestate = require "libraries.ext.gamestate"
@@ -38,6 +45,7 @@ SplashScreen = require "states.splashscreen"
 Mainmenu = require "states.mainmenu"
 Singleplayer = require "states.singleplayer"
 Multiplayer = require "states.multiplayer"
+LobbyMenu = require "states.lobby"
 Debugging = require "states.debugstate"
 CharacterSelection = require "states.characterselection"
 PlayMenu = require "states.playgame"
@@ -59,6 +67,10 @@ function love.load()
         love.filesystem.createDirectory("characters")
     end
 
+    if not love.filesystem.exists("maps") then
+        love.filesystem.createDirectory("maps")
+    end
+
     CharHandler = CharacterHandler()
 
 
@@ -70,7 +82,7 @@ function love.load()
     --love.window.setMode(windowWidth, windowHeight, {resizable=false, vsync=false, minwidth=800, minheight=600, borderless=true, msaa=2})
 
     Gamestate.registerEvents()
-    Gamestate.switch(MapCreator)
+    Gamestate.switch(CharacterSelection)
 
 
     -- Physics variables
@@ -96,7 +108,7 @@ end
 function love.wheelmoved(x, y)
     if Gamestate.current() == MapCreator then
         if canZoom then
-            if y < 0 and zoom <= minZoom then 
+            if y < 0 and zoom <= minZoom then
                 zoom = minZoom
                 return
             end

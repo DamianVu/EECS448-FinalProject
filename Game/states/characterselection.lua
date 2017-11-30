@@ -4,7 +4,7 @@ CS = {}
 
 local menus = {
 	{"", "Use this character", "Create new character", "Back"}, -- Main screen
-	{"Name: ", "Randomize Color", "Create", "Cancel"}
+	{"Name: ", "Create", "Cancel"}
 }
 
 local characters
@@ -12,8 +12,8 @@ local characters
 local currentMenu
 local currentItem
 local currentCharacter
+local currentSprite
 
-local charColors = {math.random(255), math.random(255), math.random(255)}
 
 local centerX, centerY = love.graphics.getWidth()/2, love.graphics.getHeight()/2
 
@@ -50,9 +50,12 @@ function CS:enter()
 	currentMenu = 1
 	currentItem = 1
 	currentCharacter = 1
+	currentSprite = 1
 	characters = CharHandler:getCharacters()
 	sprite = love.graphics.newImage('images/sprites/player.png')
 	createName = ""
+
+	characterSpriteTable = CharHandler:loadCharacterSprites()
 end
 
 --- Called every game tick to draw to the screen
@@ -68,9 +71,11 @@ function CS:draw()
 			end
 			love.graphics.print("<--", centerX - 200, 40)
 			love.graphics.print("-->", centerX + 170, 40)
-			love.graphics.setColor(characters[currentCharacter].color)
-			love.graphics.print(characters[currentCharacter].name, centerX - 80, 40)
-			love.graphics.draw(sprite, centerX - 60, 150)
+			love.graphics.setColor(255,255,255,255)
+			if #characters ~= 0 then
+				love.graphics.print(characters[currentCharacter].name, centerX - 80, 40)
+				love.graphics.draw(getSprite(characters[currentCharacter].sprite), centerX - 60, 150, 0, 1.5, 1.5)
+			end
 		else
 			love.graphics.setColor(255,0,0)
 			love.graphics.print("NO CHARACTERS", centerX, 40)
@@ -91,14 +96,13 @@ function CS:draw()
 		if textInput then
 			extra = "_"
 		end
-		love.graphics.setColor(charColors)
-		love.graphics.draw(sprite, centerX - 100, 200)
+		love.graphics.setColor(255,255,255,255)
+		love.graphics.draw(characterSpriteTable[currentSprite][2], centerX - 100, 200)
 
 		love.graphics.setColor(255,255,255)
 		love.graphics.print(menus[currentMenu][1] .. createName .. extra, centerX - 200, 400)
 		love.graphics.print(menus[currentMenu][2], centerX - 200, 450)
 		love.graphics.print(menus[currentMenu][3], centerX - 200, 500)
-		love.graphics.print(menus[currentMenu][4], centerX - 200, 550)
 		love.graphics.setColor(0,0,255)
 		love.graphics.print("-->", centerX - 275, 400 + ((currentItem - 1) * 50))
 	end
@@ -124,8 +128,9 @@ function CS:keypressed(key)
 				if #characters == 0 then
 					return
 				end
-				USERNAME = characters[currentCharacter].name .. tostring(characters[currentCharacter].salt)
-				CHARACTERCOLOR = characters[currentCharacter].color
+				USERNAME = characters[currentCharacter].name
+				USERID = tostring(characters[currentCharacter].salt)
+				CURRENTSPRITE = getSprite(characters[currentCharacter].sprite)
 				Gamestate.switch(PlayMenu)
 			elseif currentItem == 3 then
 				-- Create a player
@@ -138,12 +143,9 @@ function CS:keypressed(key)
 			end
 		elseif currentMenu == 2 then
 			if currentItem == 2 then
-				-- Randomize colors
-				charColors = {math.random(255),math.random(255),math.random(255)}
-			elseif currentItem == 3 then
 				-- Create character
 				if createName ~= "" then
-					CharHandler:addCharacter(createName, charColors)
+					CharHandler:addCharacter(createName, characterSpriteTable[currentSprite][1])
 					CharHandler:refresh()
 					characters = CharHandler:getCharacters()
 					currentMenu = 1
@@ -152,7 +154,7 @@ function CS:keypressed(key)
 				else
 
 				end
-			elseif currentItem == 4 then
+			elseif currentItem == 3 then
 				currentMenu = 1
 				currentItem = 1
 			end
@@ -176,6 +178,22 @@ function CS:keypressed(key)
 					else
 						currentCharacter = currentCharacter + 1
 					end
+				end
+			end
+		end
+
+		if currentMenu == 2 then
+			if key == 'a' or key == 'left' then
+				if currentSprite == 1 then
+					currentSprite = #characterSpriteTable
+				else
+					currentSprite = currentSprite - 1
+				end
+			elseif key == 'd' or key == 'right' then
+				if currentSprite == #characterSpriteTable then
+					currentSprite = 1
+				else
+					currentSprite = currentSprite + 1
 				end
 			end
 		end
@@ -220,6 +238,12 @@ function CS:keypressed(key)
 		end
 	end
 
+end
+
+function getSprite(name)
+	for i = 1, #characterSpriteTable do
+		if characterSpriteTable[i][1] == name then return characterSpriteTable[i][2] end
+	end
 end
 
 return CS
