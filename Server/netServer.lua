@@ -5,9 +5,11 @@ local socket = require "socket"
 -- NOTE Server starts at the bottom of this file
 
 -- Connection information
-local address, port = "*", "5050"
+local address, port = "*", arg[1]
 local entity, cmd, parms
 local running = true -- Whether server is running. Here, we auto-start
+
+local serverName = arg[2]
 
 -- Initialize the server socket
 udp = socket.udp()
@@ -57,7 +59,7 @@ function receiver()
 	  if data then
 
 	    -- Data has been received from the server
-	    print("Received Packet from " .. tostring(fromIP) .. ":" .. tostring(fromPort) .. " ->\n    "  .. tostring(data)) -- (Print Debug)
+			print("["..serverName.."] Received from " .. tostring(fromIP) .. ":" .. tostring(fromPort) .. " ->\n    "  .. tostring(data)) -- (Print Debug)
 
 			-- Read packet (Packet grammar: <Entity> <Command> <p1> <p...> <pN> where p1...pN represent N parameters
       entity, cmd, parms = data:match("^(%S*) (%S*) *(.*)")
@@ -93,7 +95,6 @@ function receiver()
     			players[i].x, players[i].y = x, y
       -- elseif cmd == 'listplayers' then
 			elseif cmd == 'spawnprojectile' then broadcast(data)
-			-- elseif cmd == 'died' then broadcast(data)
       elseif cmd == nil then cmd = nil -- Dummy to avoid displaying nil commands
       else print("Unkown command: '"..tostring(cmd).."' received from "..tostring(entity)) end
 	  elseif fromIP ~= 'timeout' then error("Network error: "..tostring(fromIP)) end

@@ -20,14 +20,34 @@ players = {}
 -- Table of active game servers
 games = {}
 
---
--- -- Get the index of a player in the connected players list
--- function indexOf(ent)
--- 	for i = 1, #players do
--- 		if players[i].id == ent then return i end
--- 	end
--- 	return -1
--- end
+-- Return the index of a game given the name
+function locateGame(name)
+	for i = 1, #games do
+		if games[#games][i] == name then return i
+		else return -1 end
+	end
+end
+
+
+-- Finds a new port to set up a new game on (will cycle through 5050-5060 range)
+function newPort()
+	local lastPort
+
+	if #games == 0 then lastPort = 5050
+	else lastPort = games[#games][2] end
+
+	if lastPort == 5060 then lastPort = 5050
+	else lastPort = lastPort + 1 end
+
+	return lastPort
+end
+
+function addGame(name)
+	local gamePort = newPort()
+	games[#games + 1] = {name.."'s game", gamePort} -- Create entry in game tracker table
+	-- os.execute("lua netServer.lua "..gamePort.." '"..name.."'") -- Spawn new server process
+	os.execute("python spawnServer.py "..gamePort.." "..name)
+end
 
 -- Reply to the client sending a command (Semantically convenient helper)
 function reply(payload, ip, pn) udp:sendto(payload, ip, pn) end
@@ -48,10 +68,17 @@ function receiver()
       -- Grammar definition
       if cmd == 'fetchlobbies' then -- Bounce the current games back to the new player (replies with #games number of packets)
           print("Responding to "..entity.." with the list of active games...")
-					for i=1, #games do reply("lobby "..games[i], fromIP, fromPort) end
+					for i=1, #games do reply("lobby "..games[i][1], fromIP, fromPort) end
       elseif cmd == 'countlobbies' then
-					reply("countlobbies "..#games)
-
+					reply("countlobbies "..#games, fromIP, fromPort)
+			elseif cmd == 'newgame' then
+					addGame(parms)
+					print("Sending connection information (port "..games[#games][2]..") back to creator of new lobby...")
+					reply("newconnect "..games[#games][2], fromIP, fromPort)
+			elseif cmd == 'select' then
+					local gameIndex = locateGame(parms)
+					if gameIndex ~= -1 then reply("newconnect "..games[gameIndex][2], fromIP, fromPort)
+					else reply("notfound", fromIP, fromPort) end
       elseif cmd == nil then cmd = nil -- Dummy to avoid displaying nil commands
       else print("Unkown command: '"..tostring(cmd).."' received from "..tostring(entity)) end
 	  elseif fromIP ~= 'timeout' then error("Network error: "..tostring(fromIP)) end
