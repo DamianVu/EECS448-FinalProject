@@ -19,6 +19,8 @@ end
 
 function EventHandler:triggerEvent(EVENT)
 	if math.random(2) == 1 then
-		GH:addObject(Enemy(GH:getNewUID(), nil, nil, .5, 1, math.random(96,400), math.random(96,400), 32, 32, 5, 1))
+		for i = 1, math.random(4) do
+			GH:addObject(Enemy(GH:getNewUID(), nil, nil, .5, 1, math.random(96,400), math.random(96,400), 32, 32, 5, 1))
+		end
 	end
 end
