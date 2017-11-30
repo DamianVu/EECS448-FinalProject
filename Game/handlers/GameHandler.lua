@@ -73,7 +73,7 @@ function GameHandler:update(dt)
 		self.gameTimer = self.gameTimer + dt
 	end
 
-	if self.gameTimer > 5 and not self.testSpawn then
+	if self.multiplayer and self.gameTimer > 5 and not self.testSpawn then
 		if USERNAME == "dv" then
 			self:spawnEnemy(self.player)
 		else
