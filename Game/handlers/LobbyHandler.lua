@@ -90,7 +90,7 @@ function LobbyHandler:joinGame(gameIndex)
 	self:send(USERNAME..USERID.." select "..gameIndex)
 end
 
--- LOBBY PROTOCOL -- (I got lazy and gave up on this comment)
+-- LOBBY PROTOCOL -- (NOTE I got lazy and gave up on this comment)
 -- Stages of a request/response for matchmaking information
 
 -- 1 - A request is sent to the lobby server for lobby information
