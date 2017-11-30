@@ -100,6 +100,7 @@ function receiver()
 
 	  socket.sleep(0.01)
 	end
+	print(os.clock())
 end
 
 
