@@ -14,6 +14,8 @@ function GameHandler:init()
 	self.multiplayer = false -- This will only get set to true in NetworkHandler
 	self.networkMoveTimer = 0
 
+	self.EH = EventHandler(10)
+
 	self.playerIsMoving = false
 	self.playerPrevX = 0
 	self.playerPrevY = 0
@@ -71,6 +73,7 @@ function GameHandler:update(dt)
 
 	if not self.multiplayer or self.gameStarted then
 		self.gameTimer = self.gameTimer + dt
+		self.EH:update(dt)
 	end
 
 	if self.multiplayer and self.gameTimer > 5 and not self.testSpawn then
@@ -98,7 +101,7 @@ function GameHandler:update(dt)
 			end
 		end
 
-		self.spawnTimer = self.spawnTimer + dt
+		--self.spawnTimer = self.spawnTimer + dt
 		if not self.multiplayer and self.spawnTimer > 5 then
 			self:spawnEnemy(self.player)
 			self.spawnTimer = self.spawnTimer - 5
