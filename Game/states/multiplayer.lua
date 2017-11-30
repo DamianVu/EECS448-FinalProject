@@ -87,6 +87,7 @@ function OnlineGame:keypressed(key)
 	if key == 'n' then noclip = not noclip end
 	if key == 'tab' then debugMode = not debugMode end -- Toggle debug mode
 	if key == 'escape' then Gamestate.switch(PlayMenu) end
+	if key == 's' then NH:send(GH.player.id .. " start") end
 end
 
 

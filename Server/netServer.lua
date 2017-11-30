@@ -86,7 +86,7 @@ function receiver()
 					broadcast(data)
 					print("Player left, attempting to set index " .. indexOf(entity) .. "'s property 'connected' to 'false'")
 					players[indexOf(entity)].connected = false
-			elseif cmd == 'moveto' then
+		elseif cmd == 'moveto' then
 					broadcast(data)
     			local x, y = parms:match("^(%-?[%d.e]*) (%-?[%d.e]*)$")
           local i = indexOf(entity)
@@ -95,12 +95,15 @@ function receiver()
 			elseif cmd == 'spawnprojectile' then broadcast(data)
 			-- elseif cmd == 'died' then broadcast(data)
       elseif cmd == nil then cmd = nil -- Dummy to avoid displaying nil commands
+
+      	elseif cmd == "start" then
+      		broadcast("server start")
+
       else print("Unkown command: '"..tostring(cmd).."' received from "..tostring(entity)) end
 	  elseif fromIP ~= 'timeout' then error("Network error: "..tostring(fromIP)) end
 
 	  socket.sleep(0.01)
 	end
-	print(os.clock())
 end
 
 

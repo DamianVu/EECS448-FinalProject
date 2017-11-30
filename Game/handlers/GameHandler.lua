@@ -19,6 +19,7 @@ function GameHandler:init()
 	self.playerPrevY = 0
 
 	self.gameTimer = 0
+	self.gameStarted = false
 
 	self.spawnTimer = 0
 end
@@ -66,7 +67,9 @@ end
 -- Update functions (primary game dt function)
 function GameHandler:update(dt)
 
-	self.gameTimer = self.gameTimer + dt
+	if not self.multiplayer or self.gameStarted then
+		self.gameTimer = self.gameTimer + dt
+	end
 
 	if self.DH.playing then
 		self.DH:update(dt)

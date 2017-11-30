@@ -71,7 +71,7 @@ function NetworkHandler:receive()
 			if self.verbose_debug then print(receivedData) end
 
 			-- Grammar definition
-			local entity, cmd, parms = tostring(receivedData):match("^(%S*) (%S*) *(.*)")
+			local entity, cmd, parms = tostring(receivedData):match("^(%S*) *(%S*) *(.*)")
 			if entity ~= self.GH.player.id then -- Broadcast Type Commands
 				if cmd == 'join' then -- Broadcast Type
 					local px, py, pr, pg, pb = parms:match("(-*%d+.*%d*) (-*%d+.*%d*) (%d+) (%d+) (%d+)")
@@ -90,6 +90,9 @@ function NetworkHandler:receive()
 				if cmd == 'spawnprojectile' then -- Broadcast Type
 					local x, y, size, angle, damage, speed = parms:match("(-*%d+.*%d*) (-*%d+.*%d*) (-*%d+.*%d*) (-*%d+.*%d*) (-*%d+.*%d*) (-*%d+.*%d*)")
 					self.GH:createProjectile(x, y, size, angle, damage, speed, entity)
+				end
+				if cmd == 'start' then
+					self.GH.gameStarted = true
 				end
 			else -- Response Type Commands
 				if cmd == 'rejoin' then -- Response Type
