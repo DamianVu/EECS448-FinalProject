@@ -16,6 +16,10 @@ function GameHandler:init()
 	self.playerIsMoving = false
 	self.playerPrevX = 0
 	self.playerPrevY = 0
+
+	self.gameTimer = 0
+
+	self.spawnTimer = 0
 end
 
 function GameHandler:addObject(obj)
@@ -60,6 +64,9 @@ end
 
 -- Update functions (primary game dt function)
 function GameHandler:update(dt)
+
+	self.gameTimer = self.gameTimer + dt
+
 	self:updatePlayer(dt)				-- player state * dt
 	self:updateEnemies(dt)			-- enemies states * dt
 	self:updateProjectiles(dt)  -- projectile states * dt
@@ -72,6 +79,16 @@ function GameHandler:update(dt)
 			self:destroyEnemy(self.enemies[i].id)
 		end
 	end
+
+	self.spawnTimer = self.spawnTimer + dt
+	if self.spawnTimer > 5 then
+		self:spawnEnemy(self.player)
+		self.spawnTimer = self.spawnTimer - 5
+	end
+end
+
+function GameHandler:spawnEnemy(object)
+	self:addObject(Enemy(self:getNewUID(), nil, {255,0,0}, .5, 5, math.random(96, 300), math.random(96, 300), 32, 32, 15, 2, object))
 end
 
 

@@ -32,7 +32,8 @@ Map = {
 	},
 	tilesets = {
 		"Pipes",
-		"Debugging"
+		"Debugging",
+		"testset"
 	},
 	objects = {
 		{1, 3},
@@ -42,8 +43,8 @@ Map = {
 		{1, 1},
 		{1, 2},
 		{2, 1},
-		{2, 2},
-		{2, 3}
+		{3, 2},
+		{3, 3}
 	},
 	terrain = {
 		{1, 1, 52, 1},
