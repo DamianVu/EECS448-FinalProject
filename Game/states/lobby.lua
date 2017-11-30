@@ -68,7 +68,8 @@ function Lobby:setGame(opt, serverIndex)
 		print("Game created.")
 	elseif opt == 'join' then
 		print("Joining...")
-		-- local selectedServer = self.LOBBY.lobbies[serverIndex] 		-- Set the selected lobby
+		local selectedServer = self.LOBBY.lobbies[serverIndex] 		-- Set the selected lobby
+		print("NEW GAME IS AT INDEX "..serverIndex) -- TESTING
 		self.LOBBY:joinGame(selectedServer)
 	end
 end
