@@ -5,10 +5,10 @@ LobbyHandler = class("LobbyHandler", {})
 
 -- Constructor for the LobbyHandler
 function LobbyHandler:init(GH, ip, port)
+	self.verbose_debug = true
 	self.socket = require "socket"
   self.lobbyIP = ip
 	self.lobbyPort = port
-	self.verbose_debug = true
 	self.count = -1
 	self.lobbies = {}
 	self.menu = {}
