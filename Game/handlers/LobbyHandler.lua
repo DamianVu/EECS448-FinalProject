@@ -9,7 +9,7 @@ function LobbyHandler:init(GH, ip, port)
   self.lobbyIP = ip
 	self.lobbyPort = port
 	self.verbose_debug = true
-	self.count = 0
+	self.count = -1
 	self.lobbies = {}
 	self.menu = {}
 	self.udp = nil
@@ -36,12 +36,11 @@ function LobbyHandler:fetchMenu()
 	self:fetchLobbyInfo()
 
 	print("Populating server list...")
-	repeat -- Populate the lobbylist, waiting until completion
-		self:receive()
-	until #self.lobbies == self.count
-	print("Populated. "..self.count.." games found.")
-
-
+	-- repeat -- Populate the lobbylist, waiting until completion
+	-- 	self:receive()
+	-- until #self.lobbies == self.count
+	-- print("Populated. "..self.count.." games found.")
+	self.menu = self.lobbies
 	self.menu[#self.menu + 1] = "Create New Game"
 	return self.menu
 end
@@ -64,23 +63,24 @@ function LobbyHandler:receive()
 		-- Read and parse packet
 		receivedData, msg = self.udp:receive()
 		if receivedData then
-			if self.verbose_debug then print(receivedData) end
+			if self.verbose_debug then print("Received from matchmaking server: "..receivedData) end
 
 			-- Grammar definition
-			local entity, cmd, parms = tostring(receivedData):match("^(%S*) (%S*) *(.*)")
-			if entity ~= USERNAME..USERID then -- Broadcast Type Commands (NONE)
-			else 															-- Response Type Commands
+			local cmd, parms = tostring(receivedData):match("^(%S*) *(.*)")
+			print(cmd, parms)
 				if cmd == 'lobby' then -- Response Type
-					self.lobbies[#self.lobbies + 1] = parms:match("^(%S*)")
+					self.lobbies[#self.lobbies + 1] = parms
+					print("found game: "..parms)
 				elseif cmd == 'countlobbies' then
-					self.count = parms:match("^(%d+)")
+					self.count = parms
+					print("Found "..parms.." games.")
 				elseif cmd == 'newconnect' then
 					-- Sets global connection port to (newly created) lobby and switches the state to multiplayer
+					print("Setting connection information...")
 					SERVER_PORT = parms
-					self:disconnect()
 					Gamestate.switch(Multiplayer)
+					return
 				end
-			end
 		elseif msg~= 'timeout' then
 			error("Network error: " ..tostring(msg))
 		end
@@ -92,10 +92,10 @@ function LobbyHandler:newGame(gameName)
 end
 
 function LobbyHandler:joinGame(gameName)
-	self:send(USERNAME..USERID.." join "..gameName)
+	self:send(USERNAME..USERID.." select "..gameName)
 end
 
--- LOBBY PROTOCOL --
+-- LOBBY PROTOCOL -- (I got lazy and gave up on this comment)
 -- Stages of a request/response for matchmaking information
 
 -- 1 - A request is sent to the lobby server for lobby information

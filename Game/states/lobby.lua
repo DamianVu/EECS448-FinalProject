@@ -29,6 +29,7 @@ function Lobby:draw()
 
 		love.graphics.print("Playing as: " .. USERNAME, centerX, 50)
 
+
     -- Print menu items (lobbies + create new)
     local drawY = 0
     for i = 1, #self.options do
@@ -50,18 +51,23 @@ end
 
 --- Called when this state has been left
 function Lobby:leave()
+	print("leaving lobby and disconnecting from lobby server...")
 	self.LOBBY:disconnect()
+	print("left")
 end
 
---- Called if the user backs out from the lobby state
+--- Called if the user closes the game while in this state
 function Lobby:quit()
-
+	self.LOBBY:disconnect()
 end
 
 function Lobby:setGame(opt, serverIndex)
 	if opt == 'new' then
-		self.LOBBY:newGame(USERNAME.."'s game")
+		print("Creating new game...")
+		self.LOBBY:newGame(USERNAME) -- Just sending the username to create a '<username>'s game' name
+		print("Game created.")
 	elseif opt == 'join' then
+		print("Joining...")
 		local selectedServer = self.LOBBY.lobbies[serverIndex] 		-- Set the selected lobby
 		self.LOBBY:joinGame(selectedServer)
 	end
@@ -72,7 +78,7 @@ function Lobby:keypressed(key)
 
   -- Selected an option
 	if key == "return" then
-		if self.selection == #self.options then
+		if self.options[self.selection] == "Create New Game" then
 				self:setGame('new')
 		else
 			self:setGame('join', self.selection)
