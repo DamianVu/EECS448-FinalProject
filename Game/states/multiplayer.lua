@@ -53,7 +53,7 @@ function OnlineGame:draw()
 	love.graphics.print("Collision: " .. tostring(collision), 10, 80)
 	love.graphics.print("Number of projectiles: " .. #GH.projectiles, 10, 100)
 	love.graphics.print("Score: " .. GH.player.score, 10, 120)
-
+	love.graphics.print("Time: " .. math.floor(GH.gameTimer), 10, 160)
 
 
 	HUD:draw()
@@ -87,7 +87,7 @@ function OnlineGame:keypressed(key)
 	if key == 'n' then noclip = not noclip end
 	if key == 'tab' then debugMode = not debugMode end -- Toggle debug mode
 	if key == 'escape' then Gamestate.switch(PlayMenu) end
-	if key == 's' then NH:send(GH.player.id .. " start") end
+	if key == 'o' then NH:send(GH.player.id .. " start") end
 end
 
 

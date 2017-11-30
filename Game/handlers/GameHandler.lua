@@ -22,6 +22,8 @@ function GameHandler:init()
 	self.gameStarted = false
 
 	self.spawnTimer = 0
+
+	self.testSpawn = false
 end
 
 function GameHandler:addObject(obj)
@@ -71,6 +73,15 @@ function GameHandler:update(dt)
 		self.gameTimer = self.gameTimer + dt
 	end
 
+	if self.gameTimer > 9999 and not self.testSpawn then
+		if USERNAME == "dv" then
+			self:spawnEnemy(self.player)
+		else
+			self:spawnEnemy(self.peers[1])
+		end
+		self.testSpawn = true
+	end
+
 	if self.DH.playing then
 		self.DH:update(dt)
 	else
@@ -96,7 +107,7 @@ function GameHandler:update(dt)
 end
 
 function GameHandler:spawnEnemy(object)
-	self:addObject(Enemy(self:getNewUID(), nil, {255,0,0}, .5, 5, math.random(96, 300), math.random(96, 300), 32, 32, 15, 2, object))
+	self:addObject(Enemy(self:getNewUID(), nil, {255,0,0}, .5, 5, 300, 300, 32, 32, 15, 2, object))
 end
 
 
@@ -194,12 +205,16 @@ end
 
 -- Creation functions
 
-function GameHandler:createProjectile(x, y, size, angle, damage, speed, creatorID)
+function GameHandler:createProjectile(x, y, size, angle, damage, speed, creatorID, time)
+	local changeInTime = self.gameTimer - time
+	x = x + (changeInTime * math.cos(angle) * speed * base_speed)
+	y = y + (changeInTime * math.sin(angle) * speed * base_speed)
+
 	self:addObject(Projectile(self:getNewUID(), nil, x, y, size, size, math.cos(angle), math.sin(angle), damage, speed, creatorID))
 
 	--(Multiplayer) Stream Projectile Spawn-----
 	if self.multiplayer and self.player.id == creatorID then
-		NH:spawnProjectile(x, y, size, angle, damage, speed, creatorID)
+		NH:spawnProjectile(x, y, size, angle, damage, speed, creatorID, time)
 	end
 	--------------------------------------------
 end
@@ -252,8 +267,8 @@ function GameHandler:fireWeapon(weapon, mx, my)
 				local leftAngle = angle - (spreadAngle/2) - ((i-1) * spreadAngle)
 				local rightAngle = angle + (spreadAngle/2) + ((i-1) * spreadAngle)
 
-				self:createProjectile(self.player.x, self.player.y, 16, leftAngle, weapon.stats.damage, weapon.stats.speed, self.player.id)
-				self:createProjectile(self.player.x, self.player.y, 16, rightAngle, weapon.stats.damage, weapon.stats.speed, self.player.id)
+				self:createProjectile(self.player.x, self.player.y, 16, leftAngle, weapon.stats.damage, weapon.stats.speed, self.player.id, self.gameTimer)
+				self:createProjectile(self.player.x, self.player.y, 16, rightAngle, weapon.stats.damage, weapon.stats.speed, self.player.id, self.gameTimer)
 			end
 		else
 			-- Odd num of projectiles
@@ -263,11 +278,11 @@ function GameHandler:fireWeapon(weapon, mx, my)
 				local leftAngle = angle - (i * spreadAngle)
 				local rightAngle = angle + (i * spreadAngle)
 
-				self:createProjectile(self.player.x, self.player.y, 16, leftAngle, weapon.stats.damage, weapon.stats.speed, self.player.id)
-				self:createProjectile(self.player.x, self.player.y, 16, rightAngle, weapon.stats.damage, weapon.stats.speed, self.player.id)
+				self:createProjectile(self.player.x, self.player.y, 16, leftAngle, weapon.stats.damage, weapon.stats.speed, self.player.id, self.gameTimer)
+				self:createProjectile(self.player.x, self.player.y, 16, rightAngle, weapon.stats.damage, weapon.stats.speed, self.player.id, self.gameTimer)
 			end
 			-- Fire at mouse
-			self:createProjectile(self.player.x, self.player.y, 16, angle, weapon.stats.damage, weapon.stats.speed, self.player.id)
+			self:createProjectile(self.player.x, self.player.y, 16, angle, weapon.stats.damage, weapon.stats.speed, self.player.id, self.gameTimer)
 		end
 
 		self.player:startAttackDelay(weapon.stats.firerate)

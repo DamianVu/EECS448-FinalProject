@@ -9,6 +9,8 @@ local address, port = "*", "5050"
 local entity, cmd, parms
 local running = true -- Whether server is running. Here, we auto-start
 
+local gameTimer = -.05 -- Assume that it will take around 50ms to tell players to start their game
+
 -- Initialize the server socket
 udp = socket.udp()
 udp:setsockname(address, port)
@@ -52,7 +54,11 @@ function reply(payload, ip, pn) udp:sendto(payload, ip, pn) end
 -- Receives incoming packets
 function receiver()
 	print("Entering receiver loop...")
+	prevTime = 0
 	while running do
+		currentTime = os.clock()
+		dt = currentTime - prevTime
+		prevTime = currentTime
 	  data, fromIP, fromPort = udp:receivefrom() -- Receive contents of packet
 	  if data then
 
@@ -97,6 +103,7 @@ function receiver()
       elseif cmd == nil then cmd = nil -- Dummy to avoid displaying nil commands
 
       	elseif cmd == "start" then
+      		print("Start command received. Telling each player to begin their game timer")
       		broadcast("server start")
 
       else print("Unkown command: '"..tostring(cmd).."' received from "..tostring(entity)) end
