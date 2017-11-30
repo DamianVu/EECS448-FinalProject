@@ -68,9 +68,18 @@ function Lobby:setGame(opt, serverIndex)
 		print("Game created.")
 	elseif opt == 'join' then
 		print("Joining...")
-		local selectedServer = self.LOBBY.lobbies[serverIndex] 		-- Set the selected lobby
+		-- local selectedServer = self.LOBBY.lobbies[serverIndex] 		-- Set the selected lobby
 		print("NEW GAME IS AT INDEX "..serverIndex) -- TESTING
-		self.LOBBY:joinGame(selectedServer)
+		-- self.LOBBY:joinGame(selectedServer)
+		self.LOBBY:joinGame(serverIndex)
+
+		--TESTING
+		print("SELECTION IS "..self.selection..", serverIndex sent to server is "..serverIndex)
+		print("LOCAL LOBBY TABLE:")
+		for i=1, #self.LOBBY.lobbies do
+			print("INDEX "..i..": "..self.LOBBY.lobbies[i])
+		end
+
 	end
 end
 
@@ -82,7 +91,7 @@ function Lobby:keypressed(key)
 		if self.options[self.selection] == "Create New Game" then
 				self:setGame('new')
 		else
-			self:setGame('join', self.selection)
+			self:setGame('join', self.selection - 1)
 		end
 	end
 

@@ -34,12 +34,7 @@ end
 
 function LobbyHandler:fetchMenu()
 	self:fetchLobbyInfo()
-
 	print("Populating server list...")
-	-- repeat -- Populate the lobbylist, waiting until completion
-	-- 	self:receive()
-	-- until #self.lobbies == self.count
-	-- print("Populated. "..self.count.." games found.")
 	self.menu = self.lobbies
 	self.menu[#self.menu + 1] = "Create New Game"
 	return self.menu
@@ -91,8 +86,8 @@ function LobbyHandler:newGame(gameName)
 	self:send(USERNAME..USERID.." newgame "..gameName)
 end
 
-function LobbyHandler:joinGame(gameName)
-	self:send(USERNAME..USERID.." select "..gameName)
+function LobbyHandler:joinGame(gameIndex)
+	self:send(USERNAME..USERID.." select "..gameIndex)
 end
 
 -- LOBBY PROTOCOL -- (I got lazy and gave up on this comment)
