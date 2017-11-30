@@ -13,6 +13,7 @@ require "handlers.ItemHandler"
 require "handlers.GameHandler"
 require "handlers.NetworkHandler"
 require "handlers.MapCreationHandler"
+require "handlers.DialogueHandler"
 require "handlers.LobbyHandler"
 
 require "libraries.classes.cObject"

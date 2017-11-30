@@ -17,13 +17,15 @@ function Singleplayer:enter()
 
 	
 
-	GH:addObject(Player(GH:getNewUID(), spriteImg, CHARACTERCOLOR, 1, 10, 96, 96, 32, 32))
+	GH:addObject(Player(GH:getNewUID(), CURRENTSPRITE, CHARACTERCOLOR, 1, 10, 96, 96, 48, 48))
 
 
 
 	GH:addObject(Enemy(GH:getNewUID(), nil, {255,0,0}, .5, 5, math.random(96, 300), math.random(96, 300), 32, 32, 15, 2, GH.player))
 
-	GH.LH:loadLevel("testcave", 1)
+	GH.LH:loadLevel("home", 1)
+
+	GH.DH:start("Starting")
 	
 end
 
@@ -51,6 +53,10 @@ function Singleplayer:draw()
 
 
 	HUD:draw()
+
+	if GH.DH.playing then
+		GH.DH:draw()
+	end
 
     love.graphics.setColor(255, 255, 255)
     local mx,my = love.mouse.getPosition()

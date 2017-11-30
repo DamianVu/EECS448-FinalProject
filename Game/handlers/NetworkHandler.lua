@@ -66,6 +66,7 @@ end
 
 -- Receive packet stream of peers through the server
 function NetworkHandler:receive()
+	prevTime = 0
 	repeat
 		-- Read and parse packet
 		receivedData, msg = self.udp:receive()
@@ -73,7 +74,7 @@ function NetworkHandler:receive()
 			if self.verbose_debug then print(receivedData) end
 
 			-- Grammar definition
-			local entity, cmd, parms = tostring(receivedData):match("^(%S*) (%S*) *(.*)")
+			local entity, cmd, parms = tostring(receivedData):match("^(%S*) *(%S*) *(.*)")
 			if entity ~= self.GH.player.id then -- Broadcast Type Commands
 				if cmd == 'join' then -- Broadcast Type
 					local px, py, pr, pg, pb = parms:match("(-*%d+.*%d*) (-*%d+.*%d*) (%d+) (%d+) (%d+)")
@@ -90,8 +91,11 @@ function NetworkHandler:receive()
 					self.peers[ind].y = y
 				end
 				if cmd == 'spawnprojectile' then -- Broadcast Type
-					local x, y, size, angle, damage, speed = parms:match("(-*%d+.*%d*) (-*%d+.*%d*) (-*%d+.*%d*) (-*%d+.*%d*) (-*%d+.*%d*) (-*%d+.*%d*)")
-					self.GH:createProjectile(x, y, size, angle, damage, speed, entity)
+					local x, y, size, angle, damage, speed, time = parms:match("(-*%d+.*%d*) (-*%d+.*%d*) (-*%d+.*%d*) (-*%d+.*%d*) (-*%d+.*%d*) (-*%d+.*%d*) (%d+.*%d*)")
+					self.GH:createProjectile(x, y, size, angle, damage, speed, entity, time)
+				end
+				if cmd == 'start' then
+					self.GH.gameStarted = true
 				end
 			else -- Response Type Commands
 				if cmd == 'rejoin' then -- Response Type
@@ -113,8 +117,8 @@ function NetworkHandler:playerMove(id, x, y)
 end
 
 -- Broadcast a projectile spawn by the player
-function NetworkHandler:spawnProjectile(x, y, size, angle, damage, speed, creatorID)
-	self:send(creatorID.." spawnprojectile "..x.." "..y.." "..size.." "..angle.." "..damage.." "..speed)
+function NetworkHandler:spawnProjectile(x, y, size, angle, damage, speed, creatorID, time)
+	self:send(creatorID.." spawnprojectile "..x.." "..y.." "..size.." "..angle.." "..damage.." "..speed.." "..time)
 end
 
 function NetworkHandler:playerDeath(id)

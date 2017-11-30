@@ -35,8 +35,7 @@ function CharacterHandler:getCharacters()
 			elseif j == 2 then
 				char.salt = line
 			elseif j == 3 then
-				local r,g,b = line:match("(%d+),(%d+),(%d+)")
-				char.color = {tonumber(r),tonumber(g),tonumber(b)}
+				char.sprite = line
 			end
 			j = j + 1
 		end
@@ -53,10 +52,9 @@ function CharacterHandler:saveCurrentCharacter()
 end
 
 --- Add a character to the character handler\
-function CharacterHandler:addCharacter(name, color)
-	local r,g,b = unpack(color)
+function CharacterHandler:addCharacter(name, sprite)
 
-	local data = name .. "\n" .. tostring(math.random(99999)) .. "\n" .. r .. "," .. g .. "," .. b
+	local data = name .. "\n" .. tostring(math.random(99999)) .. "\n" .. sprite
 
 	local fname = name:gsub('%W', '')
 
@@ -74,4 +72,14 @@ function CharacterHandler:addCharacter(name, color)
 	else
 		love.filesystem.write("characters/" .. fname .. ".dat", data)
 	end
+end
+
+function CharacterHandler:loadCharacterSprites()
+	local files = love.filesystem.getDirectoryItems("images/sprites/characters/")
+	local sprites = {}
+	for i = 1, #files do
+		sprites[i] = {files[i], love.graphics.newImage('images/sprites/characters/' .. files[i])}
+	end
+
+	return sprites
 end
