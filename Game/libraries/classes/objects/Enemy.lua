@@ -6,7 +6,7 @@ function Enemy:init(id, sprite, color, speed, bumpFactor, x, y, width, height, h
 	self.type = ENEMY
 	self.bumpFactor = bumpFactor or 1
 	self.sprite = sprite or enemyImg
-	self.color = color or {math.random(0,255), math.random(0,255), math.random(0,255)}
+	self.color = color or {255,0,0,255}
 	self.speed = speed or 0 -- 0 means stationary
 	self.x = x
 	self.y = y
@@ -18,7 +18,7 @@ function Enemy:init(id, sprite, color, speed, bumpFactor, x, y, width, height, h
 	self.scaleX = self.width / imgW
 	self.scaleY = self.height / imgH
 	self.rotation = rotation or 0
-	self.chaseObj = chaseObj or player
+	self.chaseObj = chaseObj or GH.player
 	self.health = health or 10
 	self.maxHealth = self.health
 	self.damage = damage or 2

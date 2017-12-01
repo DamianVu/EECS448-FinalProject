@@ -13,7 +13,9 @@ require "handlers.ItemHandler"
 require "handlers.GameHandler"
 require "handlers.NetworkHandler"
 require "handlers.MapCreationHandler"
+require "handlers.DialogueHandler"
 require "handlers.LobbyHandler"
+require "handlers.EventHandler"
 
 require "libraries.classes.cObject"
 require "libraries.classes.CoordinateList"
@@ -81,7 +83,7 @@ function love.load()
     --love.window.setMode(windowWidth, windowHeight, {resizable=false, vsync=false, minwidth=800, minheight=600, borderless=true, msaa=2})
 
     Gamestate.registerEvents()
-    Gamestate.switch(Mainmenu)
+    Gamestate.switch(CharacterSelection)
 
 
     -- Physics variables

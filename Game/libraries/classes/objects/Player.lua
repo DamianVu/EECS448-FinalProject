@@ -5,7 +5,7 @@ function Player:init(id, sprite, color, speed, health, x, y, width, height)
 	self.id = id
 	self.type = PLAYER
 	self.sprite = sprite or spriteImg
-	self.color = color or {math.random(0,255), math.random(0,255), math.random(0,255), 255}
+	self.color = color or {255,255,255,255}
 	self.currentColor = self.color
 	self.speed = speed or 1
 	self.x = x

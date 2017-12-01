@@ -9,6 +9,7 @@ local address, port = "*", arg[1]
 local entity, cmd, parms
 local running = true -- Whether server is running. Here, we auto-start
 
+local gameTimer = -.05 -- Assume that it will take around 50ms to tell players to start their game
 local serverName = arg[2]
 
 -- Initialize the server socket
@@ -54,7 +55,11 @@ function reply(payload, ip, pn) udp:sendto(payload, ip, pn) end
 -- Receives incoming packets
 function receiver()
 	print("Entering receiver loop...")
+	prevTime = 0
 	while running do
+		currentTime = os.clock()
+		dt = currentTime - prevTime
+		prevTime = currentTime
 	  data, fromIP, fromPort = udp:receivefrom() -- Receive contents of packet
 	  if data then
 
@@ -88,7 +93,7 @@ function receiver()
 					broadcast(data)
 					print("Player left, attempting to set index " .. indexOf(entity) .. "'s property 'connected' to 'false'")
 					players[indexOf(entity)].connected = false
-			elseif cmd == 'moveto' then
+		elseif cmd == 'moveto' then
 					broadcast(data)
     			local x, y = parms:match("^(%-?[%d.e]*) (%-?[%d.e]*)$")
           local i = indexOf(entity)
@@ -96,6 +101,11 @@ function receiver()
       -- elseif cmd == 'listplayers' then
 			elseif cmd == 'spawnprojectile' then broadcast(data)
       elseif cmd == nil then cmd = nil -- Dummy to avoid displaying nil commands
+
+      	elseif cmd == "start" then
+      		print("Start command received. Telling each player to begin their game timer")
+      		broadcast("server start")
+
       else print("Unkown command: '"..tostring(cmd).."' received from "..tostring(entity)) end
 	  elseif fromIP ~= 'timeout' then error("Network error: "..tostring(fromIP)) end
 
