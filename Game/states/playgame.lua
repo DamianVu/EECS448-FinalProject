@@ -3,6 +3,8 @@ Play = {}
 
 local centerX, centerY = love.graphics.getWidth()/2, love.graphics.getHeight()/2
 
+centerX = centerX - 150
+
 --- Called on initialization (in main.lua)
 function Play:init()
 	self.options = {
