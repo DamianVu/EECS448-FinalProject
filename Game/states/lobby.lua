@@ -14,7 +14,6 @@ function Lobby:enter()
 
   -- Our LobbyHandler, referred to as LOBBY
 	self.LOBBY = LobbyHandler(GH, SERVER_ADDRESS, LOBBY_PORT) -- IP is that of vuhoo.org, Port is 5001
-
   self.options = self.LOBBY.menu
   self.currentMenu = 1
   self.selection = 1
@@ -26,9 +25,7 @@ function Lobby:draw()
 	if self.currentMenu == 1 then
 		love.graphics.setColor(255,255,255,255)
 		love.graphics.setNewFont(30)
-
 		love.graphics.print("Playing as: " .. USERNAME, centerX, 50)
-
 
     -- Print menu items (lobbies + create new)
     local drawY = 0
@@ -40,7 +37,6 @@ function Lobby:draw()
     -- Selection highlighter
 		love.graphics.setColor(0,255,230,255)
 		love.graphics.print("--->", centerX - 65, centerY + ((self.selection - 1) * 50) - 2)
-
 	end
 end
 
@@ -51,11 +47,8 @@ end
 
 --- Called when this state has been left
 function Lobby:leave()
-	print("leaving lobby and disconnecting from lobby server...")
 	self.LOBBY:disconnect()
-	print("left")
 end
-
 --- Called if the user closes the game while in this state
 function Lobby:quit()
 	self.LOBBY:disconnect()
@@ -68,9 +61,7 @@ function Lobby:setGame(opt, serverIndex)
 		print("Game created.")
 	elseif opt == 'join' then
 		print("Joining...")
-		local selectedServer = self.LOBBY.lobbies[serverIndex] 		-- Set the selected lobby
-		print("NEW GAME IS AT INDEX "..serverIndex) -- TESTING
-		self.LOBBY:joinGame(selectedServer)
+		self.LOBBY:joinGame(serverIndex)
 	end
 end
 
@@ -82,7 +73,7 @@ function Lobby:keypressed(key)
 		if self.options[self.selection] == "Create New Game" then
 				self:setGame('new')
 		else
-			self:setGame('join', self.selection)
+			self:setGame('join', self.selection - 1)
 		end
 	end
 
@@ -107,9 +98,5 @@ function Lobby:keypressed(key)
 		end
 	end
 end
-
-
-
-
 
 return Lobby
