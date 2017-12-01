@@ -1,3 +1,4 @@
+---Map TestCave
 Map = {
 	name = "testcave",
 	startingLocations = {

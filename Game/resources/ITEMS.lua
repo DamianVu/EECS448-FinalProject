@@ -1,4 +1,4 @@
-
+---Items
 Items = {
 	[1] = {name = "PewPew", type=WEAPON, weaponType=RANGED, stats={firerate = 1, damage = 5, speed = 1.5, projectiles = 1}},
 	[2] = {name = "RapidFire", type=WEAPON, weaponType=RANGED, stats={firerate = .1, damage = 1, projectiles = 1, speed = 1}},

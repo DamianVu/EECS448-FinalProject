@@ -1,3 +1,4 @@
+---Map Garden
 Map = {
 	name = "garden",
 	startingLocations = {

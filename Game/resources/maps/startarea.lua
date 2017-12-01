@@ -1,3 +1,4 @@
+---Map Home
 Map = {
 	name = "home",
 	startingLocations = {

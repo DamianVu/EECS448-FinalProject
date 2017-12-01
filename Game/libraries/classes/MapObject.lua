@@ -1,4 +1,4 @@
-
+---Class Map Object
 MapObject = class("MapObject", {})
 
 function MapObject:init(image, quad, properties)

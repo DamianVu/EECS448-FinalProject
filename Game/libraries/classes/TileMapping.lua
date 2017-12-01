@@ -1,4 +1,4 @@
-
+---Class Tilemapping
 Map = class("Map", {})
 --- Class defn
 function Map:init(grid, id_dict)

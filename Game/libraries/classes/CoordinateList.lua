@@ -1,4 +1,4 @@
-
+---Class CoordinateList
 CoordinateList = class("CoordinateList", {list = {}})
 --- Init
 function CoordinateList:init(unique)

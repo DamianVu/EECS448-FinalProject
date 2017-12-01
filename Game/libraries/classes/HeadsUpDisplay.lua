@@ -1,4 +1,4 @@
-
+---Class HUD
 HeadsUpDisplay = class("HeadsUpDisplay", {})
 
 function HeadsUpDisplay:init()

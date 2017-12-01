@@ -1,3 +1,4 @@
+---Class Tile
 Tile = class("Tile", {})
 --- TODO Tile Objects will have all information for a given tile that needs to be realized. Render position, size, collision enable, etc.
 function Tile:init(id, x, y, width, height, collision, bumpFactor)
