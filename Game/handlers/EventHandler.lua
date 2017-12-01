@@ -28,23 +28,16 @@ function EventHandler:triggerEvent()
 		table.sort(GH.connectedIDs)
 
 		if math.random(2) == 1 then
-			-- Spawn enemy
-			local chaseObj = self:findByNetworkID(GH.connectedIDs[math.random(#GH.connectedIDs)])
-		end
+		local radius = 200
+			for i = 1, math.random(#GH.connectedIDs) do
+				local angle = math.random(100) * math.pi * 2 / 100
 
+				local enemy = self.enemies[math.random(#self.enemies)]
 
+				local chaseObj = self:findByNetworkID(GH.connectedIDs[math.random(#GH.connectedIDs)])
 
-		if num == 1 then
-			--for i = 1, math.random(4) do
-			num1 = math.random(#GH.connectedIDs)
-			print(num1)
-			num2 = math.random(96,400)
-			print(num2)
-			num3 = math.random(96,400)
-			print(num3)
-
-			local chaseObj = self:findByNetworkID(GH.connectedIDs[num1])
-			GH:addObject(Enemy(GH:getNewUID(), lavaBug, {255,255,255}, .99, 1, num2, num3, 32, 32, 5, 1, chaseObj))
+				GH:addObject(Enemy(GH:getNewUID(), enemy[1], {255,255,255}, enemy[2], 1, GH.player.x + math.cos(angle) * radius, GH.player.y + math.sin(angle) * radius, 32, 32, enemy[3], enemy[4], GH.player))
+			end
 		end
 	else
 		if math.random(2) == 1 then
