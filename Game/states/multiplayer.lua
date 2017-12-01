@@ -21,7 +21,7 @@ function OnlineGame:enter() -- enter is called everytime this state occurs
 
 	GH:addObject(Player(USERNAME .. USERID, nil, love.graphics.newImage("images/sprites/characters/" .. USERSPRITE .. ".png"), CHARACTERCOLOR, 1, 50, 96, 96, 48, 48))
 
-	GH.LH:loadLevel("test", 1)
+	GH.LH:loadLevel("beach", 1)
 
 	messageCount = 0
 	print("Connecting to server")

@@ -1,9 +1,9 @@
-
+--- handles lobby system for joining a game.
 class = require 'libraries.ext.30log'
 
 LobbyHandler = class("LobbyHandler", {})
 
--- Constructor for the LobbyHandler
+-- Constructor for the LobbyHandler.
 function LobbyHandler:init(GH, ip, port)
 	self.verbose_debug = true
 	self.socket = require "socket"
@@ -17,7 +17,7 @@ function LobbyHandler:init(GH, ip, port)
 	self:connect()
 end
 
--- Connect to the Lobby server
+-- Connect to the Lobby server.
 function LobbyHandler:connect()
 	self.udp = socket.udp()
 	self.udp:setpeername(self.lobbyIP, self.lobbyPort)
@@ -27,11 +27,12 @@ function LobbyHandler:connect()
 	self:fetchMenu()
 end
 
--- Close the peer-type connection to the lobby server
+-- Close the peer-type connection to the lobby server.
 function LobbyHandler:disconnect()
 	self.udp:close()
 end
 
+-- Populates lobby server list.
 function LobbyHandler:fetchMenu()
 	self:fetchLobbyInfo()
 	print("Populating server list...")
@@ -40,19 +41,20 @@ function LobbyHandler:fetchMenu()
 	return self.menu
 end
 
+-- Gets lobby information.
 function LobbyHandler:fetchLobbyInfo()
-	self:send( USERNAME..USERID.." countlobbies") -- Set number of lobbies to wait for
-	self:send( USERNAME..USERID.." fetchlobbies") -- Request the lobbies and wait for the list to populate
+	self:send( USERNAME..USERID.." countlobbies") -- Set number of lobbies to wait for.
+	self:send( USERNAME..USERID.." fetchlobbies") -- Request the lobbies and wait for the list to populate.
 end
 
--- Send a packet to the server
+-- Send a packet to the server.
 function LobbyHandler:send(packet)
 	if self.verbose_debug then print("Sending to matchmaking server: "..packet) end
 	self.udp:send(packet)
 	self.messageCount = self.messageCount + 1
 end
 
--- Receive responses from the lobby server
+-- Receive responses from the lobby server.
 function LobbyHandler:receive()
 	repeat
 		-- Read and parse packet
@@ -82,10 +84,12 @@ function LobbyHandler:receive()
 	until not receivedData
 end
 
+-- new game option. 
 function LobbyHandler:newGame(gameName)
 	self:send(USERNAME..USERID.." newgame "..gameName)
 end
 
+-- join game option. 
 function LobbyHandler:joinGame(gameIndex)
 	self:send(USERNAME..USERID.." select "..gameIndex)
 end
