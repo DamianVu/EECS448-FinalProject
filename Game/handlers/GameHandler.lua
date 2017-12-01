@@ -1,6 +1,6 @@
-
+---Handler GameHandler.
 GameHandler = class("GameHandler", {})
-
+---GameHandler contructor.
 function GameHandler:init()
 	self.terrain = {}
 	self.projectiles = {}
@@ -38,7 +38,7 @@ function GameHandler:init()
 
 	self.connectedIDs = {}
 end
-
+---GameHandler add object.
 function GameHandler:addObject(obj)
 	if obj.type == PLAYER then
 		self.CH:addObject(obj)
@@ -58,7 +58,7 @@ function GameHandler:addObject(obj)
 	end
 end
 
--- Draw functions
+--- Draw functions.
 function GameHandler:draw()
 	-- Draw Enemies
 	for i=#self.enemies, 1, -1 do self.enemies[i]:draw() end
@@ -79,7 +79,7 @@ end
 
 
 
--- Update functions (primary game dt function)
+--- Update functions (primary game dt function).
 function GameHandler:update(dt)
 
 	if self.gameStarted or not self.multiplayer then
@@ -111,12 +111,12 @@ function GameHandler:update(dt)
 		end
 	end
 end
-
+---GameHandler spawnEnemy.
 function GameHandler:spawnEnemy(object)
 	self:addObject(Enemy(self:getNewUID(), nil, {255,0,0}, .5, 5, 300, 300, 32, 32, 15, 2, object))
 end
 
-
+---GameHandler updatePeers.
 function GameHandler:updatePeers(dt)
 	for i=1, #self.peers, 1 do
 		if self.peers[i]:isDead() then
@@ -124,7 +124,7 @@ function GameHandler:updatePeers(dt)
 		end
 	end
 end
-
+---GameHandler updatePlayer.
 function GameHandler:updatePlayer(dt)
 
 	if self.player:isDead() then
@@ -200,7 +200,7 @@ function GameHandler:updatePlayer(dt)
 		self.player:updateAttackDelay(dt)
 	end
 end
-
+---GameHandler updateEnemies.
 function GameHandler:updateEnemies(dt)
 	for i = #self.enemies, 1, -1 do
 		self.enemies[i]:chase()
@@ -210,7 +210,7 @@ function GameHandler:updateEnemies(dt)
 		end
 	end
 end
-
+---GameHandler updateProjectiles.
 function GameHandler:updateProjectiles(dt)
 	for i=#self.projectiles, 1, -1 do self.projectiles[i]:move(dt) end
 end
@@ -218,7 +218,7 @@ end
 -- End of update functions
 
 -- Creation functions
-
+---GameHandler createProjectile.
 function GameHandler:createProjectile(x, y, size, angle, damage, speed, creatorID, time)
 	local changeInTime = self.gameTimer - time
 	x = x + (changeInTime * math.cos(angle) * speed * base_speed)
@@ -239,7 +239,7 @@ end
 
 
 -- Helper functions
-
+---GameHandler destroyProjectile.
 function GameHandler:destroyProjectile(id)
 	table.remove(self.CH.projectiles, self.getObjectPosition(id, self.CH.projectiles))
 	table.remove(self.projectiles, self.getObjectPosition(id, self.projectiles))
@@ -251,7 +251,7 @@ function GameHandler:destroyEnemy(id)
 	table.remove(self.CH.objects, self.getObjectPosition(id, self.CH.objects))
 	table.remove(self.enemies, self.getObjectPosition(id, self.enemies))
 end
-
+---GameHandler getObjectPosition.
 function GameHandler.getObjectPosition(id, table)
 	for i=1, #table do
 		if table[i].id == id then
@@ -260,12 +260,12 @@ function GameHandler.getObjectPosition(id, table)
 	end
 	return -1
 end
-
+---GameHandler getNewUID.
 function GameHandler:getNewUID()
 	self.uid_counter = self.uid_counter + 1
 	return self.uid_counter
 end
-
+---GameHandler fireWeapon
 function GameHandler:fireWeapon(weapon, mx, my)
 	-- Move this to its own handler later?
 	if weapon.weaponType == RANGED then
