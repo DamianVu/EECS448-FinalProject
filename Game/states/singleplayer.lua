@@ -1,127 +1,86 @@
---- State Single player (module).
--- This module runs the single player game
-SoloGame = {}
 
-local movingObj = {}
+Singleplayer = {}
 
---- This is called only when the the module has been initialized (in main.lua)
-function SoloGame:init() -- init is only called once
 
+
+function Singleplayer:init()
 end
 
+function Singleplayer:enter()
+	collision = 0
 
---- Called whenever this state is entered
-function SoloGame:enter() -- enter is called everytime this state occurs
-    noclip = false -- if true then no collision should happen.
-    debugMode = false
-	CH = CollisionHandler()
+	GH = GameHandler()
 
 	love.graphics.setNewFont(16)
 
-	MH = MapHandler()
-    MH:loadMap(2,2)
+	HUD = HeadsUpDisplay()
 
-	player = cObject(USERNAME, love.graphics.newImage('images/sprites/player.png'), nil, 1, 96, 96, 32, 32)
+	
 
-	CH:addObj(player)
-    movingObj[#movingObj + 1] = player
+	GH:addObject(Player(GH:getNewUID(), CURRENTSPRITE, CHARACTERCOLOR, 1, 10, 96, 96, 48, 48))
 
 
+
+	--GH:addObject(Enemy(GH:getNewUID(), nil, {255,0,0}, .5, 5, math.random(96, 300), math.random(96, 300), 32, 32, 15, 2, GH.player))
+
+	GH.LH:loadLevel("garden", 1)
+
+	--GH.DH:start("Starting")
+	
 end
 
---- Called on game ticks for drawing operations
-function SoloGame:draw()
-	if CH.playerMovement then
-        x_translate_val = (love.graphics.getWidth() / 2) - player.x
-        y_translate_val = (love.graphics.getHeight() / 2) - player.y
-    end
+function Singleplayer:draw()
+	x_translate_val = (love.graphics.getWidth() / 2) - GH.player.x
+	y_translate_val = (love.graphics.getHeight() / 2) - GH.player.y
 
-    love.graphics.push()
-    love.graphics.translate(x_translate_val, y_translate_val)
+	love.graphics.push()
+	love.graphics.translate(x_translate_val, y_translate_val)
 
-    MH:drawMap()
-    if debugMode then
-        highlightTiles(player)
-    end
+	MH:drawMap()
 
-    -- Draw all players
-    player:draw()
+	GH:draw()
 
-    if debugMode then
-      --player:drawHitbox() no need until we update hitboxes
-    end
 
-    love.graphics.pop()
+	love.graphics.pop()
 
+	love.graphics.setColor(0,255,0)
+	love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 10, 60)
+	love.graphics.print("Collision: " .. tostring(collision), 10, 80)
+	love.graphics.print("Number of projectiles: " .. #GH.projectiles, 10, 100)
+	love.graphics.print("Score: " .. GH.player.score, 10, 120)
+	love.graphics.print("Time: " .. math.floor(GH.gameTimer), 10, 160)
+
+
+
+	HUD:draw()
+
+	if GH.DH.playing then
+		GH.DH:draw()
+	end
 
     love.graphics.setColor(255, 255, 255)
-    love.graphics.circle("line", mouse.x, mouse.y, 5) -- "line" is outline, 5 is radius
+    local mx,my = love.mouse.getPosition()
+    love.graphics.circle("line", mx, my, 8)
 
-    -- Debugging information (from debugging.lua)
-    drawMonitors()
-
-    if debugMode then drawDebug() end
-
-    -- End Text in the top left
-    --love.graphics.circle("fill", windowWidth/2, windowHeight/2, 2)            This code draws a dot in the center of the screen
-
-    -- Code that will cap FPS at 144 --
-    local cur_time = love.timer.getTime()
-    if next_time <= cur_time then
-        next_time = cur_time
-        return
-    end
-
-    love.timer.sleep(next_time - cur_time)
-    -- End Code that will cap FPS at 144 --
 end
 
---- Called every game tick to update game data
-function SoloGame:update(dt)
-	if CH.playerMovement then
+function Singleplayer:update(dt)
 
-        -- Change velocity according to keypresses
-        if love.keyboard.isDown('d') then player.x_vel = player.speed * base_speed * dt end
-        if love.keyboard.isDown('a') then player.x_vel = -player.speed * base_speed * dt end
-        if love.keyboard.isDown('w') then player.y_vel = -player.speed * base_speed * dt end
-        if love.keyboard.isDown('s') then player.y_vel = player.speed * base_speed * dt end
-
-        -- Friction
-        if not love.keyboard.isDown('d','a') then
-            if (player.x_vel_counter < 1) then player.x_vel = 0
-            else player.x_vel_counter = player.x_vel_counter - 1 end
-        else player.x_vel_counter = base_slowdown_counter
-        end
-        if not love.keyboard.isDown('w','s') then
-            if (player.y_vel_counter < 1) then player.y_vel = 0
-            else player.y_vel_counter = player.y_vel_counter - 1 end
-        else player.y_vel_counter = base_slowdown_counter
-        end
-
-    else
-        if CH.playerMovementDisableCount < 1 then
-            CH.playerMovementDisableCount = 10
-            CH.playerMovement = true
-        else CH.playerMovementDisableCount = CH.playerMovementDisableCount - 1
-        end
-    end
-
-    -- Handle collisions
-    if not noclip then CH:checkCollisions() end
-
-    -- Move the moving objects after collisions have been handled
-    for i = 1, #movingObj do movingObj[i]:move() end
+	GH:update(dt)
 
 end
 
 --- Event binding to listen for key presses
-function SoloGame:keypressed(key)
--- Handle keypresses
-    if debugMode and key == 'r' then player.x, player.y = 0, 0 end -- Reset position
-    if key == 'n' then noclip = not noclip end
-    if key == 'tab' then debugMode = not debugMode end -- Toggle debug mode
-    if key == 'escape' then Gamestate.switch(PlayMenu) end
+function Singleplayer:keypressed(key)
+	if key == 'r' then
+    	Gamestate.switch(Singleplayer)
+	end
+	if key == "escape" then
+		Gamestate.switch(PlayMenu)
+	end
 end
 
 
-return SoloGame
+
+
+return Singleplayer

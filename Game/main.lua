@@ -1,13 +1,43 @@
 ---Current functionality is just movement and mouse cursor until we get maps and tiling implemented.
 
+class = require 'libraries.ext.30log'
+
+require "GAMECONSTANTS"
 
 require "handlers.CollisionHandler"
 require "handlers.MapHandler"
 require "handlers.CharacterHandler"
+require "handlers.LevelHandler"
+require "handlers.NewCollisionHandler"
+require "handlers.ItemHandler"
+require "handlers.GameHandler"
+require "handlers.NetworkHandler"
+require "handlers.MapCreationHandler"
+require "handlers.DialogueHandler"
+require "handlers.LobbyHandler"
 
-require "libraries.cObject"
+require "libraries.classes.cObject"
+require "libraries.classes.CoordinateList"
+require "libraries.classes.Map"
+require "libraries.classes.Tile"
+require "libraries.classes.TileMapping"
+
+require "libraries.classes.objects.Player"
+require "libraries.classes.objects.Peer"
+require "libraries.classes.objects.Terrain"
+require "libraries.classes.objects.Projectile"
+require "libraries.classes.objects.Enemy"
+
+require "libraries.classes.MCTile"
+require "libraries.classes.MapObject"
+require "libraries.classes.HeadsUpDisplay"
+
 require "debugging"
 require "netClient"
+
+require 'resources.rawmaps' -- Revamp for project 4
+
+
 
 Gamestate = require "libraries.ext.gamestate"
 
@@ -15,9 +45,12 @@ SplashScreen = require "states.splashscreen"
 Mainmenu = require "states.mainmenu"
 Singleplayer = require "states.singleplayer"
 Multiplayer = require "states.multiplayer"
+LobbyMenu = require "states.lobby"
 Debugging = require "states.debugstate"
 CharacterSelection = require "states.characterselection"
 PlayMenu = require "states.playgame"
+MapCreator = require "states.mapcreator"
+GameOver = require "states.gameover"
 
 mouse = {}
 movingObjects = {}
@@ -26,9 +59,6 @@ player = {}
 math.randomseed(os.time())
 
 -- Server connection information (Currently the AWS server info)
-SERVER_ADDRESS, SERVER_PORT = "13.58.15.46", 5050
-USERNAME = "Lane" -- String eventually
-updateRate = 0.1
 
 
 function love.load()
@@ -37,7 +67,14 @@ function love.load()
         love.filesystem.createDirectory("characters")
     end
 
+    if not love.filesystem.exists("maps") then
+        love.filesystem.createDirectory("maps")
+    end
+
     CharHandler = CharacterHandler()
+
+
+    love.mouse.setVisible(false)
 
     -- Set up window
     --windowWidth = 1600
@@ -45,40 +82,46 @@ function love.load()
     --love.window.setMode(windowWidth, windowHeight, {resizable=false, vsync=false, minwidth=800, minheight=600, borderless=true, msaa=2})
 
     Gamestate.registerEvents()
-    Gamestate.switch(SplashScreen)
+    Gamestate.switch(Singleplayer)
 
-    love.mouse.setVisible(false)
 
     -- Physics variables
     base_speed = 250
-    base_slowdown_counter = 5 -- Game will wait this many game ticks before velocity comes to a halt
 
 
-
-    -- Code that will cap FPS at 144
-    min_dt = 1/160
-    next_time = love.timer.getTime()
-    -- End Code that will cap FPS at 144
-
+    arrowCursor = love.mouse.getSystemCursor("arrow")
+    handCursor = love.mouse.getSystemCursor("hand")
 end
 
 function love.draw()
-    love.graphics.setColor(255, 255, 255)
-    love.graphics.circle("line", mouse.x, mouse.y, 5)
+
 end
 
 function love.update(dt)
-    -- Code that will cap FPS at 144
-    next_time = next_time + min_dt
-
-    -- Get current mouse position and store in object mouse
-    mouse.x, mouse.y = love.mouse.getPosition()
-
 
 end
 
 function love.keypressed(key)
 
+end
+
+function love.wheelmoved(x, y)
+    if Gamestate.current() == MapCreator then
+        if canZoom then
+            if y < 0 and zoom <= minZoom then
+                zoom = minZoom
+                return
+            end
+            if y > 0 and zoom >= maxZoom then
+                zoom = maxZoom
+                return
+            end
+            zoom = zoom * (1 + (y * .2))
+        else
+            -- Scroll through tiles
+            MCH:changeTile(y)
+        end
+    end
 end
 
 
