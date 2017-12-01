@@ -108,6 +108,8 @@ function NetworkHandler:receive()
 					self.GH.gameStarted = true
 				end
 				if cmd == 'netid' then
+					print("Hey we received " .. entity .. "'s ID. that's cool. it is :" .. tonumber(parms))
+					
 					GH.peers[self:locatePeer(entity, GH.peers)].networkID = tonumber(parms)
 					GH.connectedIDs[#GH.connectedIDs + 1] = tonumber(parms)
 					table.sort(GH.connectedIDs)

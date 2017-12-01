@@ -92,7 +92,10 @@ function receiver()
 					-- Bounce the current players back to the new player
 					for i=1, #players do
 						local p = players[i]
-						if p.id ~= entity and p.connected then reply(p.id.." join "..p.x.." "..p.y.." "..p.s, fromIP, fromPort) end
+						if p.id ~= entity and p.connected then 
+							reply(p.id.." join "..p.x.." "..p.y.." "..p.s, fromIP, fromPort)
+							reply(p.id.." netid "..i)
+						end
 					end
       elseif cmd == 'leave' then
 					broadcast(data)
