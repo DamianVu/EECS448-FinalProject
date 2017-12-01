@@ -110,6 +110,7 @@ function NetworkHandler:receive()
 				if cmd == 'netid' then
 					GH.peers[self:locatePeer(entity, GH.peers)].networkID = tonumber(parms)
 					GH.connectedIDs[#GH.connectedIDs + 1] = tonumber(parms)
+					table.sort(GH.connectedIDs)
 				end
 			else -- Response Type Commands
 				if cmd == 'rejoin' then -- Response Type
@@ -118,6 +119,7 @@ function NetworkHandler:receive()
 				if cmd == 'yourid' then
 					GH.player.networkID = tonumber(parms)
 					GH.connectedIDs[#GH.connectedIDs + 1] = tonumber(parms)
+					table.sort(GH.connectedIDs)
 				end
 			end
 		elseif msg~= 'timeout' then
