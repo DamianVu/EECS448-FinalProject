@@ -16,7 +16,7 @@ function MapHandler:loadAllMaps()
 	for i = 1, #files do
 		local filename = files[i]:match("(.+).lua")
 		if filename ~= nil then
-			self.maps[i] = require ("resources.maps." .. filename)
+			self.maps[#self.maps + 1] = require ("resources.maps." .. filename)
 		end
 	end
 end
