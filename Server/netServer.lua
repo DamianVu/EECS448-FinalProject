@@ -82,10 +82,12 @@ function receiver()
 						players[p].ip = fromIP
 						players[p].port = fromPort
 						reply(entity .. " rejoin " .. players[p].x .. " " .. players[p].y, fromIP, fromPort)
-						
+
 						reply(entity .. " yourid " .. p, fromIP, fromPort)
 						print("This is a rejoin in our player table at index " .. p)
 					end -- Set player's connected property to true
+
+					broadcast(entity .. " netid " .. indexOf(entity))
 
 					-- Bounce the current players back to the new player
 					for i=1, #players do
