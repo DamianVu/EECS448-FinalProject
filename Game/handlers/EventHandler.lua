@@ -4,6 +4,7 @@ EventHandler = class("EventHandler", {})
 lavaBug = love.graphics.newImage('images/sprites/lava_bug.png')
 angryTourist = love.graphics.newImage('images/sprites/angry_tourist.png')
 angryGhost = love.graphics.newImage('images/sprites/angry_ghost.png')
+slimeMonster = love.graphics.newImage('images/sprites/slime_monster.png')
 
 function EventHandler:init(seed)
 	math.randomseed(seed)
@@ -12,7 +13,7 @@ function EventHandler:init(seed)
 
 	self.updateRate = 1
 
-	self.enemies = {{lavaBug, 1, 2, 2}, {angryTourist, 2, 1, 5}, {angryGhost, .5, 10, 10}}
+	self.enemies = {{lavaBug, 1, 2, 2}, {angryTourist, 2, 1, 5}, {angryGhost, .5, 10, 10}, {slimeMonster, .8, 10, 5}}
 end
 
 function EventHandler:update(dt)
@@ -46,12 +47,15 @@ function EventHandler:triggerEvent()
 			GH:addObject(Enemy(GH:getNewUID(), lavaBug, {255,255,255}, .99, 1, num2, num3, 32, 32, 5, 1, chaseObj))
 		end
 	else
-		if math.random(3) == 1 then
-			local radius = 150
-			local angle = math.random(100) * math.pi * 2 / 100
+		if math.random(2) == 1 then
+			local radius = 200
 
-			local enemy = self.enemies[math.random(#self.enemies)]
-			GH:addObject(Enemy(GH:getNewUID(), enemy[1], {255,255,255}, enemy[2], 1, GH.player.x + math.cos(angle) * radius, GH.player.y + math.sin(angle) * radius, 32, 32, enemy[3], enemy[4], GH.player))
+			for i = 1, math.random(3) do
+				local angle = math.random(100) * math.pi * 2 / 100
+
+				local enemy = self.enemies[math.random(#self.enemies)]
+				GH:addObject(Enemy(GH:getNewUID(), enemy[1], {255,255,255}, enemy[2], 1, GH.player.x + math.cos(angle) * radius, GH.player.y + math.sin(angle) * radius, 32, 32, enemy[3], enemy[4], GH.player))
+			end
 		end
 	end
 end

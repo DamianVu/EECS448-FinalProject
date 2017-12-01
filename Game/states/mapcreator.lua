@@ -118,6 +118,14 @@ function MapCreator:keypressed(key)
 	if key == 'm' then MCH:changeTileset(false) end
 
 	if key == 'g' then gridlines = not gridlines end
+
+	if key == 'escape' then
+		if MCH.mode == MCHModes[3] then 
+			MCH.mode = MCHModes[1]
+		else
+			Gamestate.switch(Mainmenu)
+		end
+	end
 end
 
 function MapCreator:keyreleased(key)
@@ -186,10 +194,11 @@ end
 
 function MapCreator:leave()
 	-- Prompt for save?
+	MCH:saveMap()
 end
 
 function MapCreator:quit()
-
+	MCH:saveMap()
 end
 
 return MapCreator

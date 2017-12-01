@@ -279,6 +279,7 @@ function MapCreationHandler:loadMap(map)
 end
 
 function MapCreationHandler:saveMap()
+	if #self.currentMap.grid == 0 then return end
 	local mapTable = love.filesystem.getDirectoryItems("maps")
 	data = "Map = {\n\tname = \"test\",\n\tstartingLocations = {"
 

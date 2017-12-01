@@ -3,7 +3,7 @@
 Menu = {}
 
 options = {
-	{"Play", "Options", "Exit"},
+	{"Play", "Map Editor", "Exit"},
 	{"No options yet..."}
 }
 
@@ -47,8 +47,7 @@ function Menu:keypressed(key)
 			if self.selection == 1 then
 				Gamestate.switch(CharacterSelection)
 			elseif self.selection == 2 then
-				self.currentMenu = 2
-				self.selection = 2
+				Gamestate.switch(MapCreator)
 			elseif self.selection == 3 then
 				love.event.quit()
 			end

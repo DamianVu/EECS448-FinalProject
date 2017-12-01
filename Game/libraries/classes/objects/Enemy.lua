@@ -60,7 +60,13 @@ function Enemy:move(dt)
 		if self.pauseTime > self.pauseDuration then self.paused = false end
 	elseif self.created then
 		self.createdTime = self.createdTime + dt
-		self.color = {255,255,255,self.createdTime / self.createTimer * 255}
+
+		local opacity = self.createdTime / self.createTimer * 255
+		if opacity < 75 then
+			opacity = 75
+		end
+
+		self.color = {255,255,255,opacity}
 		if self.createdTime > self.createTimer then
 			self.created = false
 		end
