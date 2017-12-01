@@ -34,7 +34,6 @@ require "libraries.classes.MapObject"
 require "libraries.classes.HeadsUpDisplay"
 
 require "debugging"
-require "netClient"
 
 require 'resources.rawmaps' -- Revamp for project 4
 
