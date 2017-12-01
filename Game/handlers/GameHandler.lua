@@ -71,19 +71,11 @@ end
 -- Update functions (primary game dt function)
 function GameHandler:update(dt)
 
-	if not self.multiplayer or self.gameStarted then
+	if self.gameStarted or not self.multiplayer then
 		self.gameTimer = self.gameTimer + dt
 		self.EH:update(dt)
 	end
 
-	if self.multiplayer and self.gameTimer > 5 and not self.testSpawn then
-		if USERNAME == "dv" then
-			self:spawnEnemy(self.player)
-		else
-			self:spawnEnemy(self.peers[1])
-		end
-		self.testSpawn = true
-	end
 
 	if self.DH.playing then
 		self.DH:update(dt)

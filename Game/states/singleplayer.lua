@@ -23,7 +23,7 @@ function Singleplayer:enter()
 
 	--GH:addObject(Enemy(GH:getNewUID(), nil, {255,0,0}, .5, 5, math.random(96, 300), math.random(96, 300), 32, 32, 15, 2, GH.player))
 
-	GH.LH:loadLevel("garden", 1)
+	GH.LH:loadLevel("test", 1)
 
 	--GH.DH:start("Starting")
 end
