@@ -80,7 +80,7 @@ function CharacterHandler:loadCharacterSprites()
 	for i = 1, #files do
 		local filename = files[i]:match("(.+)%.png")
 		if filename ~= nil then
-			sprites[i] = {files[i], love.graphics.newImage('images/sprites/characters/' .. files[i] .. ".png")}
+			sprites[i] = {files[i], love.graphics.newImage('images/sprites/characters/' .. files[i])}
 		end
 	end
 
