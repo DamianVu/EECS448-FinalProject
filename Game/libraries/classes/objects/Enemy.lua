@@ -1,6 +1,6 @@
-
+--- defines enemy.
 Enemy = class("Enemy", {})
-
+-- Enemy object creator. Handles enemy id, sprite, color, speed, bumpFactor, x, y, width, height, health, damage, and chaseObj.
 function Enemy:init(id, sprite, color, speed, bumpFactor, x, y, width, height, health, damage, chaseObj)
 	self.id = id
 	self.type = ENEMY
@@ -33,7 +33,7 @@ function Enemy:init(id, sprite, color, speed, bumpFactor, x, y, width, height, h
 	self.createTimer = 1.5
 	self.defaultPauseDuration = .3 -- Amount of time to pause before attempting to move again
 end
-
+-- prints enemy to screen and handles enemy health bar.
 function Enemy:draw()
 	love.graphics.setColor(self.color)
 	love.graphics.draw(self.sprite, self.x, self.y, self.rotation, self.scaleX, self.scaleY, self.x_offset, self.y_offset)
@@ -49,11 +49,13 @@ function Enemy:draw()
 	end
 end
 
+-- draws enemy hitbox.
 function Enemy:drawHitbox()
 	love.graphics.setColor(255,0,0)
 	love.graphics.rectangle("line", self.x - (self.x_offset * self.scaleX), self.y - (self.x_offset * self.scaleY), self.width, self.height)
 end
 
+-- creates enemy movement.
 function Enemy:move(dt)
 	if self.paused then
 		self.pauseTime = self.pauseTime + dt
@@ -75,34 +77,35 @@ function Enemy:move(dt)
 		self.y = self.y + (self.y_vel * base_speed * dt)
 	end
 end
-
+-- pauses enemy.
 function Enemy:pause(newDuration)
 	self.pauseDuration = newDuration or self.defaultPauseDuration
 	self.pauseTime = 0
 	self.paused = true
 end
 
+-- handles making the enemy chase the player.
 function Enemy:chase()
 	local angle = math.atan2(self.chaseObj.y - self.y, self.chaseObj.x - self.x)
 
 	self.x_vel = self.speed * math.cos(angle)
 	self.y_vel = self.speed * math.sin(angle)
 end
-
+-- handles taking damage when enemy is hit with projectile.
 function Enemy:takeDamage(damage)
 	self.health = self.health - damage
 	self.hpBarTimeout = 2
 	self.hpBarTimer = 0
 	self.showHealth = true
 end
-
+-- handles enemy health bar printing
 function Enemy:updateShowHealth(dt)
 	self.hpBarTimer = self.hpBarTimer + dt
 	if self.hpBarTimer > self.hpBarTimeout then
 		self.showHealth = false
 	end
 end
-
+-- detects if the enemy is dead.
 function Enemy:isDead()
 	return self.health <= 0
 end

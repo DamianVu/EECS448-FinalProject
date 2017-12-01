@@ -1,8 +1,8 @@
-
+--- Handles loading a level.
 require 'libraries.ext.30log'
 
 LevelHandler = class("LevelHandler", {})
-
+-- constructor for level handler.
 function LevelHandler:init()
 	MH = MapHandler()
   MH:loadAllMaps()
@@ -10,10 +10,12 @@ function LevelHandler:init()
   self.currentMapIndex = -1
 end
 
+-- Starts game.
 function LevelHandler:startGame()
 	self:loadLevel(4,1)
 end
 
+-- loads level.
 function LevelHandler:loadLevel(map, startPos)
   self.currentMap = map
 	if not startPos then
@@ -23,7 +25,7 @@ function LevelHandler:loadLevel(map, startPos)
 end
 
 
-
+-- updates level across all users.
 function LevelHandler:update(dt)
   -- Check for ending location
   local endings = RawMaps[self.currentMapIndex].endingLocations

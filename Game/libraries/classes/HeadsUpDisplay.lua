@@ -1,16 +1,19 @@
 ---Class HUD
 HeadsUpDisplay = class("HeadsUpDisplay", {})
 
+--- Constructor for the in-game HUD.
 function HeadsUpDisplay:init()
 	-- "Default constructor" occurs when we initialize the HeadsUpDisplay
 end
 
+--- Draws the HUD on screen.
 function HeadsUpDisplay:draw()
 
 	self:drawPlayerHP()
 	self:drawPlayerWeaponInfo()
 end
 
+--- Draws the HP portion of the HUD.
 function HeadsUpDisplay:drawPlayerHP()
 	local w,h = love.graphics.getDimensions()
 	local barSize = w * .3
@@ -25,6 +28,7 @@ function HeadsUpDisplay:drawPlayerHP()
 	love.graphics.rectangle("line", 10, 10, barSize, 40)
 end
 
+--- Draws the weapon info for the selected weapon on the HUD .
 function HeadsUpDisplay:drawPlayerWeaponInfo()
 	local w,h = love.graphics.getDimensions()
 

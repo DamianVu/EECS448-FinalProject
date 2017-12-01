@@ -1,6 +1,7 @@
 ---Class Map Object
 MapObject = class("MapObject", {})
 
+--- Constructor for a Map Object.
 function MapObject:init(image, quad, properties)
 	self.image = image
 	self.quad = quad

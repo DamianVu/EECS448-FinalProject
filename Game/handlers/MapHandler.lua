@@ -3,7 +3,8 @@ require 'libraries.ext.30log'
 
 MapHandler = class("MapHandler", {})
 
---- Called on initialization
+--- Constructor for the MapHandler.
+-- The MapHandler manages all interactions with map files, map rendering, and tilesets.
 function MapHandler:init()
 	-- Eventually load maps from xml files.
 	-- For project 3 we will load everything manually in the beginning portion of loadMap()
@@ -11,6 +12,7 @@ function MapHandler:init()
 	self.tilesets = {}
 end
 
+--- Loads all maps from the system folder containing the map files.
 function MapHandler:loadAllMaps()
 	local files = love.filesystem.getDirectoryItems("resources/maps/")
 	for i = 1, #files do
@@ -21,6 +23,7 @@ function MapHandler:loadAllMaps()
 	end
 end
 
+--- Loads all tilesets from the system folder containing the tileset files.
 function MapHandler:loadAllTilesets()
 	local files = love.filesystem.getDirectoryItems("resources/tilesets/")
 	for i = 1, #files do
@@ -98,6 +101,7 @@ function MapHandler:loadMap(map, startIndex)
 	end
 end
 
+--- Gets the index of a map in the map table, given the name of the map.
 function MapHandler:getMapIndex(mapname)
 	for i = 1, #self.maps do
 		if self.maps[i].name == mapname then return i end
@@ -105,6 +109,7 @@ function MapHandler:getMapIndex(mapname)
 	return -1
 end
 
+--- Gets the index of a tileset in the tileset table, given the name of the tileset.
 function MapHandler:getTilesetIndex(tilesetname)
 	for i = 1, #self.tilesets do
 		if self.tilesets[i].name == tilesetname then return i end
@@ -112,7 +117,8 @@ function MapHandler:getTilesetIndex(tilesetname)
 	return -1
 end
 
---- Each map needs it's own tileset, definitions for those tiles, color for debug mode, and layout.
+--- Draws the Map on screen.
+-- Each map needs it's own tileset, definitions for those tiles, color for debug mode, and layout.
 function MapHandler:drawMap()
 
 	-- Sets color to white with full opacity.
@@ -134,11 +140,12 @@ function MapHandler:drawMap()
 	end
 end
 
---- Finally an opportunity to use getters (discovery of private variables).
+--- Returns the dimensions of the current map.
 function MapHandler:getCurrentMapDimensions()
 	return self.currentMap.origin, self.currentMap.tileWidth, self.currentMap.tileHeight
 end
 
+--- Returns the properties of a tile at a given (x, y) coordinate.
 function MapHandler:getTileInfo(tilex, tiley)
 	local currentTile = self.currentMap.map.tiles[tiley][tilex]
 	if self:isValidTile(tilex, tiley) then
@@ -148,6 +155,7 @@ function MapHandler:getTileInfo(tilex, tiley)
 	end
 end
 
+--- Returns whether the tile at a given (x, y) coordinate is a valid tile.
 function MapHandler:isValidTile(tilex, tiley)
 	return not (tilex < 1 or tiley < 1 or tiley > #self.currentMap.map.tiles or tilex > #self.currentMap.map.tiles[tiley])
 end

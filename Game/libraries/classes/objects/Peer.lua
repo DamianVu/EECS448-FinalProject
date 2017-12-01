@@ -1,6 +1,6 @@
-
+--- creates peers when people join in the game
 Peer = class("Peer", {})
-
+-- peer constructor that initialized id, networkID, color, x, y, size, and sprite.
 function Peer:init(id, networkID, color, x, y, size, sprite)
 	self.id = id
 	self.networkID = networkID
@@ -29,7 +29,7 @@ function Peer:init(id, networkID, color, x, y, size, sprite)
 	self.health = self.maxHP
 
 end
-
+-- draws peer to the screen.
 function Peer:draw()
 	love.graphics.setColor(self.currentColor)
 	love.graphics.draw(self.sprite, self.x, self.y, 0, self.scaleX, self.scaleY, self.x_offset, self.y_offset)
