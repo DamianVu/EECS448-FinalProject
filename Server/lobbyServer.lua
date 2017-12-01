@@ -42,11 +42,11 @@ function newPort()
 	return lastPort
 end
 
+-- Creates a new game upon request by a client. Indexes the new server and spawns the process.
 function addGame(name)
 	local gamePort = newPort()
 	games[#games + 1] = {name.."'s game", gamePort} -- Create entry in game tracker table
-	-- os.execute("lua netServer.lua "..gamePort.." '"..name.."'") -- Spawn new server process
-	os.execute("python spawnServer.py "..gamePort.." "..name)
+	os.execute("python spawnServer.py "..gamePort.." "..name) -- Run server spawn script
 end
 
 -- Reply to the client sending a command (Semantically convenient helper)
@@ -76,19 +76,7 @@ function receiver()
 					print("Sending connection information (port "..games[#games][2]..") back to creator of new lobby...")
 					reply("newconnect "..games[#games][2], fromIP, fromPort)
 			elseif cmd == 'select' then
-					-- local gameIndex = locateGame(parms)
-
-					--TESTING
-					print("SERVER LOBBY TABLE")
-					print("GAME TABLE SIZE IS: "..#games)
-					for i=1, #games do
-						print("INDEX "..i)
-						for j=1, #games[i] do
-							print(games[i][j])
-						end
-					end
-
-					local gameIndex = parms
+					local gameIndex = tonumber(parms)
 					if gameIndex <= #games then reply("newconnect "..games[gameIndex][2], fromIP, fromPort)
 					else reply("notfound", fromIP, fromPort) end
       elseif cmd == nil then cmd = nil -- Dummy to avoid displaying nil commands
@@ -97,8 +85,6 @@ function receiver()
 	  socket.sleep(0.01)
 	end
 end
-
-
 
 -- Start the server
 print "Starting server..."
