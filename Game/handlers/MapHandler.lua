@@ -14,8 +14,8 @@ end
 function MapHandler:loadAllMaps()
 	local files = love.filesystem.getDirectoryItems("resources/maps/")
 	for i = 1, #files do
-		if files[i] ~= ".DS_Store" then
-			local filename = files[i]:match("(.+).lua")
+		local filename = files[i]:match("(.+).lua")
+		if filename ~= nil then
 			self.maps[i] = require ("resources.maps." .. filename)
 		end
 	end
