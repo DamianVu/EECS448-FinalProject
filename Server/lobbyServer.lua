@@ -20,7 +20,7 @@ players = {}
 -- Table of active game servers
 games = {}
 
--- Return the index of a game given the name
+--- Return the index of a game given the name.
 function locateGame(name)
 	for i = 1, #games do
 		if games[#games][i] == name then return i
@@ -29,7 +29,7 @@ function locateGame(name)
 end
 
 
--- Finds a new port to set up a new game on (will cycle through 5050-5060 range)
+--- Finds a new port to set up a new game on (will cycle through 5050-5060 range).
 function newPort()
 	local lastPort
 
@@ -42,17 +42,23 @@ function newPort()
 	return lastPort
 end
 
--- Creates a new game upon request by a client. Indexes the new server and spawns the process.
+--- Creates a new game upon request by a client. Indexes the new server and spawns the process.
 function addGame(name)
 	local gamePort = newPort()
 	games[#games + 1] = {name.."'s game", gamePort} -- Create entry in game tracker table
 	os.execute("python spawnServer.py "..gamePort.." "..name) -- Run server spawn script
 end
 
--- Reply to the client sending a command (Semantically convenient helper)
+--- Reply to the client sending a command (Semantically convenient helper).
+-- The reply function, after a message is received from a connected player,
+-- is used to bounce a message back to the player.
 function reply(payload, ip, pn) udp:sendto(payload, ip, pn) end
 
--- Receives incoming packets
+--- Receives incoming packets.
+-- This receiver function is the loop at the heart of the Lobby server.
+-- This function is responsible for managing all connections of players
+-- searching for or creating games. Players receive information on the available
+-- games and their connection information from this process.
 function receiver()
 	print("Entering receiver loop...")
 	while running do

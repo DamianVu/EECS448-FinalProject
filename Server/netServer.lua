@@ -20,7 +20,7 @@ udp:settimeout(0)
 -- Table of connected players
 players = {}
 
--- Get the index of a player in the connected players list
+--- Get the index of a player in the connected players list.
 function indexOf(ent)
 	for i = 1, #players do
 		if players[i].id == ent then return i end
@@ -28,12 +28,16 @@ function indexOf(ent)
 	return -1
 end
 
--- Useful, and easy first step for testing
-function retrievePlayerList()
+-- Not in use, remains here for potential use in the future.
+-- --- Useful, and easy first step for testing
+-- function retrievePlayerList()
+--
+-- end
 
-end
-
--- Forward packets to clients
+--- Broadcast function.
+-- This broadcast function receives a payload (generally from a connected player)
+-- and forwards the packet to all other connected players. It is also used to distribute
+-- other information which must be synchronized across the server and all players.
 function broadcast(payload)
 	local e = payload:match("^(%S*)")
 	local p = {} -- For looping through players
@@ -49,10 +53,18 @@ function broadcast(payload)
 	-- print("Broadcasting to: " .. names) -- Debugging
 end
 
--- Reply to the client sending a command (Semantically convenient helper)
+--- Reply to the client sending a command (Semantically convenient helper).
+-- This reply function is the counterpart to the broadcast function.
+-- The reply function, after a message is received from a connected player,
+-- is used to bounce a message back to the player.
 function reply(payload, ip, pn) udp:sendto(payload, ip, pn) end
 
--- Receives incoming packets
+--- Receives incoming packets.
+-- This receiver function is a loop at the heart of the server.
+-- The Receiver is spawned by the lobby server as an independent process
+-- (although the lobby server still has arbitration capabilities) which
+-- receives all packets from connected clients, forwards, broadcasts,
+-- synchronizes packets across all players connected to the particular instance.
 function receiver()
 	print("Entering receiver loop...")
 	prevTime = 0
@@ -92,7 +104,7 @@ function receiver()
 					-- Bounce the current players back to the new player
 					for i=1, #players do
 						local p = players[i]
-						if p.id ~= entity and p.connected then 
+						if p.id ~= entity and p.connected then
 							reply(p.id.." join "..p.x.." "..p.y.." "..p.s, fromIP, fromPort)
 							reply(p.id.." netid "..i, fromIP, fromPort)
 						end

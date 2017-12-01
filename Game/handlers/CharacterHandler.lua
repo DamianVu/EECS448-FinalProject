@@ -1,6 +1,6 @@
 ---
 require "libraries.ext.30log"
-
+---Class CharacterHandler
 CharacterHandler = class("CharacterHandler", {})
 
 --- Initializes Character Handler.
@@ -51,7 +51,7 @@ function CharacterHandler:saveCurrentCharacter()
 
 end
 
---- Add a character to the character handler\
+--- Add a character to the character handler.
 function CharacterHandler:addCharacter(name, sprite)
 
 	local data = name .. "\n" .. tostring(math.random(99999)) .. "\n" .. sprite
@@ -73,7 +73,7 @@ function CharacterHandler:addCharacter(name, sprite)
 		love.filesystem.write("characters/" .. fname .. ".dat", data)
 	end
 end
-
+---Function loadCharacterSprites.
 function CharacterHandler:loadCharacterSprites()
 	local files = love.filesystem.getDirectoryItems("images/sprites/characters/")
 	local sprites = {}

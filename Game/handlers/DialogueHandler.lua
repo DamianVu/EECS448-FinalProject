@@ -1,10 +1,10 @@
-
+---Handler DialogueHandler.
 DialogueHandler = class("DialogueHandler", {})
 
 cutscenes = {
 	{"Starting", {"Hello! I'm the disco martian.", "This is a dialogue message", "This is the third message"}}
 }
-
+---Function DialogueHandler.
 function DialogueHandler:init()
 	self.playing = false
 	self.interval = 3
@@ -16,19 +16,19 @@ function DialogueHandler:init()
 
 	self.currentCutscene = nil
 end
-
+---DialogueHandler Start.
 function DialogueHandler:start(cutscene)
 	self.playing = true
 
 	for i = 1, #cutscenes do
-		if cutscenes[i][1] == cutscene then 
+		if cutscenes[i][1] == cutscene then
 			self.currentCutscene = cutscenes[i][2]
 		else
 			self.currentCutscene = {"Error loading cutscene '" .. cutscene .. "'", nil}
 		end
 	end
 end
-
+---DialogueHandler continue.
 function DialogueHandler:continue()
 	self.timer = 0
 	if self.index == #self.currentCutscene then
@@ -38,7 +38,7 @@ function DialogueHandler:continue()
 		self.index = self.index + 1
 	end
 end
-
+---DialogueHandler update.
 function DialogueHandler:update(dt)
 	if self.playing then
 		self.timer = self.timer + dt
@@ -47,7 +47,7 @@ function DialogueHandler:update(dt)
 		end
 	end
 end
-
+---DialougeHandler draw.
 function DialogueHandler:draw()
 	if self.playing then
 		local w,h = love.graphics.getDimensions()

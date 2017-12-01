@@ -1,11 +1,12 @@
-
+---Handler Event Handler.
 EventHandler = class("EventHandler", {})
 
+--Types of enemies
 lavaBug = love.graphics.newImage('images/sprites/lava_bug.png')
 angryTourist = love.graphics.newImage('images/sprites/angry_tourist.png')
 angryGhost = love.graphics.newImage('images/sprites/angry_ghost.png')
 slimeMonster = love.graphics.newImage('images/sprites/slime_monster.png')
-
+---EventHandler Constructor.
 function EventHandler:init(seed)
 	math.randomseed(seed)
 
@@ -15,7 +16,7 @@ function EventHandler:init(seed)
 
 	self.enemies = {{lavaBug, 1, 2, 2}, {angryTourist, 2, 1, 5}, {angryGhost, .5, 10, 10}, {slimeMonster, .8, 10, 5}}
 end
-
+---Eventhandler update.
 function EventHandler:update(dt)
 	self.timer = self.timer + dt
 	if self.timer > self.updateRate then
@@ -23,6 +24,7 @@ function EventHandler:update(dt)
 		self.timer = self.timer - self.updateRate
 	end
 end
+---EventHandler TriggerEvent.
 function EventHandler:triggerEvent()
 	if GH.multiplayer then
 		table.sort(GH.connectedIDs)
@@ -52,11 +54,10 @@ function EventHandler:triggerEvent()
 		end
 	end
 end
-
+---EventHandler findByNetworkID.
 function EventHandler:findByNetworkID(id)
 	if GH.player.networkID == id then return GH.player end
 	for i = 1, #GH.peers do
 		if GH.peers[i].networkID == id then return GH.peers[i] end
 	end
 end
-

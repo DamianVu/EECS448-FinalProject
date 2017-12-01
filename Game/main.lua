@@ -84,6 +84,8 @@ function love.load()
     Gamestate.registerEvents()
     Gamestate.switch(SplashScreen)
 
+    MENUMUSIC:play()
+
 
     -- Physics variables
     base_speed = 250

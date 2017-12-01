@@ -1,7 +1,7 @@
 
 NetworkHandler = class("NetworkHandler", {})
 
--- Constructor for the NetworkHandler
+--- Constructor for the NetworkHandler. Takes the GameHandler, the IP of the server, and the port of the selected game.
 function NetworkHandler:init(GH, ip, port)
 	self.socket = require "socket"
 
@@ -19,9 +19,7 @@ function NetworkHandler:init(GH, ip, port)
 	self.verbose_debug = false
 end
 
--- function NetworkHandler:setPort(p) self.serverPort = p end
-
--- Connect to the server
+--- Connect to the server.
 function NetworkHandler:connect()
 	self.udp = socket.udp()
 	self.udp:setpeername(self.serverIP, self.serverPort)
@@ -38,40 +36,41 @@ function NetworkHandler:connect()
 	self.connected = true
 end
 
--- Send a packet to the server
+--- Send a packet to the server.
 function NetworkHandler:send(packet)
 	self.udp:send(packet)
 	self.messageCount = self.messageCount + 1
 end
 
--- Disconnect from the server
+--- Disconnect from the server.
 function NetworkHandler:disconnect()
 	self:send(self.GH.player.id .. " leave")
 	self.udp:close()
 	self.connected = false
 end
 
--- Creates a peer in the peer table
+--- Creates a peer in the peer table, which tracks information about all of the other players in the server.
 function NetworkHandler:addPeer(ent, x, y, sprite)
 	local a = Peer(ent, nil, {255,255,255,255}, x, y, 48, sprite)
 	self.peers[#self.peers + 1] = a
 	self.GH:addObject(a) -- Add the peer to the GameHandler's objects table
 end
 
--- Used for table lookups in peer table, given a peer entity
+--- Used for table lookups in peer table, given a peer entity.
 function NetworkHandler:locatePeer(ent, table)
 	for i = 1, #table do
 		if table[i].id == ent then return i end
 	end
 end
 
+--- Locates the Network ID of a peer, given a connectedID.
 function NetworkHandler:locatePeerNetId(id)
 	for i = 1, #GH.connectedIDs do
 		if GH.connectedIDs[i] == id then return i end
 	end
 end
 
--- Receive packet stream of peers through the server
+--- Receive packet stream of peers through the server.
 function NetworkHandler:receive()
 	prevTime = 0
 	repeat
@@ -109,7 +108,7 @@ function NetworkHandler:receive()
 				end
 				if cmd == 'netid' then
 					print("Hey we received " .. entity .. "'s ID. that's cool. it is :" .. tonumber(parms))
-					
+
 					GH.peers[self:locatePeer(entity, GH.peers)].networkID = tonumber(parms)
 					GH.connectedIDs[#GH.connectedIDs + 1] = tonumber(parms)
 					table.sort(GH.connectedIDs)
@@ -133,19 +132,17 @@ function NetworkHandler:receive()
 	until not receivedData
 end
 
-
--- Maybe move these functions into their respective objects? *shrugs*
-
--- Broadcast update of the player's movement
+--- Broadcast update of the player's movement.
 function NetworkHandler:playerMove(id, x, y)
 	self:send(id .. " moveto " .. x .. " " .. y)
 end
 
--- Broadcast a projectile spawn by the player
+--- Broadcast a projectile spawn by the player.
 function NetworkHandler:spawnProjectile(x, y, size, angle, damage, speed, creatorID, time)
 	self:send(creatorID.." spawnprojectile "..x.." "..y.." "..size.." "..angle.." "..damage.." "..speed.." "..time)
 end
 
+--- Broadcast a death notification for the player. Currently unused, left for the option to use in future versions.
 function NetworkHandler:playerDeath(id)
 	self:send(id.." died")
 end

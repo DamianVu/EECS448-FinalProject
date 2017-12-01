@@ -36,6 +36,13 @@ function Player:init(id, networkID, sprite, color, speed, health, x, y, width, h
 	self.attackTimer = 0
 	self.attackTimeout = 1
 
+	self.hurtSound = love.audio.newSource("sounds/playerDamage.mp3", "static")
+	self.hurtSound:setVolume(.5)
+	self.hurtSound:setPitch(.75)
+
+	self.movesound = love.audio.newSource("sounds/footsteps.mp3", "static")
+	self.movesound:setLooping(true)
+	self.movesound:setVolume(.35)
 
 
 	self.inventory = {}
@@ -69,6 +76,7 @@ function Player:move(dt, direction)
 		elseif direction == 4 then
 			self.x = self.x - (self.speed * base_speed * dt)
 		end
+		self.movesound:play()
 	else
 		-- Bump should always be for a constant time (say half a second?)
 		-- Bump factor should change the distance you bump.
@@ -124,6 +132,7 @@ end
 -- handles player taking damage from being hit by enemy
 function Player:takeDamage(damage)
 	self.health = self.health - damage
+	self.hurtSound:play()
 end
 -- Handles player death
 function Player:isDead()

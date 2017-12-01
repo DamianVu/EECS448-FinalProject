@@ -7,8 +7,10 @@ MCHModes = {
 	[3] = "Object Manager"
 }
 
+--- Class definition for the MapCreationHandler.
+-- This acts as a sort of 'header' for the MapCreationHandler's object structure.
 MapCreationHandler = class("MapCreationHandler", {
-	gridColor = {180,180,180}, 
+	gridColor = {180,180,180},
 	paletteSize = 250,
 	paletteColor = {80,80,80},
 	textColor = {20,211,255},
@@ -21,6 +23,7 @@ MapCreationHandler = class("MapCreationHandler", {
 	}
 	})
 
+--- Constructor for the MapCreationHandler.
 function MapCreationHandler:init(tilesize)
 	self.tilesize = tilesize or 64
 	self.currentTileX = 0
@@ -46,6 +49,7 @@ function MapCreationHandler:init(tilesize)
 	self:initializeObjectMenuSettings()
 end
 
+--- Loads the tilesets from the resources into the MapCreationHandler.
 function MapCreationHandler:loadTilesets()
 	local files = love.filesystem.getDirectoryItems("resources/tilesets/")
 	for i = 1, #files do
@@ -75,6 +79,7 @@ function MapCreationHandler:loadTilesets()
 	end
 end
 
+--- Draws the grid lines onto the screen in the MapCreationHandler.
 function MapCreationHandler:drawGridLines(x, y)
 	local width, height = love.graphics.getDimensions()
 
@@ -129,6 +134,7 @@ function MapCreationHandler:drawGridLines(x, y)
 	end
 end
 
+--- Draws the GUI MapCreationHandler.
 function MapCreationHandler:drawGUI()
 	local width, height = love.graphics.getDimensions()
 
@@ -181,6 +187,7 @@ function MapCreationHandler:drawGUI()
 	self:drawTilePalette()
 end
 
+--- Draws the Tile Palette on the bottom of the screen in the MapCreationHandler.
 function MapCreationHandler:drawTilePalette()
 	-- Draw current tileset and tiles
 	local tsGridX = 10
@@ -233,6 +240,7 @@ function MapCreationHandler:drawTilePalette()
 	love.graphics.rectangle("line", tsGridX + (ct * 64), tsGridY + (row * 64), 64, 64)
 end
 
+--- Draws the mouse on screen in the MapCreationHandler.
 function MapCreationHandler:drawMouse()
 	local mx, my = love.mouse.getPosition()
 	local mouseX = (mx - x_translate_val) / zoom
@@ -251,7 +259,7 @@ function MapCreationHandler:drawMouse()
 				love.graphics.rectangle("fill", drawX, drawY, self.tilesize, self.tilesize)
 				love.graphics.print("INVALID", drawX, drawY - 20)
 				self.mouseOnValidTile = false
-			else 
+			else
 				love.graphics.setColor(255,255,255,100)
 				local ts = self.tilesets[self.objects[self.currentTile].tileset]
 				love.graphics.draw(ts.image, ts.Quads[self.objects[self.currentTile].tile], drawX, drawY)
@@ -263,6 +271,7 @@ function MapCreationHandler:drawMouse()
 	end
 end
 
+--- Changes the mode in the MapCreationHandler.
 function MapCreationHandler:changeMode(mode)
 	if mode then
 		self.mode = mode
@@ -275,9 +284,11 @@ function MapCreationHandler:changeMode(mode)
 	end
 end
 
+--- Loads a map into the MapCreationHandler.
 function MapCreationHandler:loadMap(map)
 end
 
+--- Saves a map that was created in the MapCreationHandler.
 function MapCreationHandler:saveMap()
 	if #self.currentMap.grid == 0 then return end
 	local mapTable = love.filesystem.getDirectoryItems("maps")
@@ -326,17 +337,19 @@ function MapCreationHandler:saveMap()
 	data = data .. "\n\nreturn Map"
 	love.filesystem.write("maps/map" .. #mapTable + 1 .. ".lua", data)
 end
-
 -- love.graphics.rectangle("fill", width - 170, height - 60, 150, 38)
+
+--- Used to the update the mouse on the palette portion of the MapCreationHandler.
 function MapCreationHandler:updateMouseOnPalette()
 	local x,y = love.mouse.getPosition()
 	local w,h = love.graphics.getDimensions()
 
 	self.mouseOnPalette = y > h - self.paletteSize
-	self.mouseOnObjectMenuButton = x > w - 170 and x < w - 20 and y > h - 60 and y < h - 22 
+	self.mouseOnObjectMenuButton = x > w - 170 and x < w - 20 and y > h - 60 and y < h - 22
 	self.mouseOnSaveButton = x > w - 170 and x < w - 20 and y > h - self.paletteSize + 20 and y < h - self.paletteSize + 58
 end
 
+--- Changes the tile in the tile palette.
 function MapCreationHandler:changeTile(updown)
 	if #self.objects == 0 then return end
 	local tilePages = math.floor((#self.objects - 1) / 16) + 1
@@ -384,6 +397,7 @@ function MapCreationHandler:changeTile(updown)
 	end
 end
 
+--- Changes the selected page in the tile palette.
 function MapCreationHandler:changePage(prev)
 	if self.mode == MCHModes[1] or self.mode == MCHModes[2] then
 		if self:getTilesetSize() <= 16 then return end
@@ -426,6 +440,7 @@ function MapCreationHandler:changePage(prev)
 	end
 end
 
+--- Changes the selected tileset in the MapCreationHandler.
 function MapCreationHandler:changeTileset(prev)
 	if self.mode == MCHModes[3] then
 		if prev then
@@ -446,6 +461,7 @@ function MapCreationHandler:changeTileset(prev)
 	end
 end
 
+--- Places a tile on the map active in the MapCreationHandler.
 function MapCreationHandler:placeTile()
 	-- This should trigger only if the mouse is already in a valid spot
 
@@ -475,6 +491,7 @@ function MapCreationHandler:placeTile()
 	self.currentMap.grid[self.currentTileY][self.currentTileX] = self.currentTile
 end
 
+--- Removes a tile from the map being edited in the MapCreationHandler.
 function MapCreationHandler:removeTile()
 	-- Make sure the tile exists
 	if #self.currentMap.grid >= self.currentTileY then
@@ -484,6 +501,7 @@ function MapCreationHandler:removeTile()
 	end
 end
 
+--- Draws the map in the viewport for the MapCreationHandler.
 function MapCreationHandler:drawMap()
 	love.graphics.setColor(255,255,255,255)
 	for i = 1, #self.currentMap.grid do
@@ -497,11 +515,13 @@ function MapCreationHandler:drawMap()
 	end
 end
 
-function MapCreationHandler:getTilesetSize() 
+--- Returns the size of the selected tileset, by number of tiles.
+function MapCreationHandler:getTilesetSize()
 	-- TO CLARIFY, THIS FUNCTION PULLS THE NUMBER OF TILES IN THE SET. NOT THE AMOUNT OF TILES ON SCREEN
 	return #self.tilesets[self.currentTileset].Quads
 end
 
+--- Returns the number of tiles in the grid.
 function MapCreationHandler:getTileCount()
 	local ts = self.tilesets[self.currentTileset]
 	local count = 0
@@ -515,12 +535,14 @@ function MapCreationHandler:getTileCount()
 	return count
 end
 
+--- Reset the tile palette menu.
 function MapCreationHandler:resetObjectMenu()
 	self.currentTileset = 1
 	self.currentTile = 1
 	self.currentTilePage = 1
 end
 
+--- Initializes the settings for the object menu (for the tile palette).
 function MapCreationHandler:initializeObjectMenuSettings()
 	-- This will draw the frame of the menu
 	local w,h = love.graphics.getDimensions()
@@ -564,7 +586,7 @@ function MapCreationHandler:initializeObjectMenuSettings()
 
 	self.objectMenu.cbDrawX = self.objectMenu.drawx + self.objectMenu.menuWidth - self.objectMenu.createButtonWidth - self.objectMenu.createButtonMargin
 	self.objectMenu.cbDrawY = self.objectMenu.drawy + self.objectMenu.menuHeight - self.objectMenu.createButtonHeight - self.objectMenu.createButtonMargin
-	
+
 	self.objectMenu.colButtonWidth = 120
 	self.objectMenu.colButtonHeight = 50
 	self.objectMenu.colButtonMargin = 30
@@ -573,6 +595,7 @@ function MapCreationHandler:initializeObjectMenuSettings()
 	self.objectMenu.colDrawY = self.objectMenu.tileDrawY
 end
 
+--- Handles clicks (user input) on the tile palette.
 function MapCreationHandler:objectMenuClickAction(x,y)
 	-- Check if mouse is in the tileset
 	if x > self.objectMenu.tileDrawX and x < self.objectMenu.tileDrawX + self.objectMenu.maxRowSize * 64 and y > self.objectMenu.tileDrawY and y < self.objectMenu.tileDrawY + self.objectMenu.maxColSize * 64 then
@@ -616,9 +639,10 @@ function MapCreationHandler:objectMenuClickAction(x,y)
 	end
 end
 
+--- Draws objects in the tile palette menu.
 function MapCreationHandler:drawObjectMenu()
 	local currentTS = self.tilesets[self.objectMenu.currentTileset]
-	
+
 	love.graphics.setColor(200,200,200,255)
 	love.graphics.rectangle("fill", self.objectMenu.drawx, self.objectMenu.drawy, self.objectMenu.menuWidth, self.objectMenu.menuHeight)
 
@@ -630,7 +654,7 @@ function MapCreationHandler:drawObjectMenu()
 	love.graphics.setNewFont(16)
 	love.graphics.print("Use '<' and '>' to change pages", self.objectMenu.tileDrawX, self.objectMenu.tileDrawY + (64 * self.objectMenu.maxColSize) + 3)
 	love.graphics.print("Use 'n' and 'm' to change tilesets", self.objectMenu.tileDrawX, self.objectMenu.tileDrawY + (64 * self.objectMenu.maxColSize) + 20)
-	
+
 
 	-- Tiles
 	local currentTile = ((self.objectMenu.currentTilePage - 1) * self.objectMenu.tilesPerPage) + 1
@@ -655,12 +679,6 @@ function MapCreationHandler:drawObjectMenu()
 		end
 	end
 
-
-
-
-
-
-
 	love.graphics.setColor(125,45,0)
 	for i = 0, self.objectMenu.maxRowSize do
 		local x = self.objectMenu.tileDrawX + (64 * i)
@@ -670,7 +688,6 @@ function MapCreationHandler:drawObjectMenu()
 		local y = self.objectMenu.tileDrawY + (64 * i)
 		love.graphics.line(self.objectMenu.tileDrawX, y, self.objectMenu.tileDrawX + self.objectMenu.rowLineLength, y)
 	end
-
 
 	-- Draw selected tile
 	local x,y
@@ -719,6 +736,7 @@ function MapCreationHandler:drawObjectMenu()
 
 end
 
+--- Updates the mouse while in the tile palette.
 function MapCreationHandler:updateMouseOnObjectMenu()
 	local x,y = love.mouse.getPosition()
 
@@ -730,8 +748,9 @@ function MapCreationHandler:updateMouseOnObjectMenu()
 
 end
 
+--- Creates an object in the tileset menu.
 function MapCreationHandler:createObject()
-	if self:isUnique(self.objectMenu.currentTileset, self.objectMenu.currentTile, self.objectMenu.collision) then 
+	if self:isUnique(self.objectMenu.currentTileset, self.objectMenu.currentTile, self.objectMenu.collision) then
 		self.objects[#self.objects + 1] = {
 			tileset = self.objectMenu.currentTileset,
 			tile = self.objectMenu.currentTile,
@@ -740,6 +759,7 @@ function MapCreationHandler:createObject()
 	end
 end
 
+--- Determines whether a given tile in a tileset is unique.
 function MapCreationHandler:isUnique(ts, tile, col)
 	for i = 1, #self.objects do
 		if ts == self.objects[i].tileset and tile == self.objects[i].tile and col == self.objects[i].collision then
@@ -749,6 +769,7 @@ function MapCreationHandler:isUnique(ts, tile, col)
 	return true
 end
 
+--- Gets the names of the tilesets active in the tile palette.
 function MapCreationHandler:getCurrentTilesetNames()
 	local names = {}
 	for i = 1, #self.objects do
@@ -760,6 +781,7 @@ function MapCreationHandler:getCurrentTilesetNames()
 	return names
 end
 
+--- Finds the index of an object in the tile palette.
 function MapCreationHandler:findCurrentIndex(objectIndex)
 	local tsNames = self:getCurrentTilesetNames()
 	local actualName = self.tilesets[self.objects[objectIndex].tileset].name
@@ -768,6 +790,7 @@ function MapCreationHandler:findCurrentIndex(objectIndex)
 	end
 end
 
+--- Generates the terrain data for the created map in the map editor.
 function MapCreationHandler:generateTerrain()
 	-- Function will return table of terrain objects
 	local terrain = {}
@@ -834,7 +857,7 @@ function MapCreationHandler:generateTerrain()
 				end
 			end
 
-			if found then 
+			if found then
 				-- Add current working vertical piece and break
 				local x, y, w, h = unpack(startItem)
 				h = h + workingHeight - 1
@@ -866,6 +889,7 @@ function MapCreationHandler:generateTerrain()
 
 end
 
+--- Helper used to determine whether a table contains a string, where both are provided.
 function contains(table, string)
 	for i = 1, #table do
 		if table[i] == string then return true end
