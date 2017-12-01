@@ -54,6 +54,7 @@ function OnlineGame:draw()
 	love.graphics.print("Number of projectiles: " .. #GH.projectiles, 10, 100)
 	love.graphics.print("Score: " .. GH.player.score, 10, 120)
 	love.graphics.print("Time: " .. math.floor(GH.gameTimer), 10, 160)
+	love.graphics.print("Network ID: " .. (GH.player.networkID or "NONE YET"), 10, 180)
 
 
 	HUD:draw()
