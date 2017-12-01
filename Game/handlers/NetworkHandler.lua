@@ -117,6 +117,7 @@ function NetworkHandler:receive()
 				end
 				if cmd == 'yourid' then
 					GH.player.networkID = tonumber(parms)
+					GH.connectedIDs[#GH.connectedIDs + 1] = tonumber(parms)
 				end
 			end
 		elseif msg~= 'timeout' then
