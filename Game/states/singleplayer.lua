@@ -48,6 +48,7 @@ function Singleplayer:draw()
 	love.graphics.print("Number of projectiles: " .. #GH.projectiles, 10, 100)
 	love.graphics.print("Score: " .. GH.player.score, 10, 120)
 	love.graphics.print("Time: " .. math.floor(GH.gameTimer), 10, 160)
+	love.graphics.print("Size of Network IDs" .. #GH.connectedIDs, 10, 180)
 
 
 
