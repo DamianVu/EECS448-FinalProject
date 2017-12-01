@@ -19,7 +19,7 @@ function OnlineGame:enter() -- enter is called everytime this state occurs
 
 	HUD = HeadsUpDisplay()
 
-	GH:addObject(Player(USERNAME .. USERID, spriteImg, CHARACTERCOLOR, 1, 10, 96, 96, 32, 32))
+	GH:addObject(Player(USERNAME .. USERID, nil, love.graphics.newImage("images/sprites/characters/" .. USERSPRITE .. ".png"), CHARACTERCOLOR, 1, 10, 96, 96, 48, 48))
 
 	GH.LH:loadLevel("test", 1)
 
@@ -54,6 +54,7 @@ function OnlineGame:draw()
 	love.graphics.print("Number of projectiles: " .. #GH.projectiles, 10, 100)
 	love.graphics.print("Score: " .. GH.player.score, 10, 120)
 	love.graphics.print("Time: " .. math.floor(GH.gameTimer), 10, 160)
+	love.graphics.print("Network ID: " .. (GH.player.networkID or "NONE YET"), 10, 180)
 
 
 	HUD:draw()

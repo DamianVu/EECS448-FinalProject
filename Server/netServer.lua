@@ -72,25 +72,27 @@ function receiver()
       -- Grammar definition
       if cmd == 'join' then
 					broadcast(data)
-          local lx,ly,lr,lg,lb = parms:match("(-*%d+.*%d*) (-*%d+.*%d*) (%d+) (%d+) (%d+)")
+          local lx,ly,ls = parms:match("(-*%d+.*%d*) (-*%d+.*%d*) (%S+)")
 					local p = indexOf(entity)
 					if p == -1 then -- Add player if never joined before
-						players[#players+1] = {connected=true, ip=fromIP, port=fromPort, id=entity, x=lx, y=ly, r=lr, g=lg, b=lb}
+						players[#players+1] = {connected=true, ip=fromIP, port=fromPort, id=entity, x=lx, y=ly, s=ls}
 						reply(entity .. " yourid " .. #players, fromIP, fromPort)
 					else
 						players[p].connected = true
 						players[p].ip = fromIP
 						players[p].port = fromPort
 						reply(entity .. " rejoin " .. players[p].x .. " " .. players[p].y, fromIP, fromPort)
-						
+
 						reply(entity .. " yourid " .. p, fromIP, fromPort)
 						print("This is a rejoin in our player table at index " .. p)
 					end -- Set player's connected property to true
 
+					broadcast(entity .. " netid " .. indexOf(entity))
+
 					-- Bounce the current players back to the new player
 					for i=1, #players do
 						local p = players[i]
-						if p.id ~= entity and p.connected then reply(p.id.." join "..p.x.." "..p.y.." "..p.r.." "..p.g.." "..p.b, fromIP, fromPort) end
+						if p.id ~= entity and p.connected then reply(p.id.." join "..p.x.." "..p.y.." "..p.s, fromIP, fromPort) end
 					end
       elseif cmd == 'leave' then
 					broadcast(data)

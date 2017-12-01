@@ -20,6 +20,13 @@ RANGED = "Ranged"
 WEAPON = "Weapon"
 
 
+-- Sprite String Constants
+BASIC = "whiteguy"
+DAMIAN = "damian"
+DUSTIN = "dustin"
+KARI = "kari"
+LANE = "lane"
+
 
 
 
@@ -30,3 +37,4 @@ enemyImg = love.graphics.newImage('images/sprites/badguy.png')
 
 
 CURRENTSPRITE = spriteImg
+USERSPRITE = LANE

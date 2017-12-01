@@ -16,7 +16,7 @@ function NetworkHandler:init(GH, ip, port)
 	self.serverPort = port
 
 	self.connected = false
-	self.verbose_debug = true
+	self.verbose_debug = false
 end
 
 -- function NetworkHandler:setPort(p) self.serverPort = p end
@@ -28,12 +28,13 @@ function NetworkHandler:connect()
 	self.udp:settimeout(0)
 
 	-- Initialize player info relevant to server
-	local r,g,b = unpack(self.GH.player.color)
 	self.messageCount = 0
 	playerList = ""
 
+
+
 	-- Send join signal
-	self:send(self.GH.player.id .. " join " .. self.GH.player.x .. " " .. self.GH.player.y .. " " .. r .. " " .. g .. " " .. b)
+	self:send(self.GH.player.id .. " join " .. self.GH.player.x .. " " .. self.GH.player.y .. " " .. USERSPRITE)
 	self.connected = true
 end
 
@@ -51,8 +52,8 @@ function NetworkHandler:disconnect()
 end
 
 -- Creates a peer in the peer table
-function NetworkHandler:addPeer(ent, x, y, r, g, b)
-	local a = Peer(ent, {r, g, b}, x, y, 32)
+function NetworkHandler:addPeer(ent, x, y, sprite)
+	local a = Peer(ent, nil, {255,255,255,255}, x, y, 48, sprite)
 	self.peers[#self.peers + 1] = a
 	self.GH:addObject(a) -- Add the peer to the GameHandler's objects table
 end
@@ -61,6 +62,12 @@ end
 function NetworkHandler:locatePeer(ent, table)
 	for i = 1, #table do
 		if table[i].id == ent then return i end
+	end
+end
+
+function NetworkHandler:locatePeerNetId(id)
+	for i = 1, #GH.connectedIDs do
+		if GH.connectedIDs[i] == id then return i end
 	end
 end
 
@@ -77,12 +84,15 @@ function NetworkHandler:receive()
 			local entity, cmd, parms = tostring(receivedData):match("^(%S*) *(%S*) *(.*)")
 			if entity ~= self.GH.player.id then -- Broadcast Type Commands
 				if cmd == 'join' then -- Broadcast Type
-					local px, py, pr, pg, pb = parms:match("(-*%d+.*%d*) (-*%d+.*%d*) (%d+) (%d+) (%d+)")
-							self:addPeer(entity, px, py, pr, pg, pb)
+					local px, py, ps = parms:match("(-*%d+.*%d*) (-*%d+.*%d*) (%S+)")
+							self:addPeer(entity, px, py, ps)
 				end
 				if cmd == 'leave' then -- Broadcast Type
+					local peerNetID = GH.peers[self:locatePeer(entity, GH.peers)].networkID
+					local peerNetIDLocation = self:locatePeerNetId(peerNetID)
 					table.remove(self.peers, self:locatePeer(entity, self.peers))
 					table.remove(self.GH.peers, self:locatePeer(entity, self.GH.peers))
+					table.remove(GH.connectedIDs, peerNetIDLocation)
 				end
 				if cmd == 'moveto' then -- Broadcast Type
 					local x, y = parms:match("^(%-?[%d.e]*) (%-?[%d.e]*)$")
@@ -97,12 +107,17 @@ function NetworkHandler:receive()
 				if cmd == 'start' then
 					self.GH.gameStarted = true
 				end
+				if cmd == 'netid' then
+					GH.peers[self:locatePeer(entity, GH.peers)].networkID = tonumber(parms)
+					GH.connectedIDs[#GH.connectedIDs + 1] = tonumber(parms)
+				end
 			else -- Response Type Commands
 				if cmd == 'rejoin' then -- Response Type
 					GH.player.x, GH.player.y = parms:match("(-*%d+.*%d*) (-*%d+.*%d*)")
 				end
 				if cmd == 'yourid' then
 					GH.player.networkID = tonumber(parms)
+					GH.connectedIDs[#GH.connectedIDs + 1] = tonumber(parms)
 				end
 			end
 		elseif msg~= 'timeout' then

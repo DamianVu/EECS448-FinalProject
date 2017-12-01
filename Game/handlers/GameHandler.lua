@@ -26,6 +26,8 @@ function GameHandler:init()
 	self.spawnTimer = 0
 
 	self.testSpawn = false
+
+	self.connectedIDs = {}
 end
 
 function GameHandler:addObject(obj)

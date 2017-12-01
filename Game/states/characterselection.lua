@@ -131,6 +131,7 @@ function CS:keypressed(key)
 				USERNAME = characters[currentCharacter].name
 				USERID = tostring(characters[currentCharacter].salt)
 				CURRENTSPRITE = getSprite(characters[currentCharacter].sprite)
+				USERSPRITE = characters[currentCharacter].sprite:match("(%S+)%.")
 				Gamestate.switch(PlayMenu)
 			elseif currentItem == 3 then
 				-- Create a player

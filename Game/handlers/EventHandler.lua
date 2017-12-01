@@ -21,14 +21,49 @@ function EventHandler:update(dt)
 	end
 end
 function EventHandler:triggerEvent(EVENT)
-	if math.random(3) == 1 then
+	local num = math.random(5)
+	print(num)
+	if num == 1 then
 		--for i = 1, math.random(4) do
-		GH:addObject(Enemy(GH:getNewUID(), lavaBug, {255,255,255}, .99, 1, math.random(96,400), math.random(96,400), 32, 32, 5, 1))
+		num1 = math.random(#GH.connectedIDs)
+		print(num1)
+		num2 = math.random(96,400)
+		print(num2)
+		num3 = math.random(96,400)
+		print(num3)
+
+		local chaseObj = self:findByNetworkID(GH.connectedIDs[num1])
+		GH:addObject(Enemy(GH:getNewUID(), lavaBug, {255,255,255}, .99, 1, num2, num3, 32, 32, 5, 1, chaseObj))
 	end
-	if math.random(2) == 1 then
-		GH:addObject(Enemy(GH:getNewUID(), angryTourist, {255,255,255}, .2, 1, math.random(96,400), math.random(96,400), 32, 32, 5, 1))
+	if num == 2 then
+		--for i = 1, math.random(4) do
+		num1 = math.random(#GH.connectedIDs)
+		print(num1)
+		num2 = math.random(96,400)
+		print(num2)
+		num3 = math.random(96,400)
+		print(num3)
+
+		local chaseObj = self:findByNetworkID(GH.connectedIDs[num1])
+		GH:addObject(Enemy(GH:getNewUID(), angryTourist, {255,255,255}, .99, 1, num2, num3, 32, 32, 5, 1, chaseObj))
 	end
-	if math.random(20) == 1 then
-		GH:addObject(Enemy(GH:getNewUID(), angryGhost, {255,255,255}, 1.1, 1, math.random(96,400), math.random(96,400), 32, 32, 5, 1))
+	if num == 3 then
+		--for i = 1, math.random(4) do
+		num1 = math.random(#GH.connectedIDs)
+		print(num1)
+		num2 = math.random(96,400)
+		print(num2)
+		num3 = math.random(96,400)
+		print(num3)
+
+		local chaseObj = self:findByNetworkID(GH.connectedIDs[num1])
+		GH:addObject(Enemy(GH:getNewUID(), angryGhost, {255,255,255}, .99, 1, num2, num3, 32, 32, 5, 1, chaseObj))
+	end
+end
+
+function EventHandler:findByNetworkID(id)
+	if GH.player.networkID == id then return GH.player end
+	for i = 1, #GH.peers do
+		if GH.peers[i].networkID == id then return GH.peers[i] end
 	end
 end
