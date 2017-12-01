@@ -67,3 +67,4 @@ function EventHandler:findByNetworkID(id)
 		if GH.peers[i].networkID == id then return GH.peers[i] end
 	end
 end
+
