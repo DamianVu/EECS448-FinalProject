@@ -9,6 +9,8 @@ options = {
 
 local centerX, centerY = love.graphics.getWidth()/2, love.graphics.getHeight()/2
 
+menuPic = love.graphics.newImage("images/tilesets/SLASHNBASH.png")
+
 --- Called when this state is entered
 function Menu:enter()
 	self.currentMenu = 1
@@ -20,6 +22,8 @@ function Menu:draw()
 	if self.currentMenu == 1 then
 		love.graphics.setColor(255,255,255,255)
 		love.graphics.setNewFont(30)
+
+		love.graphics.draw(menuPic, centerX - 400, 0)
 
 		love.graphics.print(options[self.currentMenu][1], centerX - 100, centerY - 100)
 		love.graphics.print(options[self.currentMenu][2], centerX - 100, centerY - 50)
