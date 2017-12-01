@@ -14,6 +14,8 @@ function GameHandler:init()
 	self.multiplayer = false -- This will only get set to true in NetworkHandler
 	self.networkMoveTimer = 0
 
+	self.EH = EventHandler(10)
+
 	self.playerIsMoving = false
 	self.playerPrevX = 0
 	self.playerPrevY = 0
@@ -71,9 +73,10 @@ function GameHandler:update(dt)
 
 	if not self.multiplayer or self.gameStarted then
 		self.gameTimer = self.gameTimer + dt
+		self.EH:update(dt)
 	end
 
-	if self.gameTimer > 9999 and not self.testSpawn then
+	if self.multiplayer and self.gameTimer > 5 and not self.testSpawn then
 		if USERNAME == "dv" then
 			self:spawnEnemy(self.player)
 		else

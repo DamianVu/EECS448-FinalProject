@@ -15,7 +15,7 @@ function Singleplayer:enter()
 
 	HUD = HeadsUpDisplay()
 
-	
+
 
 	GH:addObject(Player(GH:getNewUID(), CURRENTSPRITE, CHARACTERCOLOR, 1, 10, 96, 96, 48, 48))
 

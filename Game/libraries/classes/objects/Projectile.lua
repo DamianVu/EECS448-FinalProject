@@ -15,7 +15,7 @@ function Projectile:init(id, sprite, x, y, width, height, x_vel, y_vel, damage, 
 
 	self.damage = damage or 1
 
-	self.color = {math.random(0,255), math.random(0,255), math.random(0,255)}
+	self.color = {255,0,0}
 
 	local imgW, imgH = self.sprite:getDimensions()
 	self.x_offset = imgW / 2

@@ -15,6 +15,7 @@ require "handlers.NetworkHandler"
 require "handlers.MapCreationHandler"
 require "handlers.DialogueHandler"
 require "handlers.LobbyHandler"
+require "handlers.EventHandler"
 
 require "libraries.classes.cObject"
 require "libraries.classes.CoordinateList"

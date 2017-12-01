@@ -76,8 +76,20 @@ function receiver()
 					print("Sending connection information (port "..games[#games][2]..") back to creator of new lobby...")
 					reply("newconnect "..games[#games][2], fromIP, fromPort)
 			elseif cmd == 'select' then
-					local gameIndex = locateGame(parms)
-					if gameIndex ~= -1 then reply("newconnect "..games[gameIndex][2], fromIP, fromPort)
+					-- local gameIndex = locateGame(parms)
+
+					--TESTING
+					print("SERVER LOBBY TABLE")
+					print("GAME TABLE SIZE IS: "..#games)
+					for i=1, #games do
+						print("INDEX "..i)
+						for j=1, #games[i] do
+							print(games[i][j])
+						end
+					end
+
+					local gameIndex = parms
+					if gameIndex <= #games then reply("newconnect "..games[gameIndex][2], fromIP, fromPort)
 					else reply("notfound", fromIP, fromPort) end
       elseif cmd == nil then cmd = nil -- Dummy to avoid displaying nil commands
       else print("Unkown command: '"..tostring(cmd).."' received from "..tostring(entity)) end
