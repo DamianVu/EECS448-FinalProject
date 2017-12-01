@@ -21,18 +21,43 @@ function EventHandler:update(dt)
 	end
 end
 function EventHandler:triggerEvent(EVENT)
-	if math.random(3) == 1 then
+	local num = math.random(5)
+	print(num)
+	if num == 1 then
 		--for i = 1, math.random(4) do
-		local chaseObj = self:findByNetworkID(GH.connectedIDs[math.random(#GH.connectedIDs)])
-		GH:addObject(Enemy(GH:getNewUID(), lavaBug, {255,255,255}, .99, 1, math.random(96,400), math.random(96,400), 32, 32, 5, 1, chaseObj))
+		num1 = math.random(#GH.connectedIDs)
+		print(num)
+		num2 = math.random(96,400)
+		print(num)
+		num3 = math.random(96,400)
+		print(num)
+
+		local chaseObj = self:findByNetworkID(GH.connectedIDs[num1])
+		GH:addObject(Enemy(GH:getNewUID(), lavaBug, {255,255,255}, .99, 1, num2, num3, 32, 32, 5, 1, chaseObj))
 	end
-	if math.random(2) == 1 then
-		local chaseObj = self:findByNetworkID(GH.connectedIDs[math.random(#GH.connectedIDs)])
-		GH:addObject(Enemy(GH:getNewUID(), angryTourist, {255,255,255}, .2, 1, math.random(96,400), math.random(96,400), 32, 32, 5, 1, chaseObj))
+	if num == 2 then
+		--for i = 1, math.random(4) do
+		num1 = math.random(#GH.connectedIDs)
+		print(num)
+		num2 = math.random(96,400)
+		print(num)
+		num3 = math.random(96,400)
+		print(num)
+
+		local chaseObj = self:findByNetworkID(GH.connectedIDs[num1])
+		GH:addObject(Enemy(GH:getNewUID(), angryTourist, {255,255,255}, .99, 1, num2, num3, 32, 32, 5, 1, chaseObj))
 	end
-	if math.random(20) == 1 then
-		local chaseObj = self:findByNetworkID(GH.connectedIDs[math.random(#GH.connectedIDs)])
-		GH:addObject(Enemy(GH:getNewUID(), angryGhost, {255,255,255}, 1.1, 1, math.random(96,400), math.random(96,400), 32, 32, 5, 1, chaseObj))
+	if num == 3 then
+		--for i = 1, math.random(4) do
+		num1 = math.random(#GH.connectedIDs)
+		print(num)
+		num2 = math.random(96,400)
+		print(num)
+		num3 = math.random(96,400)
+		print(num)
+
+		local chaseObj = self:findByNetworkID(GH.connectedIDs[num1])
+		GH:addObject(Enemy(GH:getNewUID(), angryGhost, {255,255,255}, .99, 1, num2, num3, 32, 32, 5, 1, chaseObj))
 	end
 end
 

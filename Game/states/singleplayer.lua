@@ -17,7 +17,7 @@ function Singleplayer:enter()
 
 
 
-	GH:addObject(Player(GH:getNewUID(), CURRENTSPRITE, CHARACTERCOLOR, 1, 10, 96, 96, 48, 48))
+	GH:addObject(Player(GH:getNewUID(), nil, CURRENTSPRITE, CHARACTERCOLOR, 1, 10, 96, 96, 48, 48))
 
 
 

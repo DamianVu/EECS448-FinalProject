@@ -16,7 +16,7 @@ function NetworkHandler:init(GH, ip, port)
 	self.serverPort = port
 
 	self.connected = false
-	self.verbose_debug = true
+	self.verbose_debug = false
 end
 
 -- function NetworkHandler:setPort(p) self.serverPort = p end
