@@ -26,7 +26,6 @@ function Singleplayer:enter()
 	GH.LH:loadLevel("garden", 1)
 
 	--GH.DH:start("Starting")
-	
 end
 
 function Singleplayer:draw()
