@@ -1,8 +1,9 @@
 
 Peer = class("Peer", {})
 
-function Peer:init(id, color, x, y, size)
+function Peer:init(id, networkID, color, x, y, size)
 	self.id = id
+	self.networkID = networkID
 	self.type = PEER
 	self.sprite = spriteImg
 	self.color = color

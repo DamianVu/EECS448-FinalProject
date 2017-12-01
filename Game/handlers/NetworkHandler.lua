@@ -101,6 +101,9 @@ function NetworkHandler:receive()
 				if cmd == 'rejoin' then -- Response Type
 					GH.player.x, GH.player.y = parms:match("(-*%d+.*%d*) (-*%d+.*%d*)")
 				end
+				if cmd == 'yourid' then
+					GH.player.networkID = tonumber(parms)
+				end
 			end
 		elseif msg~= 'timeout' then
 			error("Network error: " ..tostring(msg))
