@@ -1,4 +1,4 @@
-
+---Class Tilemapping
 Map = class("Map", {})
 
 --- Constructor for a Map. Given a grid, and a dictionary of tile ids.

@@ -1,3 +1,4 @@
+---Map Space
 Map = {
 	name = "space",
 	startingLocations = {

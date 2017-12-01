@@ -38,3 +38,12 @@ enemyImg = love.graphics.newImage('images/sprites/badguy.png')
 
 CURRENTSPRITE = spriteImg
 USERSPRITE = LANE
+
+
+MENUMUSIC = love.audio.newSource("sounds/soundtrack/Menu.mp3")
+WATERMUSIC = love.audio.newSource("sounds/soundtrack/Water.mp3")
+
+MENUMUSIC:setLooping(true)
+WATERMUSIC:setLooping(true)
+
+WATERMUSIC:setVolume(.75)

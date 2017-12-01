@@ -1,4 +1,4 @@
-
+---Tileset Debug
 TS = {
 	name = "Debugging",
 	Width = 2, -- In tiles

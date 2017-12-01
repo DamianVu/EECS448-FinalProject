@@ -1,4 +1,4 @@
-
+---State GameOver
 GameOver = {}
 
 function GameOver:enter()

@@ -1,4 +1,4 @@
-
+---Class HUD
 HeadsUpDisplay = class("HeadsUpDisplay", {})
 
 --- Constructor for the in-game HUD.

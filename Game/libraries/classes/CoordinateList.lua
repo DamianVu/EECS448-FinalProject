@@ -1,4 +1,4 @@
-
+---Class CoordinateList
 CoordinateList = class("CoordinateList", {list = {}})
 
 --- Constructor for the CoordinateList object.

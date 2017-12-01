@@ -1,3 +1,4 @@
+---Map Beach
 Map = {
 	name = "beach",
 	startingLocations = {

@@ -1,3 +1,4 @@
+---Class Tile
 Tile = class("Tile", {})
 --- Constructor for a Tile.
 -- Tile Objects will have all information for a given tile that needs to be realized. Render position, size, collision enable, etc.

@@ -1,4 +1,4 @@
-
+---Singleplayer State
 Singleplayer = {}
 
 
@@ -7,6 +7,10 @@ function Singleplayer:init()
 end
 
 function Singleplayer:enter()
+
+	MENUMUSIC:pause()
+	WATERMUSIC:play()
+
 	collision = 0
 
 	GH = GameHandler()
@@ -44,10 +48,7 @@ function Singleplayer:draw()
 
 	love.graphics.setColor(0,255,0)
 	love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 10, 60)
-	love.graphics.print("Collision: " .. tostring(collision), 10, 80)
-	love.graphics.print("Number of projectiles: " .. #GH.projectiles, 10, 100)
-	love.graphics.print("Score: " .. GH.player.score, 10, 120)
-	love.graphics.print("Time: " .. math.floor(GH.gameTimer), 10, 160)
+	love.graphics.print("Score: " .. GH.player.score, 10, 80)
 
 
 
@@ -77,6 +78,11 @@ function Singleplayer:keypressed(key)
 	if key == "escape" then
 		Gamestate.switch(PlayMenu)
 	end
+end
+
+function Singleplayer:leave()
+	WATERMUSIC:stop()
+	MENUMUSIC:play()
 end
 
 

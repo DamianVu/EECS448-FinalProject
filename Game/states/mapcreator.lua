@@ -1,4 +1,4 @@
-
+---State MapCreator
 MapCreator = {}
 
 local checkMouseMovement = false
@@ -50,15 +50,15 @@ function MapCreator:update(dt)
 	MCH:updateMouseOnPalette()
 	if MCH.mode == MCHModes[3] then MCH:updateMouseOnObjectMenu() end
 
-	if MCH.mouseOnObjectMenuButton or checkMouseMovement then 
+	if MCH.mouseOnObjectMenuButton or checkMouseMovement then
 		love.mouse.setCursor(handCursor)
 	else
 		love.mouse.setCursor(arrowCursor)
 	end
-	
+
 	canZoom = MCH.mode == "Moving"
 
-	
+
 	if not love.keyboard.isDown('up', 'down') then camera.y_vel = 0 end
 	if not love.keyboard.isDown('left', 'right') then camera.x_vel = 0 end
 
@@ -90,20 +90,20 @@ function MapCreator:keypressed(key)
 		zoomSpeed = 1
 	end
 	if not checkMouseMovement and MCH.mode ~= MCHModes[3] then
-		if key == 'up' then 
+		if key == 'up' then
 			camera.y_vel = -camera.speed * 3 * zoomSpeed
 		end
-		if key == 'left' then 
+		if key == 'left' then
 			camera.x_vel = -camera.speed * 3 * zoomSpeed
 		end
-		if key == 'down' then 
+		if key == 'down' then
 			camera.y_vel = camera.speed * 3 * zoomSpeed
 		end
-		if key == 'right' then 
+		if key == 'right' then
 			camera.x_vel = camera.speed * 3 * zoomSpeed
 			print("right")
 		end
-		if key == 'r' then 
+		if key == 'r' then
 			camera.x = 0
 			camera.y = 0
 			zoom = 1
@@ -120,7 +120,7 @@ function MapCreator:keypressed(key)
 	if key == 'g' then gridlines = not gridlines end
 
 	if key == 'escape' then
-		if MCH.mode == MCHModes[3] then 
+		if MCH.mode == MCHModes[3] then
 			MCH.mode = MCHModes[1]
 		else
 			Gamestate.switch(Mainmenu)

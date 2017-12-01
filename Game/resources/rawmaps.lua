@@ -1,4 +1,4 @@
----
+---RawMaps
 RawMaps = {
 	[1] = {
 		startingLocations = {

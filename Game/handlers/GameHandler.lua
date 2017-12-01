@@ -1,6 +1,6 @@
-
+---Handler GameHandler.
 GameHandler = class("GameHandler", {})
-
+---GameHandler contructor.
 function GameHandler:init()
 	self.terrain = {}
 	self.projectiles = {}
@@ -27,9 +27,18 @@ function GameHandler:init()
 
 	self.testSpawn = false
 
+	deathSound = love.audio.newSource("sounds/SOILEDIT.mp3", "static")
+	deathSound:setVolume(.25)
+
+	self.enemyDeath = love.audio.newSource("sounds/MonsterDeath.mp3", "static")
+	self.enemyDeath:setVolume(.25)
+
+	self.bulletSound = love.audio.newSource("sounds/shootpop.mp3", "static")
+	self.bulletSound:setVolume(.3)
+
 	self.connectedIDs = {}
 end
-
+---GameHandler add object.
 function GameHandler:addObject(obj)
 	if obj.type == PLAYER then
 		self.CH:addObject(obj)
@@ -49,7 +58,7 @@ function GameHandler:addObject(obj)
 	end
 end
 
--- Draw functions
+--- Draw functions.
 function GameHandler:draw()
 	-- Draw Enemies
 	for i=#self.enemies, 1, -1 do self.enemies[i]:draw() end
@@ -70,7 +79,7 @@ end
 
 
 
--- Update functions (primary game dt function)
+--- Update functions (primary game dt function).
 function GameHandler:update(dt)
 
 	if self.gameStarted or not self.multiplayer then
@@ -102,12 +111,12 @@ function GameHandler:update(dt)
 		end
 	end
 end
-
+---GameHandler spawnEnemy.
 function GameHandler:spawnEnemy(object)
 	self:addObject(Enemy(self:getNewUID(), nil, {255,0,0}, .5, 5, 300, 300, 32, 32, 15, 2, object))
 end
 
-
+---GameHandler updatePeers.
 function GameHandler:updatePeers(dt)
 	for i=1, #self.peers, 1 do
 		if self.peers[i]:isDead() then
@@ -115,7 +124,7 @@ function GameHandler:updatePeers(dt)
 		end
 	end
 end
-
+---GameHandler updatePlayer.
 function GameHandler:updatePlayer(dt)
 
 	if self.player:isDead() then
@@ -125,8 +134,9 @@ function GameHandler:updatePlayer(dt)
 		-- 	NH:playerDeath(self.player.id)
 		-- end
 		-- --------------------------------------------
-
-		Gamestate.switch(GameOver)
+		deathSound:play()
+		MH:resetPlayer()
+		
 	end
 
 	if self.player.immune then
@@ -149,6 +159,11 @@ function GameHandler:updatePlayer(dt)
 	if love.keyboard.isDown('d') then
 		self.player:move(dt, 2)
 		self.playerIsMoving = true
+	end
+
+	if not love.keyboard.isDown('d') and not love.keyboard.isDown('w') and not love.keyboard.isDown('a') and not love.keyboard.isDown('s') then
+		self.player.movesound:pause()
+		self.player.movesound:rewind()
 	end
 
 	if not self.player.movementEnabled then
@@ -179,11 +194,13 @@ function GameHandler:updatePlayer(dt)
 		local x,y = love.mouse.getPosition()
 
 		self:fireWeapon(currentWeapon, x, y)
+		self.bulletSound:rewind()
+		self.bulletSound:play()
 	else
 		self.player:updateAttackDelay(dt)
 	end
 end
-
+---GameHandler updateEnemies.
 function GameHandler:updateEnemies(dt)
 	for i = #self.enemies, 1, -1 do
 		self.enemies[i]:chase()
@@ -193,7 +210,7 @@ function GameHandler:updateEnemies(dt)
 		end
 	end
 end
-
+---GameHandler updateProjectiles.
 function GameHandler:updateProjectiles(dt)
 	for i=#self.projectiles, 1, -1 do self.projectiles[i]:move(dt) end
 end
@@ -201,13 +218,15 @@ end
 -- End of update functions
 
 -- Creation functions
-
+---GameHandler createProjectile.
 function GameHandler:createProjectile(x, y, size, angle, damage, speed, creatorID, time)
 	local changeInTime = self.gameTimer - time
 	x = x + (changeInTime * math.cos(angle) * speed * base_speed)
 	y = y + (changeInTime * math.sin(angle) * speed * base_speed)
 
 	self:addObject(Projectile(self:getNewUID(), nil, x, y, size, size, math.cos(angle), math.sin(angle), damage, speed, creatorID))
+
+
 
 	--(Multiplayer) Stream Projectile Spawn-----
 	if self.multiplayer and self.player.id == creatorID then
@@ -220,17 +239,19 @@ end
 
 
 -- Helper functions
-
+---GameHandler destroyProjectile.
 function GameHandler:destroyProjectile(id)
 	table.remove(self.CH.projectiles, self.getObjectPosition(id, self.CH.projectiles))
 	table.remove(self.projectiles, self.getObjectPosition(id, self.projectiles))
 end
 
 function GameHandler:destroyEnemy(id)
+	self.enemyDeath:rewind()
+	self.enemyDeath:play()
 	table.remove(self.CH.objects, self.getObjectPosition(id, self.CH.objects))
 	table.remove(self.enemies, self.getObjectPosition(id, self.enemies))
 end
-
+---GameHandler getObjectPosition.
 function GameHandler.getObjectPosition(id, table)
 	for i=1, #table do
 		if table[i].id == id then
@@ -239,12 +260,12 @@ function GameHandler.getObjectPosition(id, table)
 	end
 	return -1
 end
-
+---GameHandler getNewUID.
 function GameHandler:getNewUID()
 	self.uid_counter = self.uid_counter + 1
 	return self.uid_counter
 end
-
+---GameHandler fireWeapon
 function GameHandler:fireWeapon(weapon, mx, my)
 	-- Move this to its own handler later?
 	if weapon.weaponType == RANGED then

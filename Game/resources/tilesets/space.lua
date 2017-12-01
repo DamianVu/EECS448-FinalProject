@@ -1,3 +1,4 @@
+---Tileset Space
 space = {
 	name = "space",
 	Width = 3, -- In tiles

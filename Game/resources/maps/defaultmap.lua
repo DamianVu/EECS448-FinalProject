@@ -1,4 +1,4 @@
-
+---Map Default Map
 Map = {
 	name = "Default Map",
 	startingLocations = {

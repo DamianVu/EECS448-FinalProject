@@ -53,7 +53,15 @@ function MapHandler:loadAllTilesets()
 	end
 end
 
---- Loads selected map.
+--- Resets player on death
+function MapHandler:resetPlayer()
+	GH.player.x = ((self.startx - 1) * 64) + 32
+	GH.player.y = ((self.starty - 1) * 64) + 32
+	GH.player.health = GH.player.maxHP
+	GH.player.movementEnabled = true
+end
+
+--- Loads map
 function MapHandler:loadMap(map, startIndex)
 
 	self.currentMap = self.maps[self:getMapIndex(map)]
@@ -61,6 +69,9 @@ function MapHandler:loadMap(map, startIndex)
 	if startIndex == nil then startIndex = 1 end
 
 	local starty, startx = unpack(self.currentMap.startingLocations[startIndex])
+
+	self.starty = starty
+	self.startx = startx
 
 
 	GH.player.x = ((startx - 1) * 64) + 32

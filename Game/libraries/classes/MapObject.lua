@@ -1,4 +1,4 @@
-
+---Class Map Object
 MapObject = class("MapObject", {})
 
 --- Constructor for a Map Object.
