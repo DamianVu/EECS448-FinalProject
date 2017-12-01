@@ -1,11 +1,12 @@
 
 Peer = class("Peer", {})
 
-function Peer:init(id, networkID, color, x, y, size)
+function Peer:init(id, networkID, color, x, y, size, sprite)
 	self.id = id
 	self.networkID = networkID
 	self.type = PEER
-	self.sprite = spriteImg
+
+	self.sprite = love.graphics.newImage("images/sprites/characters/" .. sprite .. ".png")
 	self.color = color
 	self.currentColor = self.color
 	self.x = x

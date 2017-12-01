@@ -28,12 +28,13 @@ function NetworkHandler:connect()
 	self.udp:settimeout(0)
 
 	-- Initialize player info relevant to server
-	local r,g,b = unpack(self.GH.player.color)
 	self.messageCount = 0
 	playerList = ""
 
+
+
 	-- Send join signal
-	self:send(self.GH.player.id .. " join " .. self.GH.player.x .. " " .. self.GH.player.y .. " " .. r .. " " .. g .. " " .. b)
+	self:send(self.GH.player.id .. " join " .. self.GH.player.x .. " " .. self.GH.player.y .. " " .. USERSPRITE)
 	self.connected = true
 end
 
@@ -51,8 +52,8 @@ function NetworkHandler:disconnect()
 end
 
 -- Creates a peer in the peer table
-function NetworkHandler:addPeer(ent, x, y, r, g, b)
-	local a = Peer(ent, {r, g, b}, x, y, 32)
+function NetworkHandler:addPeer(ent, x, y, sprite)
+	local a = Peer(ent, nil, {255,255,255,255}, x, y, 48, sprite)
 	self.peers[#self.peers + 1] = a
 	self.GH:addObject(a) -- Add the peer to the GameHandler's objects table
 end
@@ -83,8 +84,8 @@ function NetworkHandler:receive()
 			local entity, cmd, parms = tostring(receivedData):match("^(%S*) *(%S*) *(.*)")
 			if entity ~= self.GH.player.id then -- Broadcast Type Commands
 				if cmd == 'join' then -- Broadcast Type
-					local px, py, pr, pg, pb = parms:match("(-*%d+.*%d*) (-*%d+.*%d*) (%d+) (%d+) (%d+)")
-							self:addPeer(entity, px, py, pr, pg, pb)
+					local px, py, ps = parms:match("(-*%d+.*%d*) (-*%d+.*%d*) (%S+)")
+							self:addPeer(entity, px, py, ps)
 				end
 				if cmd == 'leave' then -- Broadcast Type
 					local peerNetID = GH.peers[self:locatePeer(entity, GH.peers)].networkID

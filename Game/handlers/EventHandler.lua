@@ -23,15 +23,15 @@ end
 function EventHandler:triggerEvent(EVENT)
 	if math.random(3) == 1 then
 		--for i = 1, math.random(4) do
-		local chaseObj = findByNetworkID(GH.connectedIDs[math.random(#GH.connectedIDs)])
+		local chaseObj = self:findByNetworkID(GH.connectedIDs[math.random(#GH.connectedIDs)])
 		GH:addObject(Enemy(GH:getNewUID(), lavaBug, {255,255,255}, .99, 1, math.random(96,400), math.random(96,400), 32, 32, 5, 1, chaseObj))
 	end
 	if math.random(2) == 1 then
-		local chaseObj = findByNetworkID(GH.connectedIDs[math.random(#GH.connectedIDs)])
+		local chaseObj = self:findByNetworkID(GH.connectedIDs[math.random(#GH.connectedIDs)])
 		GH:addObject(Enemy(GH:getNewUID(), angryTourist, {255,255,255}, .2, 1, math.random(96,400), math.random(96,400), 32, 32, 5, 1, chaseObj))
 	end
 	if math.random(20) == 1 then
-		local chaseObj = findByNetworkID(GH.connectedIDs[math.random(#GH.connectedIDs)])
+		local chaseObj = self:findByNetworkID(GH.connectedIDs[math.random(#GH.connectedIDs)])
 		GH:addObject(Enemy(GH:getNewUID(), angryGhost, {255,255,255}, 1.1, 1, math.random(96,400), math.random(96,400), 32, 32, 5, 1, chaseObj))
 	end
 end

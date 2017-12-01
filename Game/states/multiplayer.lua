@@ -19,7 +19,7 @@ function OnlineGame:enter() -- enter is called everytime this state occurs
 
 	HUD = HeadsUpDisplay()
 
-	GH:addObject(Player(USERNAME .. USERID, spriteImg, CHARACTERCOLOR, 1, 10, 96, 96, 32, 32))
+	GH:addObject(Player(USERNAME .. USERID, nil, love.graphics.newImage("images/sprites/characters/" .. USERSPRITE .. ".png"), CHARACTERCOLOR, 1, 10, 96, 96, 48, 48))
 
 	GH.LH:loadLevel("test", 1)
 
