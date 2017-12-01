@@ -76,11 +76,14 @@ function receiver()
 					local p = indexOf(entity)
 					if p == -1 then -- Add player if never joined before
 						players[#players+1] = {connected=true, ip=fromIP, port=fromPort, id=entity, x=lx, y=ly, r=lr, g=lg, b=lb}
+						reply(entity .. " yourid " .. #players, fromIP, fromPort)
 					else
 						players[p].connected = true
 						players[p].ip = fromIP
 						players[p].port = fromPort
-						reply("rejoin " .. players[p].x .. " " .. players[p].y, fromIP, fromPort)
+						reply(entity .. " rejoin " .. players[p].x .. " " .. players[p].y, fromIP, fromPort)
+						
+						reply(entity .. " yourid " .. p, fromIP, fromPort)
 						print("This is a rejoin in our player table at index " .. p)
 					end -- Set player's connected property to true
 

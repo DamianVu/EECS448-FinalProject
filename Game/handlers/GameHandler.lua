@@ -14,6 +14,8 @@ function GameHandler:init()
 	self.multiplayer = false -- This will only get set to true in NetworkHandler
 	self.networkMoveTimer = 0
 
+	self.EH = EventHandler(10)
+
 	self.playerIsMoving = false
 	self.playerPrevX = 0
 	self.playerPrevY = 0
@@ -69,18 +71,11 @@ end
 -- Update functions (primary game dt function)
 function GameHandler:update(dt)
 
-	if not self.multiplayer or self.gameStarted then
+	if self.gameStarted or not self.multiplayer then
 		self.gameTimer = self.gameTimer + dt
+		self.EH:update(dt)
 	end
 
-	if self.gameTimer > 9999 and not self.testSpawn then
-		if USERNAME == "dv" then
-			self:spawnEnemy(self.player)
-		else
-			self:spawnEnemy(self.peers[1])
-		end
-		self.testSpawn = true
-	end
 
 	if self.DH.playing then
 		self.DH:update(dt)

@@ -1,8 +1,9 @@
 
 Player = class("Player", {x_vel = 0, y_vel = 0})
 
-function Player:init(id, sprite, color, speed, health, x, y, width, height)
+function Player:init(id, networkID, sprite, color, speed, health, x, y, width, height)
 	self.id = id
+	self.networkID = networkID
 	self.type = PLAYER
 	self.sprite = sprite or spriteImg
 	self.color = color or {255,255,255,255}
