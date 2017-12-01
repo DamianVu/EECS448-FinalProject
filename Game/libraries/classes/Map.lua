@@ -1,7 +1,7 @@
 
 --Tileset-- Class definition and constructor, new_tileset
 Tileset = class("Tileset", {map = {}})
---- Init
+--- Tileset Constructor.
 function Tileset:init(map, img, width, height, tileWidth, tileHeight, cdict, originx, originy)
 	self.map = map                        				-- map  		|2d array of Tile objects
 	self.img = img										-- img  		|love.graphics.newImage('image/path.png')

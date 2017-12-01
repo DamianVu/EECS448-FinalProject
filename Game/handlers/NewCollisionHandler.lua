@@ -1,7 +1,7 @@
 
 NewCollisionHandler = class("NewCollisionHandler", {})
 
---- Default constructor
+--- Default constructor.
 function NewCollisionHandler:init()
 	self.objects = {}
 	self.terrain = {}
@@ -12,19 +12,19 @@ end
 -- 		Section: Adding Attributes		 --
 -------------------------------------------
 
---- Add player/enemy objects to the handler
+--- Add player/enemy objects to the handler.
 function NewCollisionHandler:addObject(object)
 	self.objects[#self.objects + 1] = object
 end
 
---- Add projectiles and other objects to the handler
 
 
---- Add terrain objects to the handler
+--- Add terrain objects to the handler.
 function NewCollisionHandler:addTerrain(object)
 	self.terrain[#self.terrain + 1] = object
 end
 
+--- Add projectiles and other objects to the handler.
 function NewCollisionHandler:addProjectile(object)
 	self.projectiles[#self.projectiles + 1] = object
 end
@@ -33,11 +33,12 @@ end
 -- 		Section: Removing Attributes	 --
 -------------------------------------------
 
---- Remove objects from handler
+--- Remove objects from handler.
 function NewCollisionHandler:removeObject(id)
 
 end
 
+--- Resets the collision handler's object, terrain, and projectiles tables.
 function NewCollisionHandler:reset()
 	self.objects = {}
 	self.terrain = {}
@@ -48,7 +49,7 @@ end
 -- 		Section: Update Functions		 --
 -------------------------------------------
 
---- Callback to check for collisions
+--- Callback to check for collisions.
 function NewCollisionHandler:update()
 	-- Check for object to object collisions
 	collision = 0
@@ -89,7 +90,7 @@ end
 -------------------------------------------
 -- 		Section: Check Functions		 --
 -------------------------------------------
---- Checks for a collision between an object and terrain
+--- Checks for a collision between an object and terrain.
 function NewCollisionHandler:checkTerrainCollision(object, terrain)
 
 	if not object then return end
@@ -107,7 +108,7 @@ function NewCollisionHandler:checkTerrainCollision(object, terrain)
 	end
 end
 
---- Checks for a collisions between a projectile and an object
+--- Checks for a collisions between a projectile and an object.
 function NewCollisionHandler:checkProjectileCollision(projectile, object)
 	if not projectile then return end
 	if self:findObject(projectile.sourceID).type == PEER and object.type == PLAYER then return end
@@ -123,6 +124,7 @@ function NewCollisionHandler:checkProjectileCollision(projectile, object)
 	end
 end
 
+--- Checks for collisions between two objects (Players and Peers).
 function NewCollisionHandler:checkObjectCollision(object1, object2)
 	if not object1 or not object2 then return end
 	if object1.type == PLAYER and object2.type == PLAYER then return end
@@ -149,7 +151,7 @@ end
 -- 	   Section: Resolution Functions	 --
 -------------------------------------------
 
---- Resolves a collision between a projectile and terrain
+--- Resolves a collision between a projectile and terrain.
 function NewCollisionHandler:resolveTerrainCollision(object, terrain)
 	if object.type == PEER then return end
 	if object.type == PROJECTILE then
@@ -159,7 +161,7 @@ function NewCollisionHandler:resolveTerrainCollision(object, terrain)
 	end
 end
 
---- Resolves a collision between an object and terrain
+--- Resolves a collision between an object and terrain.
 function NewCollisionHandler:resolveObjectTerrainCollision(object, terrain)
 	local terrainCenterX = terrain.x + (terrain.width/2)
 	local terrainCenterY = terrain.y + (terrain.height/2)
@@ -260,7 +262,7 @@ function NewCollisionHandler:resolveObjectTerrainCollision(object, terrain)
 	end
 end
 
---- Resolves a collision between a projectile and an object
+--- Resolves a collision between a projectile and an object.
 function NewCollisionHandler:resolveProjectileCollision(projectile, object)
 	object:takeDamage(projectile.damage)
 	local pos = GH.getObjectPosition(projectile.sourceID, self.objects)
@@ -268,14 +270,14 @@ function NewCollisionHandler:resolveProjectileCollision(projectile, object)
 	GH:destroyProjectile(projectile.id)
 end
 
---- Resolves a collision between an object and another object
+--- Resolves a collision between an object and another object.
 function NewCollisionHandler:resolveObjectCollision(object1, object2)
 	-- Let's assume there is only one player object, thus we don't have to handle player-player collision
 	if object1.type == PEER and object2.type == PEER then return end
-	
+
 	if object1.type == ENEMY and object2.type == ENEMY then
 		-- If enemy to enemy collision
-		
+
 
 	else
 		-- This should be player to enemy
@@ -324,7 +326,7 @@ function NewCollisionHandler:resolveObjectCollision(object1, object2)
 	end
 end
 
---
+--- Returns an object from the object table, given an object id to search for.
 function NewCollisionHandler:findObject(id)
 	for i = 1, #self.objects do
 		if self.objects[i].id == id then return self.objects[i] end

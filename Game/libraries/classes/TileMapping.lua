@@ -1,6 +1,7 @@
 
 Map = class("Map", {})
---- Class defn
+
+--- Constructor for a Map. Given a grid, and a dictionary of tile ids.
 function Map:init(grid, id_dict)
 	self.tiles = {}
 	self.id_dict = id_dict

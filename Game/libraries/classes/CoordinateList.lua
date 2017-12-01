@@ -1,10 +1,12 @@
 
 CoordinateList = class("CoordinateList", {list = {}})
---- Init
+
+--- Constructor for the CoordinateList object.
 function CoordinateList:init(unique)
 	self.unique = unique or true
 end
 
+--- Adds a coordinate to the CoordinateList.
 function CoordinateList:add(coord)
 	local x,y = unpack(coord)
 	if self.unique then
@@ -20,6 +22,7 @@ function CoordinateList:add(coord)
 	end
 end
 
+--- Determines whether the CoordinateList object contains a given coordinate.
 function CoordinateList:contains(coord)
 	local ix, iy = unpack(coord)
 	for i = 1, #self.list do
@@ -31,8 +34,8 @@ function CoordinateList:contains(coord)
 	return false
 end
 
+--- Creates a new CoordinateList that envolpes the old CoordinateList.
 -- This returns a new, larger CoordinateList containing every tile in the previous AND every adjacent tile attached
---- I don't see why this function would ever be ran if self.unique = false, but we can cross that bridge when the time comes.
 function CoordinateList:fullSpan()
 	local rList = CoordinateList()
 	for i = 1, #self.list do
@@ -46,6 +49,7 @@ function CoordinateList:fullSpan()
 	return rList
 end
 
+--- Returns a subset CoordinateList of a given CoordinateList.
 function CoordinateList.subset(outerList, innerList)
 	local rList = CoordinateList(true)
 	for i = 1, #outerList.list do
@@ -58,8 +62,7 @@ function CoordinateList.subset(outerList, innerList)
 end
 
 
-
--- Stuff i moved in to test progress
+-- Everything beyond is used for testing of the CoordinateList structure.
 
 -- Class that contains coordinates
 CoordinateList = class("CoordinateList", {list = {}})
