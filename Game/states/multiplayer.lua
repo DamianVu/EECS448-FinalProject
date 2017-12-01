@@ -11,6 +11,9 @@ end
 
 --- Called whenever this state has been entered
 function OnlineGame:enter() -- enter is called everytime this state occurs
+	MENUMUSIC:pause()
+	WATERMUSIC:play()
+
 	collision = 0
 
 	GH = GameHandler()
@@ -21,7 +24,7 @@ function OnlineGame:enter() -- enter is called everytime this state occurs
 
 	GH:addObject(Player(USERNAME .. USERID, nil, love.graphics.newImage("images/sprites/characters/" .. USERSPRITE .. ".png"), CHARACTERCOLOR, 1, 50, 96, 96, 48, 48))
 
-	GH.LH:loadLevel("test", 1)
+	GH.LH:loadLevel("beach", 1)
 
 	messageCount = 0
 	print("Connecting to server")
@@ -50,12 +53,7 @@ function OnlineGame:draw()
 
 	love.graphics.setColor(0,255,0)
 	love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 10, 60)
-	love.graphics.print("Collision: " .. tostring(collision), 10, 80)
-	love.graphics.print("Number of projectiles: " .. #GH.projectiles, 10, 100)
-	love.graphics.print("Score: " .. GH.player.score, 10, 120)
-	love.graphics.print("Time: " .. math.floor(GH.gameTimer), 10, 160)
-	love.graphics.print("Network ID: " .. (GH.player.networkID or "NONE YET"), 10, 180)
-	love.graphics.print("Size of Network IDs" .. #GH.connectedIDs, 10, 200)
+	love.graphics.print("Score: " .. GH.player.score, 10, 80)
 
 
 	HUD:draw()
@@ -75,6 +73,8 @@ end
 --- Called when this state has been left
 function OnlineGame:leave()
 	NH:disconnect()
+	WATERMUSIC:stop()
+	MENUMUSIC:play()
 end
 
 --- Called if the game is exited in this state

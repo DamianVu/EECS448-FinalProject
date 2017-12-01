@@ -27,6 +27,15 @@ function GameHandler:init()
 
 	self.testSpawn = false
 
+	deathSound = love.audio.newSource("sounds/SOILEDIT.mp3", "static")
+	deathSound:setVolume(.25)
+
+	self.enemyDeath = love.audio.newSource("sounds/MonsterDeath.mp3", "static")
+	self.enemyDeath:setVolume(.25)
+
+	self.bulletSound = love.audio.newSource("sounds/shootpop.mp3", "static")
+	self.bulletSound:setVolume(.3)
+
 	self.connectedIDs = {}
 end
 
@@ -125,8 +134,9 @@ function GameHandler:updatePlayer(dt)
 		-- 	NH:playerDeath(self.player.id)
 		-- end
 		-- --------------------------------------------
-
-		Gamestate.switch(GameOver)
+		deathSound:play()
+		MH:resetPlayer()
+		
 	end
 
 	if self.player.immune then
@@ -149,6 +159,11 @@ function GameHandler:updatePlayer(dt)
 	if love.keyboard.isDown('d') then
 		self.player:move(dt, 2)
 		self.playerIsMoving = true
+	end
+
+	if not love.keyboard.isDown('d') and not love.keyboard.isDown('w') and not love.keyboard.isDown('a') and not love.keyboard.isDown('s') then
+		self.player.movesound:pause()
+		self.player.movesound:rewind()
 	end
 
 	if not self.player.movementEnabled then
@@ -179,6 +194,8 @@ function GameHandler:updatePlayer(dt)
 		local x,y = love.mouse.getPosition()
 
 		self:fireWeapon(currentWeapon, x, y)
+		self.bulletSound:rewind()
+		self.bulletSound:play()
 	else
 		self.player:updateAttackDelay(dt)
 	end
@@ -209,6 +226,8 @@ function GameHandler:createProjectile(x, y, size, angle, damage, speed, creatorI
 
 	self:addObject(Projectile(self:getNewUID(), nil, x, y, size, size, math.cos(angle), math.sin(angle), damage, speed, creatorID))
 
+
+
 	--(Multiplayer) Stream Projectile Spawn-----
 	if self.multiplayer and self.player.id == creatorID then
 		NH:spawnProjectile(x, y, size, angle, damage, speed, creatorID, time)
@@ -227,6 +246,8 @@ function GameHandler:destroyProjectile(id)
 end
 
 function GameHandler:destroyEnemy(id)
+	self.enemyDeath:rewind()
+	self.enemyDeath:play()
 	table.remove(self.CH.objects, self.getObjectPosition(id, self.CH.objects))
 	table.remove(self.enemies, self.getObjectPosition(id, self.enemies))
 end
