@@ -117,6 +117,7 @@ function NetworkHandler:receive()
 					GH.player.x, GH.player.y = parms:match("(-*%d+.*%d*) (-*%d+.*%d*)")
 				end
 				if cmd == 'yourid' then
+					print("Hey we received our ID. that's cool. it is :" .. tonumber(parms))
 					GH.player.networkID = tonumber(parms)
 					GH.connectedIDs[#GH.connectedIDs + 1] = tonumber(parms)
 					table.sort(GH.connectedIDs)
