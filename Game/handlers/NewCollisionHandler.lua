@@ -93,6 +93,7 @@ end
 function NewCollisionHandler:checkTerrainCollision(object, terrain)
 
 	if not object then return end
+	if object.type == PEER then return end
 	-- Note: Object.x/y is the center of sprite, while terrain is the top left point
 
 	-- There is probably a more optimized way of doing this. For now let's check all 4 cases
