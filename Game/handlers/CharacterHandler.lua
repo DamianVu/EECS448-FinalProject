@@ -78,7 +78,9 @@ function CharacterHandler:loadCharacterSprites()
 	local files = love.filesystem.getDirectoryItems("images/sprites/characters/")
 	local sprites = {}
 	for i = 1, #files do
-		sprites[i] = {files[i], love.graphics.newImage('images/sprites/characters/' .. files[i])}
+		if files[i] == ".DS_Store" then
+			sprites[i] = {files[i], love.graphics.newImage('images/sprites/characters/' .. files[i])}
+		end
 	end
 
 	return sprites
