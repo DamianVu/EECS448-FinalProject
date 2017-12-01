@@ -36,7 +36,7 @@ function EventHandler:triggerEvent()
 
 				local chaseObj = self:findByNetworkID(GH.connectedIDs[math.random(#GH.connectedIDs)])
 
-				GH:addObject(Enemy(GH:getNewUID(), enemy[1], {255,255,255}, enemy[2], 1, GH.player.x + math.cos(angle) * radius, GH.player.y + math.sin(angle) * radius, 32, 32, enemy[3], enemy[4], GH.player))
+				GH:addObject(Enemy(GH:getNewUID(), enemy[1], {255,255,255}, enemy[2], 1, GH.player.x + math.cos(angle) * radius, GH.player.y + math.sin(angle) * radius, 32, 32, enemy[3], enemy[4], chaseObj))
 			end
 		end
 	else
