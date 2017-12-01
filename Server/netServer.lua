@@ -94,7 +94,7 @@ function receiver()
 						local p = players[i]
 						if p.id ~= entity and p.connected then 
 							reply(p.id.." join "..p.x.." "..p.y.." "..p.s, fromIP, fromPort)
-							reply(p.id.." netid "..i)
+							reply(p.id.." netid "..i, fromIP, fromPort)
 						end
 					end
       elseif cmd == 'leave' then
