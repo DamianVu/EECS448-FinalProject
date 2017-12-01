@@ -17,13 +17,13 @@ function Singleplayer:enter()
 
 
 
-	GH:addObject(Player(GH:getNewUID(), nil, CURRENTSPRITE, CHARACTERCOLOR, 1, 10, 96, 96, 48, 48))
+	GH:addObject(Player(GH:getNewUID(), nil, CURRENTSPRITE, CHARACTERCOLOR, 1, 50, 96, 96, 48, 48))
 
 
 
 	--GH:addObject(Enemy(GH:getNewUID(), nil, {255,0,0}, .5, 5, math.random(96, 300), math.random(96, 300), 32, 32, 15, 2, GH.player))
 
-	GH.LH:loadLevel("space", 1)
+	GH.LH:loadLevel("beach", 1)
 
 	--GH.DH:start("Starting")
 end

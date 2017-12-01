@@ -28,6 +28,9 @@ function Enemy:init(id, sprite, color, speed, bumpFactor, x, y, width, height, h
 	self.hpBarTimeout = 0
 
 	self.paused = false
+	self.created = true
+	self.createdTime = 0
+	self.createTimer = 1.5
 	self.defaultPauseDuration = .3 -- Amount of time to pause before attempting to move again
 end
 
@@ -55,6 +58,12 @@ function Enemy:move(dt)
 	if self.paused then
 		self.pauseTime = self.pauseTime + dt
 		if self.pauseTime > self.pauseDuration then self.paused = false end
+	elseif self.created then
+		self.createdTime = self.createdTime + dt
+		self.color = {255,255,255,self.createdTime / self.createTimer * 255}
+		if self.createdTime > self.createTimer then
+			self.created = false
+		end
 	else
 		self.x = self.x + (self.x_vel * base_speed * dt)
 		self.y = self.y + (self.y_vel * base_speed * dt)

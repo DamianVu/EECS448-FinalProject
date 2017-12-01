@@ -11,6 +11,8 @@ function EventHandler:init(seed)
 	self.timer = 0
 
 	self.updateRate = 1
+
+	self.enemies = {{lavaBug, 1, 2, 2}, {angryTourist, 2, 1, 5}, {angryGhost, .5, 10, 10}}
 end
 
 function EventHandler:update(dt)
@@ -20,45 +22,37 @@ function EventHandler:update(dt)
 		self.timer = self.timer - self.updateRate
 	end
 end
-function EventHandler:triggerEvent(EVENT)
-	table.sort(GH.connectedIDs)
-	local num = math.random(5)
-	print(num)
-	if num == 1 then
-		--for i = 1, math.random(4) do
-		num1 = math.random(#GH.connectedIDs)
-		print(num1)
-		num2 = math.random(96,400)
-		print(num2)
-		num3 = math.random(96,400)
-		print(num3)
+function EventHandler:triggerEvent()
+	if GH.multiplayer then
+		table.sort(GH.connectedIDs)
 
-		local chaseObj = self:findByNetworkID(GH.connectedIDs[num1])
-		GH:addObject(Enemy(GH:getNewUID(), lavaBug, {255,255,255}, .99, 1, num2, num3, 32, 32, 5, 1, chaseObj))
-	end
-	if num == 2 then
-		--for i = 1, math.random(4) do
-		num1 = math.random(#GH.connectedIDs)
-		print(num1)
-		num2 = math.random(96,400)
-		print(num2)
-		num3 = math.random(96,400)
-		print(num3)
+		if math.random(2) == 1 then
+			-- Spawn enemy
+			local chaseObj = self:findByNetworkID(GH.connectedIDs[math.random(#GH.connectedIDs)])
+		end
 
-		local chaseObj = self:findByNetworkID(GH.connectedIDs[num1])
-		GH:addObject(Enemy(GH:getNewUID(), angryTourist, {255,255,255}, .99, 1, num2, num3, 32, 32, 5, 1, chaseObj))
-	end
-	if num == 3 then
-		--for i = 1, math.random(4) do
-		num1 = math.random(#GH.connectedIDs)
-		print(num1)
-		num2 = math.random(96,400)
-		print(num2)
-		num3 = math.random(96,400)
-		print(num3)
 
-		local chaseObj = self:findByNetworkID(GH.connectedIDs[num1])
-		GH:addObject(Enemy(GH:getNewUID(), angryGhost, {255,255,255}, .99, 1, num2, num3, 32, 32, 5, 1, chaseObj))
+
+		if num == 1 then
+			--for i = 1, math.random(4) do
+			num1 = math.random(#GH.connectedIDs)
+			print(num1)
+			num2 = math.random(96,400)
+			print(num2)
+			num3 = math.random(96,400)
+			print(num3)
+
+			local chaseObj = self:findByNetworkID(GH.connectedIDs[num1])
+			GH:addObject(Enemy(GH:getNewUID(), lavaBug, {255,255,255}, .99, 1, num2, num3, 32, 32, 5, 1, chaseObj))
+		end
+	else
+		if math.random(3) == 1 then
+			local radius = 150
+			local angle = math.random(100) * math.pi * 2 / 100
+
+			local enemy = self.enemies[math.random(#self.enemies)]
+			GH:addObject(Enemy(GH:getNewUID(), enemy[1], {255,255,255}, enemy[2], 1, GH.player.x + math.cos(angle) * radius, GH.player.y + math.sin(angle) * radius, 32, 32, enemy[3], enemy[4], GH.player))
+		end
 	end
 end
 

@@ -116,7 +116,9 @@ function NetworkHandler:receive()
 				end
 			else -- Response Type Commands
 				if cmd == 'rejoin' then -- Response Type
-					GH.player.x, GH.player.y = parms:match("(-*%d+.*%d*) (-*%d+.*%d*)")
+					local x,y = parms:match("(-*%d+.*%d*) (-*%d+.*%d*)")
+					GH.player.x = tonumber(x)
+					GH.player.y = tonumber(y)
 				end
 				if cmd == 'yourid' then
 					print("Hey we received our ID. that's cool. it is :" .. tonumber(parms))
