@@ -21,6 +21,7 @@ function EventHandler:update(dt)
 	end
 end
 function EventHandler:triggerEvent(EVENT)
+	table.sort(GH.connectedIDs)
 	local num = math.random(5)
 	print(num)
 	if num == 1 then
