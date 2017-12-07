@@ -5,8 +5,9 @@ function love.conf(t)
 	t.console = false
 
 
-	t.window.width = 1600
-	t.window.height = 900
+	t.window.width = 1280
+	t.window.height = 800
+	t.window.fullscreen = true
 
 
 	-- Modules: Disable unused to save memory!!!
